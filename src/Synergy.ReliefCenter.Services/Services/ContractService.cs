@@ -46,34 +46,9 @@ namespace Synergy.ReliefCenter.Services.Services
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             var forecastData = System.Text.Json.JsonSerializer.Deserialize<ContractFormDataDto>(contractForm.Data, new System.Text.Json.JsonSerializerOptions { IgnoreNullValues = true, PropertyNameCaseInsensitive = true });
-            ContractDetails.ContractForm.Data.AttachmentDetail.MedicalCertificateAttached = forecastData.AttachmentDetail.MedicalCertificateAttached;
-            ContractDetails.ContractForm.Data.AttachmentDetail.NextOfKinFormAttached = forecastData.AttachmentDetail.NextOfKinFormAttached;
-
-            ContractDetails.ContractForm.Data.TravelInfo.StartDate = forecastData.TravelInfo.StartDate;
-            ContractDetails.ContractForm.Data.TravelInfo.EndDate = forecastData.TravelInfo.EndDate;
-            ContractDetails.ContractForm.Data.TravelInfo.ContractTerms = forecastData.TravelInfo.ContractTerms;
-            ContractDetails.ContractForm.Data.TravelInfo.PlaceOfEnagement = forecastData.TravelInfo.PlaceOfEnagement;
-            ContractDetails.ContractForm.Data.VesselInfo.CBA = forecastData.VesselInfo.CBA;
-            ContractDetails.ContractForm.Data.VesselInfo.EmployerAgent = forecastData.VesselInfo.EmployerAgent;
-            ContractDetails.ContractForm.Data.VesselInfo.IMONuber = forecastData.VesselInfo.IMONuber;
-            ContractDetails.ContractForm.Data.VesselInfo.MLCHolder = forecastData.VesselInfo.MLCHolder;
-            ContractDetails.ContractForm.Data.VesselInfo.Name = forecastData.VesselInfo.Name;
-            ContractDetails.ContractForm.Data.VesselInfo.Owner = forecastData.VesselInfo.Owner;
-            ContractDetails.ContractForm.Data.VesselInfo.PortOfRegistry = forecastData.VesselInfo.PortOfRegistry;
-
-            ContractDetails.ContractForm.Data.SeafarerDetail.Name = forecastData.SeafarerDetail.Name;
-            ContractDetails.ContractForm.Data.SeafarerDetail.Address = forecastData.SeafarerDetail.Address;
-            ContractDetails.ContractForm.Data.SeafarerDetail.Age = forecastData.SeafarerDetail.Age;
-            ContractDetails.ContractForm.Data.SeafarerDetail.CDCNumber = forecastData.SeafarerDetail.CDCNumber;
-            ContractDetails.ContractForm.Data.SeafarerDetail.CrewCode = forecastData.SeafarerDetail.CrewCode;
-            ContractDetails.ContractForm.Data.SeafarerDetail.DateOfBirth = forecastData.SeafarerDetail.DateOfBirth;
-            ContractDetails.ContractForm.Data.SeafarerDetail.Nationality = forecastData.SeafarerDetail.Nationality;
-            ContractDetails.ContractForm.Data.SeafarerDetail.PassportNumber = forecastData.SeafarerDetail.PassportNumber;
-            ContractDetails.ContractForm.Data.SeafarerDetail.PlaceOfBirth = forecastData.SeafarerDetail.PlaceOfBirth;
-            ContractDetails.ContractForm.Data.SeafarerDetail.Rank = forecastData.SeafarerDetail.Rank;
-
-            //ContractDetails.ContractForm.Data.Wages = forecastData.Wages;
-            ContractDetails.ContractForm.ContractId = contractForm.ContractId;
+            //TODO:[Abhishek] implement changes for WagesComponent from CrewWage
+            ContractDetails.ContractForm = new ContractFormDto();
+            ContractDetails.ContractForm.Data = forecastData;
             ContractDetails.SeafarerId = contract.SeafarerId;
             ContractDetails.VesselId = contract.VesselId;
             ContractDetails.StartDate = contract.StartDate;

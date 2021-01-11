@@ -2,8 +2,11 @@
 {
     public class ShipManagementCompanies
     {
-        public long id { get; set; }
+        public long Id { get; set; }
 
-        public bool synergy_company { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public bool SynergyCompany { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetConract([FromRoute] long id)
         {
-            var contractDetails = _contractService.GetConract(id);
+            var contractDetails =await _contractService.GetConract(id);
             return Ok(contractDetails);
         }
 
