@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.ReliefCenter.Api.Models;
+using Synergy.ReliefCenter.Services.Abstraction;
 using System;
 using System.Threading.Tasks;
 
@@ -8,21 +9,27 @@ namespace Synergy.ReliefCenter.Api.Controllers
 {
     public class ContractsController : ApiControllerBase
     {
+        private readonly IContractService _contractService;
         private static Contract _mockContract => GetMockContract();
-        
 
+        public ContractsController(IContractService contractService)
+        {
+            _contractService = contractService;
+        }
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetConract([FromRoute] long id)
         {
-            return Ok(_mockContract);
+            var contractDetails = _contractService.GetConract(id);
+            return Ok(contractDetails);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest requestModel)
         {
+            var contract = _contractService.CreateContract(requestModel.VesselId,requestModel.SeafarerId);
             return Created("", _mockContract); ;
         }
 

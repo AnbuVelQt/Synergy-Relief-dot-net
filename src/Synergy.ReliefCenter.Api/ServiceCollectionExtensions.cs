@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Synergy.ReliefCenter.Services;
 using System;
@@ -9,11 +10,13 @@ namespace Synergy.ReliefCenter.Api
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAllServices(this IServiceCollection services)
+        public static void AddAllServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddCustomSwagger();
 
+            services.AddEFContext(configuration);
             services.AddReliefServices();
+            services.AddReliefRepositories();
         }
 
         private static void AddCustomSwagger(this IServiceCollection services)
