@@ -3,9 +3,9 @@ using Synergy.ReliefCenter.Data.Entities.Seafarer;
 
 namespace Synergy.ReliefCenter.Data.Contexts
 {
-    public class SeafarerContext : DbContext
+    public class SeafarerDbContext : DbContext
     {
-        public SeafarerContext(DbContextOptions<SeafarerContext> options) : base(options) 
+        public SeafarerDbContext(DbContextOptions<SeafarerDbContext> options) : base(options) 
         { 
         }
 

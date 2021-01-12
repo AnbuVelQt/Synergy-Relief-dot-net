@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Synergy.CrewWage.Data.Repositories;
 using Synergy.ReliefCenter.Data.Contexts;
 
 namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
 {
     public class BaseReliefRepository<T> : IBaseRepository<T> where T : class
     {
-        protected ReliefContext ReliefContext;
+        protected ReliefDbContext ReliefContext;
 
-        protected BaseReliefRepository(ReliefContext reliefContext)
+        protected BaseReliefRepository(ReliefDbContext reliefContext)
         {
             ReliefContext = reliefContext;
         }

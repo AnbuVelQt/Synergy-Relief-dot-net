@@ -11,7 +11,9 @@
         public long? BeneficiaryOwnerId { get; set; }
 
         public long? ImoNumber { get; set; }
+
         public string ShipYard { get; set; }
+
         public long PortId { get; set; }
     }
 }
