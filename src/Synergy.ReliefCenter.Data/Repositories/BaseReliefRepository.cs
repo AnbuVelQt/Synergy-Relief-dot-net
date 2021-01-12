@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
 
@@ -31,6 +32,13 @@ namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
             ReliefContext.Set<T>().Add(entity);
         }
 
+        
+        public async Task<T> InsertAsync(T entity)
+        {
+            await ReliefContext.Set<T>().AddAsync(entity);
+            return entity;
+        }
+
         public void Update(T entity)
         {
             ReliefContext.Set<T>().Update(entity);
@@ -45,7 +53,10 @@ namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
         {
             ReliefContext.SaveChanges();
         }
-
+        public async Task<int> SaveAsync()
+        {
+            return await ReliefContext.SaveChangesAsync();
+        }
         public T Get(long id)
         {
             return ReliefContext.Set<T>().Find(id);

@@ -12,7 +12,7 @@
 
         public string MLCHolder { get; set; }
 
-        public string IMONuber { get; set; }
+        public long? IMONumber { get; set; }
 
         public string PortOfRegistry { get; set; }
 

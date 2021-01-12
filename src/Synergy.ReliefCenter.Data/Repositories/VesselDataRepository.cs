@@ -1,6 +1,8 @@
-﻿using Synergy.ReliefCenter.Data.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.Vessel;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Data.Repositories
@@ -14,9 +16,9 @@ namespace Synergy.ReliefCenter.Data.Repositories
             _context = context;
         }
 
-        public ValueTask<Vessel> GetVesselByIdAsync(long id)
+        public async ValueTask<Vessel> GetVesselByIdAsync(long id)
         {
-            throw new System.NotImplementedException();
+            return await _context.Vessels.Include(x=>x.OwnerDetails).Include(x => x.PortDetails).Include(x => x.FleetVesselsDetails).FirstOrDefaultAsync(x=>x.Id == id);
         }
     }
 }

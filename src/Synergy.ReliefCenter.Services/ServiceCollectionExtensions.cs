@@ -5,11 +5,7 @@ using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Repositories;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
-using Synergy.ReliefCenter.Data.Repositories.Abstraction.SeafarerRepository;
-using Synergy.ReliefCenter.Data.Repositories.Abstraction.VesselRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
-using Synergy.ReliefCenter.Data.Repositories.SeafarerRepository;
-using Synergy.ReliefCenter.Data.Repositories.VesselRepository;
 using Synergy.ReliefCenter.Services.Abstraction;
 using Synergy.ReliefCenter.Services.Services;
 

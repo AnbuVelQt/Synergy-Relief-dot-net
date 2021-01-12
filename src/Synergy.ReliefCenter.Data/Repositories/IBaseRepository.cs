@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Data.Repositories
 {
@@ -13,11 +14,15 @@ namespace Synergy.ReliefCenter.Data.Repositories
 
         void Insert(TEntity entity);
 
+        Task<TEntity> InsertAsync(TEntity entity);
+
         void Update(TEntity entity);
 
         void Delete(TEntity entity);
 
         void Save();
+
+        Task<int> SaveAsync();
 
         TEntity Get(long id);
 

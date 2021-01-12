@@ -7,6 +7,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
+using AutoMapper;
+using Synergy.ReliefCenter.Data.Entities;
 
 namespace Synergy.ReliefCenter.Services.Services
 {
@@ -16,26 +18,75 @@ namespace Synergy.ReliefCenter.Services.Services
         private readonly IContractFormRepository _contractFormRepository;
         private readonly IVesselDataRepository _vesselDataRepository;
         private readonly ISeafarerDataRepository _seafarerDataRepository;
+        private readonly IMapper _mapper;
 
         public ContractService(
             IContractRepository contractRepository,
             IContractFormRepository contractFormRepository,
             IVesselDataRepository vesselRepository,
-            ISeafarerDataRepository seafarerRepository
+            ISeafarerDataRepository seafarerRepository,
+            IMapper mapper
             )
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
             _vesselDataRepository = vesselRepository;
             _seafarerDataRepository = seafarerRepository;
+            _mapper = mapper;
         }
         public async Task<ContractDto> CreateContract(long vesselId, long seafarerId)
         {
             var response = new ContractDto();
-            //var vesselDetails =await _vesselDataRepository.GetAllIncluding().Where(x => x.Id == vesselId).FirstOrDefaultAsync();
-            // var seafarerDetails =await _seafarerDataRepository.GetAllIncluding().Where(x => x.Id == seafarerId).FirstOrDefaultAsync();
+            var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
+            var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
+            var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
+            response.CreatedOn = DateTime.UtcNow;
+            response.SeafarerId = seafarerAllDetails.SeafarerId;
+            response.VesselId = vesselDetails.Id;
+            response.Status = ContractStatus.InDraft;
+           
+            var seafarer = new SeafarerDetailDto()
+            {
+                Id = seafarerDetails.Id,
+                Address = seafarerAllDetails.Address,
+                CDCNumber = seafarerDetails.CdcNumber,
+                CrewCode = seafarerDetails.CrewCode,
+                DateOfBirth = seafarerDetails.DateOfBirth,
+                Name = seafarerDetails.FirstName + "" + seafarerDetails.LastName,
+                Nationality = seafarerDetails.NationalityId.ToString(),
+                PlaceOfBirth = seafarerDetails.PlaceOfBirth,
+                Rank = seafarerDetails.RankId.ToString(),
+                PassportNumber =null,
+                Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year
+            };
+            var vessels = new VesselDetailDto()
+            {
+                Id = vesselDetails.Id,
+                Name = vesselDetails.Name,
+                CBA = null,
+                EmployerAgent = null,
+                IMONumber = vesselDetails.ImoNumber,
+                MLCHolder = null,
+                Owner = vesselDetails.OwnerDetails.Address,
+                PortOfRegistry = vesselDetails.PortDetails.Name
+            };
+            
+            response.ContractForm = new ContractFormDto();
+            response.ContractForm.Data = new ContractFormDataDto();
+            response.ContractForm.Data.SeafarerDetail = seafarer;
+            response.ContractForm.Data.VesselInfo = vessels;
+            response.ContractForm.Data.TravelInfo = null;
+            response.ContractForm.Data.AttachmentDetail = null;
+            response.ContractForm.Data.Wages = null;
 
-            return null;
+            var saveContract = _mapper.Map<Contract>(response);
+            await _contractRepository.InsertAsync(saveContract); 
+            await _contractRepository.SaveAsync();
+            response.ContractForm.ContractId = saveContract.Id;
+            var saveContractForm = _mapper.Map<ContractForm>(response.ContractForm);
+            await _contractFormRepository.InsertAsync(saveContractForm);
+            await _contractFormRepository.SaveAsync();
+            return response;
         }
 
         public async Task<ContractDto> GetConract(long id)
