@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using AutoMapper;
 using Synergy.ReliefCenter.Data.Entities;
+using Newtonsoft.Json;
 
 namespace Synergy.ReliefCenter.Services.Services
 {
@@ -40,11 +41,24 @@ namespace Synergy.ReliefCenter.Services.Services
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
-            response.CreatedOn = DateTime.UtcNow;
-            response.SeafarerId = seafarerAllDetails.SeafarerId;
-            response.VesselId = vesselDetails.Id;
-            response.Status = ContractStatus.InDraft;
-           
+            
+            var cc = new ContractDto()
+            {
+                SeafarerId = seafarerAllDetails.SeafarerId,
+                VesselId = vesselDetails.Id,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddDays(90),
+                Status = ContractStatus.InDraft,
+                CreatedBy =1,
+                CreatedOn = DateTime.UtcNow,
+                Id = (_contractRepository.GetAllIncluding().OrderByDescending(x=>x.Id).FirstOrDefault().Id) +1
+            };
+            
+            var saveContract = _mapper.Map<Contract>(cc);
+            await _contractRepository.InsertAsync(saveContract);
+            await _contractRepository.SaveAsync();
+            
+            
             var seafarer = new SeafarerDetailDto()
             {
                 Id = seafarerDetails.Id,
@@ -79,13 +93,22 @@ namespace Synergy.ReliefCenter.Services.Services
             response.ContractForm.Data.AttachmentDetail = null;
             response.ContractForm.Data.Wages = null;
 
-            var saveContract = _mapper.Map<Contract>(response);
-            await _contractRepository.InsertAsync(saveContract); 
-            await _contractRepository.SaveAsync();
+            
             response.ContractForm.ContractId = saveContract.Id;
-            var saveContractForm = _mapper.Map<ContractForm>(response.ContractForm);
-            await _contractFormRepository.InsertAsync(saveContractForm);
-            await _contractFormRepository.SaveAsync();
+            response.ContractForm.Id = (_contractFormRepository.GetAllIncluding().OrderByDescending(x => x.Id).FirstOrDefault().Id) + 1;
+            try
+            {
+                var s = JsonConvert.SerializeObject(response.ContractForm.Data);
+                response.ContractForm.Data = JsonConvert.DeserializeObject<ContractFormDataDto>(s);
+                var saveContractForm = _mapper.Map<ContractForm>(response.ContractForm);
+                await _contractFormRepository.InsertAsync(saveContractForm);
+                await _contractFormRepository.SaveAsync();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
             return response;
         }
 

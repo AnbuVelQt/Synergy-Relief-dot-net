@@ -49,9 +49,9 @@ namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
             ReliefContext.Set<T>().Remove(entity);
         }
 
-        public void Save()
+        public virtual int Save()
         {
-            ReliefContext.SaveChanges();
+            return ReliefContext.SaveChanges();
         }
         public async Task<int> SaveAsync()
         {

@@ -13,6 +13,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<Data.Entities.Contract, ContractDto>();
             CreateMap<ContractDto, Data.Entities.Contract>();
             CreateMap<ContractFormDto, Data.Entities.ContractForm>();
+            CreateMap<Data.Entities.ContractForm, ContractFormDto>();
         }
     }
 }

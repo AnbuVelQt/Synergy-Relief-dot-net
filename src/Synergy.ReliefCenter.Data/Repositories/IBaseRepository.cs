@@ -20,7 +20,7 @@ namespace Synergy.ReliefCenter.Data.Repositories
 
         void Delete(TEntity entity);
 
-        void Save();
+        int Save();
 
         Task<int> SaveAsync();
 
