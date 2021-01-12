@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Core.Models.Dtos;
+using Synergy.ReliefCenter.Data.Entities.Seafarer;
 
 namespace Synergy.ReliefCenter.Api.Mappers
 {
@@ -11,6 +12,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
 
             CreateMap<ContractDto, Contract>();
             CreateMap<Data.Entities.Contract, ContractDto>();
+
+           
         }
     }
 }

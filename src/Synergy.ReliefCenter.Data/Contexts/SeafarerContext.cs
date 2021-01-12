@@ -13,6 +13,9 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         public DbSet<Seafarer> Seafarers { get; set; }
 
+        public DbSet<SeafarerContactDetails> ContactDetails { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //ConfigurationHelper.SetUpConfiguration(optionsBuilder, "SeafarerString");

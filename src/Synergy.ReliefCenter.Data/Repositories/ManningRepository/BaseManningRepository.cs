@@ -4,9 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
-using Synergy.ReliefCenter.Data.Repositories;
 
-namespace Synergy.CrewWage.Data.Repositories.ManningRepository
+namespace Synergy.ReliefCenter.Data.Repositories.ManningRepository
 {
     public class BaseManningRepository<T> : IBaseRepository<T> where T : class
     {

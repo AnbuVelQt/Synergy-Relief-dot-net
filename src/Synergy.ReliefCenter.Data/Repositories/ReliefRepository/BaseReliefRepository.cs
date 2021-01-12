@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Synergy.CrewWage.Data.Repositories;
 using Synergy.ReliefCenter.Data.Contexts;
 
 namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository

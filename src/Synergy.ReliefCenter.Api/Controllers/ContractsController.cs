@@ -29,8 +29,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest requestModel)
         {
-            var contract = _contractService.CreateContract(requestModel.VesselId,requestModel.SeafarerId);
-            return Created("", _mockContract); ;
+            var contract =await _contractService.CreateContract(requestModel.VesselId,requestModel.SeafarerId);
+            return Created("", contract); ;
         }
 
         [HttpPut]

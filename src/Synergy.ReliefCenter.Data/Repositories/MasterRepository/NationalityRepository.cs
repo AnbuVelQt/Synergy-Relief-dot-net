@@ -1,8 +1,8 @@
 ﻿using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.Master;
-using Synergy.ReliefCenter.Data.Interfaces.MasterRepository;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.MasterRepository;
 
-namespace Synergy.CrewWage.Data.Repositories.MasterRepository
+namespace Synergy.ReliefCenter.Data.Repositories.MasterRepository
 {
     public class NationalityRepository : BaseMasterRepository<Nationality>, INationalityRepository
     {

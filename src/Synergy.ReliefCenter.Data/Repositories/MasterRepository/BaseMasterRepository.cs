@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Repositories;
 
-namespace Synergy.CrewWage.Data.Repositories.MasterRepository
+namespace Synergy.ReliefCenter.Data.Repositories.MasterRepository
 {
     public class BaseMasterRepository<T> : IBaseRepository<T> where T : class
     {

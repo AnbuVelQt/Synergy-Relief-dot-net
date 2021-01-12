@@ -1,8 +1,8 @@
 ﻿using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.Vessel;
-using Synergy.ReliefCenter.Data.Interfaces.VesselRepository;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.VesselRepository;
 
-namespace Synergy.CrewWage.Data.Repositories.VesselRepository
+namespace Synergy.ReliefCenter.Data.Repositories.VesselRepository
 {
     public class FleetVesselsRepository : BaseVesselRepository<FleetVessels>, IFleetVesselsRepository
     {

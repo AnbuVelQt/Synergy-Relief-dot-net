@@ -17,5 +17,6 @@ namespace Synergy.ReliefCenter.Data.Entities.Seafarer
         public long VesselId { get; set; }
 
         public DateTime ToDate { get; set; }
+        //public Seafarer SeafarerDetails { get; set; }
     }
 }

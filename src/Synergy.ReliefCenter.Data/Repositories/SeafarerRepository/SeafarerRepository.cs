@@ -1,9 +1,9 @@
 ﻿using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.Seafarer;
-using Synergy.ReliefCenter.Data.Interfaces.SeafarerRepository;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.SeafarerRepository;
 using System.Linq;
 
-namespace Synergy.CrewWage.Data.Repositories.SeafarerRepository
+namespace Synergy.ReliefCenter.Data.Repositories.SeafarerRepository
 {
     public class SeafarerRepository : BaseSeafarerRepository<Seafarer>, ISeafarerRepository
     {

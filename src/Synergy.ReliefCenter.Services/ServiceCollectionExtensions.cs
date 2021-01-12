@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Synergy.CrewWage.Data.Repositories.SeafarerRepository;
-using Synergy.CrewWage.Data.Repositories.VesselRepository;
 using Synergy.ReliefCenter.Data.Contexts;
-using Synergy.ReliefCenter.Data.Interfaces.SeafarerRepository;
-using Synergy.ReliefCenter.Data.Interfaces.VesselRepository;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.SeafarerRepository;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.VesselRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
+using Synergy.ReliefCenter.Data.Repositories.SeafarerRepository;
+using Synergy.ReliefCenter.Data.Repositories.VesselRepository;
 using Synergy.ReliefCenter.Services.Abstraction;
 using Synergy.ReliefCenter.Services.Services;
 
@@ -28,6 +28,7 @@ namespace Synergy.ReliefCenter.Services
         {
             services.AddScoped<IVesselRepository, VesselRepository>();
             services.AddScoped<ISeafarerRepository, SeafarerRepository>();
+            services.AddScoped<ISeafarerContactDetailRepository, SeafarerContactDetailRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IContractFormRepository, ContractFormRepository>();
         }
