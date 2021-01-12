@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Synergy.ReliefCenter.Core.Models.Dtos
+{
+    public class ContractDto
+    {
+        public ContractFormDto ContractForm { get; set; }
+    }
+}
