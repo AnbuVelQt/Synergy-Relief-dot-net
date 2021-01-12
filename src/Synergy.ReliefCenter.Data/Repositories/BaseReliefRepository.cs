@@ -9,9 +9,9 @@ namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
 {
     public class BaseReliefRepository<T> : IBaseRepository<T> where T : class
     {
-        protected ReliefContext ReliefContext;
+        protected ReliefDbContext ReliefContext;
 
-        protected BaseReliefRepository(ReliefContext reliefContext)
+        protected BaseReliefRepository(ReliefDbContext reliefContext)
         {
             ReliefContext = reliefContext;
         }

@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Synergy.ReliefCenter.Data.Contexts;
+using Synergy.ReliefCenter.Data.Repositories;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.SeafarerRepository;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.VesselRepository;
@@ -26,9 +28,8 @@ namespace Synergy.ReliefCenter.Services
 
         public static void AddReliefRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IVesselRepository, VesselRepository>();
-            services.AddScoped<ISeafarerRepository, SeafarerRepository>();
-            services.AddScoped<ISeafarerContactDetailRepository, SeafarerContactDetailRepository>();
+            services.AddScoped<IVesselDataRepository, VesselDataRepository>();
+            services.AddScoped<ISeafarerDataRepository, SeafarerDataRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IContractFormRepository, ContractFormRepository>();
         }
@@ -42,16 +43,16 @@ namespace Synergy.ReliefCenter.Services
             var MasterString = configuration.GetConnectionString(MasterDBConnectionString);
 
             // Context Register
-            services.AddDbContext<ReliefContext>(opt =>
+            services.AddDbContext<ReliefDbContext>(opt =>
                 opt.UseNpgsql(ReliefDbString));
 
-            services.AddDbContext<VesselContext>(opt =>
+            services.AddDbContext<VesselDbContext>(opt =>
                 opt.UseNpgsql(VesselString).UseSnakeCaseNamingConvention());
 
-            services.AddDbContext<SeafarerContext>(opt =>
+            services.AddDbContext<SeafarerDbContext>(opt =>
                 opt.UseNpgsql(SeafarerString).UseSnakeCaseNamingConvention());
 
-            services.AddDbContext<MasterContext>(opt =>
+            services.AddDbContext<MasterDbContext>(opt =>
                 opt.UseNpgsql(MasterString).UseSnakeCaseNamingConvention());
         }
     }

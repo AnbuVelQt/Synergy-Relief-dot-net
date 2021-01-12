@@ -3,9 +3,9 @@ using Synergy.ReliefCenter.Data.Entities;
 
 namespace Synergy.ReliefCenter.Data.Contexts
 {
-    public class ReliefContext : DbContext
+    public class ReliefDbContext : DbContext
     {
-        public ReliefContext(DbContextOptions<ReliefContext> options) : base(options)
+        public ReliefDbContext(DbContextOptions<ReliefDbContext> options) : base(options)
         {
 
         }
