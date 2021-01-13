@@ -16,6 +16,7 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+           
         }
     }
 }

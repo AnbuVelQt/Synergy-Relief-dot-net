@@ -10,8 +10,8 @@ namespace Synergy.ReliefCenter.Core.Models
 
         public DateTime UpdatedOn { get; }
 
-        public int CreatedBy { get; }
+        public int? CreatedBy { get; }
 
-        public int UpdatedBy { get; }
+        public int? UpdatedBy { get; }
     }
 }

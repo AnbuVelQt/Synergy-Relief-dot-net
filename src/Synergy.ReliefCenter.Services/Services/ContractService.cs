@@ -85,10 +85,12 @@ namespace Synergy.ReliefCenter.Services.Services
             contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
             contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
             contractDto.ContractForm.Data.Wages = new ContractWagesDto();
-
+            
             var contractToCreate = _mapper.Map<Contract>(contractDto);
             await _contractRepository.InsertAsync(contractToCreate);
             await _contractRepository.SaveAsync();
+            long ContractId = contractToCreate.Id;
+            contractDto.ContractForm.ContractId = ContractId;
             
             var contractFormToCreate = _mapper.Map<ContractForm>(contractDto.ContractForm);
             await _contractFormRepository.InsertAsync(contractFormToCreate);

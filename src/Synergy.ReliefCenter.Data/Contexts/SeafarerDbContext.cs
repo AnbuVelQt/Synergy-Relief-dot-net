@@ -23,6 +23,16 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //modelBuilder.Entity<Contract>(_ => _.Property(_=> _.CreatedBy)).
+            modelBuilder.Entity<Seafarer>()
+                    .Property(p => p.CreatedOn)
+                    .HasColumnName("created_at")
+                    .HasColumnType("DateTime");
+
+            modelBuilder.Entity<Seafarer>()
+                    .Property(p => p.UpdatedOn)
+                    .HasColumnName("updated_at")
+                    .HasColumnType("DateTime");
         }
     }
 }

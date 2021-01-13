@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Synergy.ReliefCenter.Api.Helpers;
 using Synergy.ReliefCenter.Api.Mappers;
+using Synergy.ReliefCenter.Services.Mappers;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -29,7 +30,7 @@ namespace Synergy.ReliefCenter.Api
             services.AddAllServices(Configuration);
             var mapperConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new EntityMappingProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();
