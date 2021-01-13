@@ -27,8 +27,7 @@ namespace Synergy.ReliefCenter.Services.Services
             IContractFormRepository contractFormRepository,
             IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
-            IMapper mapper
-            )
+            IMapper mapper)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -38,26 +37,18 @@ namespace Synergy.ReliefCenter.Services.Services
         }
         public async Task<ContractDto> CreateContract(long vesselId, long seafarerId)
         {
-            var response = new ContractDto();
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
             
-            var cc = new ContractDto()
+            var contractDto = new ContractDto()
             {
                 SeafarerId = seafarerAllDetails.SeafarerId,
                 VesselId = vesselDetails.Id,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddDays(90),
                 Status = ContractStatus.InDraft,
-                CreatedBy =1,
-                CreatedOn = DateTime.UtcNow,
-                Id = (_contractRepository.GetAllIncluding().OrderByDescending(x=>x.Id).FirstOrDefault().Id) +1
             };
             
-            var saveContract = _mapper.Map<Contract>(cc);
-            await _contractRepository.InsertAsync(saveContract);
-            await _contractRepository.SaveAsync();
+           
             
             
             var seafarer = new SeafarerDetailDto()
@@ -74,6 +65,7 @@ namespace Synergy.ReliefCenter.Services.Services
                 PassportNumber =null,
                 Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year
             };
+
             var vessels = new VesselDetailDto()
             {
                 Id = vesselDetails.Id,
@@ -85,27 +77,24 @@ namespace Synergy.ReliefCenter.Services.Services
                 Owner = vesselDetails.OwnerDetails.Address,
                 PortOfRegistry = vesselDetails.PortDetails.Name
             };
+
+            contractDto.ContractForm = new ContractFormDto();
+            contractDto.ContractForm.Data = new ContractFormDataDto();
+            contractDto.ContractForm.Data.SeafarerDetail = seafarer;
+            contractDto.ContractForm.Data.VesselInfo = vessels;
+            contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
+            contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
+            contractDto.ContractForm.Data.Wages = new ContractWagesDto();
+
+            var contractToCreate = _mapper.Map<Contract>(contractDto);
+            await _contractRepository.InsertAsync(contractToCreate);
+            await _contractRepository.SaveAsync();
             
-            response.ContractForm = new ContractFormDto();
-            response.ContractForm.Data = new ContractFormDataDto();
-            response.ContractForm.Data.SeafarerDetail = seafarer;
-            response.ContractForm.Data.VesselInfo = vessels;
-            response.ContractForm.Data.TravelInfo = null;
-            response.ContractForm.Data.AttachmentDetail = null;
-            response.ContractForm.Data.Wages = null;
-            
-            var check = new ContractForm()
-            {
-                Id = (_contractFormRepository.GetAllIncluding().OrderByDescending(x => x.Id).FirstOrDefault().Id) + 1,
-                ContractId = saveContract.Id,
-                Data = JsonConvert.SerializeObject(response.ContractForm.Data)
-            };
-            
-            var saveContractForm = _mapper.Map<ContractForm>(check);
-            await _contractFormRepository.InsertAsync(saveContractForm);
+            var contractFormToCreate = _mapper.Map<ContractForm>(contractDto.ContractForm);
+            await _contractFormRepository.InsertAsync(contractFormToCreate);
             await _contractFormRepository.SaveAsync();
             
-            return response;
+            return contractDto;
         }
 
         public async Task<ContractDto> GetConract(long id)
@@ -114,16 +103,14 @@ namespace Synergy.ReliefCenter.Services.Services
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             var forecastData = System.Text.Json.JsonSerializer.Deserialize<ContractFormDataDto>(contractForm.Data, new System.Text.Json.JsonSerializerOptions { IgnoreNullValues = true, PropertyNameCaseInsensitive = true });
+
             //TODO:[Abhishek] implement changes for WagesComponent from CrewWage
             ContractDetails.ContractForm = new ContractFormDto();
             ContractDetails.ContractForm.Data = forecastData;
             ContractDetails.SeafarerId = contract.SeafarerId;
             ContractDetails.VesselId = contract.VesselId;
-            ContractDetails.StartDate = contract.StartDate;
             ContractDetails.EndDate = contract.EndDate;
-            ContractDetails.CreatedBy = contract.CreatedBy;
-            ContractDetails.UpdatedBy = contract.UpdatedBy;
-            ContractDetails.Status = (ContractStatus)Enum.Parse(typeof(ContractStatus), contract.Status);
+            ContractDetails.Status = contract.Status;
             
             return ContractDetails;
         }

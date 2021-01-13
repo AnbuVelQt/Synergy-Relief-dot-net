@@ -14,14 +14,8 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         public DbSet<ContractForm> ContractForms { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
         }
     }
 }

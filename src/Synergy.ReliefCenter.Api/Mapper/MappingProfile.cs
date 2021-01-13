@@ -9,11 +9,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
     {
         public MappingProfile()
         {
-            CreateMap<ContractDto, Contract>();
-            CreateMap<Data.Entities.Contract, ContractDto>();
-            CreateMap<ContractDto, Data.Entities.Contract>();
-            CreateMap<ContractFormDto, Data.Entities.ContractForm>();
-            CreateMap<Data.Entities.ContractForm, ContractFormDto>();
+          
         }
     }
 }
