@@ -10,6 +10,7 @@ using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using AutoMapper;
 using Synergy.ReliefCenter.Data.Entities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Synergy.ReliefCenter.Services.Services
 {
@@ -92,22 +93,17 @@ namespace Synergy.ReliefCenter.Services.Services
             response.ContractForm.Data.TravelInfo = null;
             response.ContractForm.Data.AttachmentDetail = null;
             response.ContractForm.Data.Wages = null;
-
             
-            response.ContractForm.ContractId = saveContract.Id;
-            response.ContractForm.Id = (_contractFormRepository.GetAllIncluding().OrderByDescending(x => x.Id).FirstOrDefault().Id) + 1;
-            try
+            var check = new ContractForm()
             {
-                var s = JsonConvert.SerializeObject(response.ContractForm.Data);
-                response.ContractForm.Data = JsonConvert.DeserializeObject<ContractFormDataDto>(s);
-                var saveContractForm = _mapper.Map<ContractForm>(response.ContractForm);
-                await _contractFormRepository.InsertAsync(saveContractForm);
-                await _contractFormRepository.SaveAsync();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
+                Id = (_contractFormRepository.GetAllIncluding().OrderByDescending(x => x.Id).FirstOrDefault().Id) + 1,
+                ContractId = saveContract.Id,
+                Data = JsonConvert.SerializeObject(response.ContractForm.Data)
+            };
+            
+            var saveContractForm = _mapper.Map<ContractForm>(check);
+            await _contractFormRepository.InsertAsync(saveContractForm);
+            await _contractFormRepository.SaveAsync();
             
             return response;
         }
