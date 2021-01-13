@@ -1,7 +1,7 @@
 ﻿using Synergy.ReliefCenter.Core.Models;
 using System;
 
-namespace Synergy.ReliefCenter.Data.Entities.Seafarer
+namespace Synergy.ReliefCenter.Data.Entities.SeafarerCenter
 {
     public class Seafarer : EntityBase
     {

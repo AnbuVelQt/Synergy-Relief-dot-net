@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Synergy.ReliefCenter.Data.Entities.Vessel
+namespace Synergy.ReliefCenter.Data.Entities.VesselCenter
 {
     public class Ports
     {

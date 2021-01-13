@@ -1,4 +1,4 @@
-﻿using Synergy.ReliefCenter.Data.Entities.Seafarer;
+﻿using Synergy.ReliefCenter.Data.Entities.SeafarerCenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;

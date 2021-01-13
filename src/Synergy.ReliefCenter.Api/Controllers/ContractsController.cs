@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.ReliefCenter.Api.Models;
+using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System;
 using System.Threading.Tasks;
@@ -10,11 +12,12 @@ namespace Synergy.ReliefCenter.Api.Controllers
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
-        private static Contract _mockContract => GetMockContract();
+        private readonly IMapper _mapper;
 
-        public ContractsController(IContractService contractService)
+        public ContractsController(IContractService contractService,IMapper mapper)
         {
             _contractService = contractService;
+            _mapper = mapper;
         }
         [HttpGet]
         [Route("{id}")]
@@ -22,15 +25,23 @@ namespace Synergy.ReliefCenter.Api.Controllers
         public async Task<ActionResult<Contract>> GetConract([FromRoute] long id)
         {
             var contractDetails =await _contractService.GetConract(id);
-            return Ok(contractDetails);
+            var getContractDetails = _mapper.Map<Contract>(contractDetails);
+            return Ok(getContractDetails);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
-        public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest requestModel)
+        public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
         {
-            var contract =await _contractService.CreateContract(requestModel.VesselId,requestModel.SeafarerId);
-            return Created("", contract); ;
+            var validator = new CreateContractRequestValidation();
+            var result = validator.Validate(model);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
+            var contract =await _contractService.CreateContract(model.VesselId,model.SeafarerId);
+            var createContractDetails = _mapper.Map<Contract>(contract);
+            return Created("", createContractDetails);
         }
 
         [HttpPut]
@@ -49,49 +60,5 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
-        private static Contract GetMockContract()
-        {
-            return new Contract()
-            {
-                Id = 1,
-                TravelInfo = new TravelDetail()
-                {
-                    StartDate = DateTime.Now.AddDays(10),
-                    EndDate = DateTime.Now.AddDays(40),
-                    PlaceOfEnagement = "SMRSPL - Chennai",
-                    ContractTerms = "9 Month(S) (+/-1 muatual consent of both parties)"
-                },
-                VesselInfo = new VesselDetail()
-                {
-                    CBA = "IBF JSU/NUSI/MUI-IMMAJ CA",
-                    EmployerAgent = "Synergy Marine Pte Ltd",
-                    Id = 1,
-                    IMONuber = "9735062",
-                    MLCHolder = "Synergy Marine Pte Ltd",
-                    Name = "BW MESSINA",
-                    Owner = "Sothern Route Maritime",
-                    PortOfRegistry = "PANAMA | PANAMA"
-                },
-                SeafarerDetail = new SeafarerDetail()
-                {
-                    Address = "VPO Kalanaur PO",
-                    CDCNumber = "MUM162653",
-                    CrewCode = "04291",
-                    PassportNumber = "R78223898",
-                    Age = 30,
-                    DateOfBirth = DateTime.Now.AddYears(-30),
-                    Id = 1,
-                    Name = "Malkeet Singh",
-                    Nationality = "INDIA",
-                    PlaceOfBirth = "Kalanaur",
-                    Rank = "Able Bodied Seamen"
-                },
-                AttachmentDetail = new ContractAttachmentDetail()
-                {
-                    MedicalCertificateAttached = true,
-                    NextOfKinFormAttached = true
-                }
-            };
-        }
     }
 }

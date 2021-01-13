@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
-using Synergy.ReliefCenter.Data.Entities.Seafarer;
+using Synergy.ReliefCenter.Data.Entities.SeafarerCenter;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using System.Linq;
 using System.Threading.Tasks;

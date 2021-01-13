@@ -7,7 +7,6 @@ using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
 using Synergy.ReliefCenter.Services.Abstraction;
-using Synergy.ReliefCenter.Services.Services;
 
 namespace Synergy.ReliefCenter.Services
 {

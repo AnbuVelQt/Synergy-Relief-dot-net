@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Synergy.ReliefCenter.Data.Entities.Vessel
+namespace Synergy.ReliefCenter.Data.Entities.VesselCenter
 {
     public class FleetVessels
     {

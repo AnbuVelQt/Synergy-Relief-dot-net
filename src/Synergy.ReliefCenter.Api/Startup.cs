@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Synergy.ReliefCenter.Api.Helpers;
 using Synergy.ReliefCenter.Api.Mappers;
+using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Services.Mappers;
 
 namespace Synergy.ReliefCenter.Api
@@ -31,10 +33,12 @@ namespace Synergy.ReliefCenter.Api
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new EntityMappingProfile());
+                mc.AddProfile(new MappingProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddAllValidators();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Synergy.ReliefCenter.Data.Entities.Seafarer;
+using Synergy.ReliefCenter.Data.Entities.SeafarerCenter;
 
 namespace Synergy.ReliefCenter.Data.Contexts
 {

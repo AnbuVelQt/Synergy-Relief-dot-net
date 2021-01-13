@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using Synergy.ReliefCenter.Data.Entities.Seafarer;
+using Synergy.ReliefCenter.Data.Entities.SeafarerCenter;
 
 namespace Synergy.ReliefCenter.Data.Entities.Master
 {

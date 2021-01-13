@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Synergy.ReliefCenter.Data.Entities.Vessel;
+using Synergy.ReliefCenter.Data.Entities.VesselCenter;
 
 namespace Synergy.ReliefCenter.Data.Contexts
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
-using Synergy.ReliefCenter.Data.Entities.Vessel;
+using Synergy.ReliefCenter.Data.Entities.VesselCenter;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using System.Linq;
 using System.Threading.Tasks;

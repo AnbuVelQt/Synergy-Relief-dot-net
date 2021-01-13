@@ -1,4 +1,4 @@
-﻿namespace Synergy.ReliefCenter.Data.Entities.Vessel
+﻿namespace Synergy.ReliefCenter.Data.Entities.VesselCenter
 {
     public class Fleets
     {

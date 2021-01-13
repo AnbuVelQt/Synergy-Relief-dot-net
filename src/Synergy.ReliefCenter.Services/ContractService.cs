@@ -12,7 +12,7 @@ using Synergy.ReliefCenter.Data.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Synergy.ReliefCenter.Services.Services
+namespace Synergy.ReliefCenter.Services
 {
     public class ContractService : IContractService
     {
@@ -104,16 +104,10 @@ namespace Synergy.ReliefCenter.Services.Services
             var ContractDetails = new ContractDto();
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
-            var forecastData = System.Text.Json.JsonSerializer.Deserialize<ContractFormDataDto>(contractForm.Data, new System.Text.Json.JsonSerializerOptions { IgnoreNullValues = true, PropertyNameCaseInsensitive = true });
-
+            //var forecastData = System.Text.Json.JsonSerializer.Deserialize<ContractFormDataDto>(contractForm.Data, new System.Text.Json.JsonSerializerOptions { IgnoreNullValues = true, PropertyNameCaseInsensitive = true });
+            ContractDetails = _mapper.Map<ContractDto>(contract);
             //TODO:[Abhishek] implement changes for WagesComponent from CrewWage
-            ContractDetails.ContractForm = new ContractFormDto();
-            ContractDetails.ContractForm.Data = forecastData;
-            ContractDetails.SeafarerId = contract.SeafarerId;
-            ContractDetails.VesselId = contract.VesselId;
-            ContractDetails.EndDate = contract.EndDate;
-            ContractDetails.Status = contract.Status;
-            
+            ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
             return ContractDetails;
         }
     }

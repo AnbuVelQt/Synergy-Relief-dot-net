@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Synergy.ReliefCenter.Core.Models;
 using Synergy.ReliefCenter.Data.Entities;
+using System;
 
 namespace Synergy.ReliefCenter.Data.Contexts
 {
@@ -16,7 +18,12 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            modelBuilder
+             .Entity<Contract>()
+             .Property(e => e.Status)
+             .HasConversion(
+                 v => v.ToString(),
+                 v => (ContractStatus)Enum.Parse(typeof(ContractStatus), v));
         }
     }
 }

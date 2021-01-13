@@ -1,4 +1,4 @@
-﻿using Synergy.ReliefCenter.Data.Entities.Vessel;
+﻿using Synergy.ReliefCenter.Data.Entities.VesselCenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
