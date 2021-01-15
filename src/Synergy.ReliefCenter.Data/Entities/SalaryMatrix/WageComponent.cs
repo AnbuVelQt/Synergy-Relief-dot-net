@@ -15,6 +15,8 @@ namespace Synergy.ReliefCenter.Data.Entities.SalaryMatrix
 
         public string Frequency { get; set; }
 
+        public string Type { get; set; }
+
         public decimal Amount { get; set; }
     }
 }

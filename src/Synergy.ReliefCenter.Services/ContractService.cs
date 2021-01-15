@@ -12,6 +12,7 @@ using Synergy.ReliefCenter.Data.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -86,12 +87,13 @@ namespace Synergy.ReliefCenter.Services
             contractDto.ContractForm.Data.VesselInfo = vessels;
             contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
             contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
+            
             contractDto.ContractForm.Data.Wages = new ContractWagesDto()
             {
                 BasicAmount = salarymatrix.BasicAmount,
-                CBAEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CBAWageComponents),
-                OtherEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CompanyWageComponents),
-                DeductionComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CompanyWageComponents),
+                CBAEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CBAWageComponents.Where(x => x.Type.Equals(WageComponentType.Earning.ToString()))),
+                OtherEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CompanyWageComponents.Where(x => x.Type.Equals(WageComponentType.Earning.ToString()))),
+                DeductionComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CBAWageComponents.Where(x => x.Type.Equals(WageComponentType.Deduction.ToString()))),
                 SpecialAllownce = salarymatrix.SpecialAllowance,
                 OTRateCard = _mapper.Map<OTRateCardDto>(salarymatrix.OTRate),
                 TotalMonthlyAmount = salarymatrix.TotalMonthlyWages
@@ -115,9 +117,7 @@ namespace Synergy.ReliefCenter.Services
             var ContractDetails = new ContractDto();
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
-            //var forecastData = System.Text.Json.JsonSerializer.Deserialize<ContractFormDataDto>(contractForm.Data, new System.Text.Json.JsonSerializerOptions { IgnoreNullValues = true, PropertyNameCaseInsensitive = true });
             ContractDetails = _mapper.Map<ContractDto>(contract);
-            //TODO:[Abhishek] implement changes for WagesComponent from CrewWage
             ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
             return ContractDetails;
         }

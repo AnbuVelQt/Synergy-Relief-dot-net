@@ -15,6 +15,8 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 
         public string Frequency { get; set; }
 
+        public string Type { get; set; }
+
         public decimal Amount { get; set; }
     }
 }
