@@ -27,6 +27,7 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<ISeafarerDataRepository, SeafarerDataRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IContractFormRepository, ContractFormRepository>();
+            services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
         }
 
         public static void AddEFContext(this IServiceCollection services, IConfiguration configuration)

@@ -11,6 +11,7 @@ using AutoMapper;
 using Synergy.ReliefCenter.Data.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -21,25 +22,29 @@ namespace Synergy.ReliefCenter.Services
         private readonly IVesselDataRepository _vesselDataRepository;
         private readonly ISeafarerDataRepository _seafarerDataRepository;
         private readonly IMapper _mapper;
+        private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
 
         public ContractService(
             IContractRepository contractRepository,
             IContractFormRepository contractFormRepository,
             IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IExternalSalaryMatrixRepository externalSalaryMatrixRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
             _vesselDataRepository = vesselRepository;
             _seafarerDataRepository = seafarerRepository;
             _mapper = mapper;
+            _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
         }
-        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId)
+        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId,AuthToken);
             
             var contractDto = new ContractDto()
             {
@@ -47,10 +52,7 @@ namespace Synergy.ReliefCenter.Services
                 VesselId = vesselDetails.Id,
                 Status = ContractStatus.InDraft,
             };
-            
-           
-            
-            
+
             var seafarer = new SeafarerDetailDto()
             {
                 Id = seafarerDetails.Id,
@@ -84,7 +86,16 @@ namespace Synergy.ReliefCenter.Services
             contractDto.ContractForm.Data.VesselInfo = vessels;
             contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
             contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
-            contractDto.ContractForm.Data.Wages = new ContractWagesDto();
+            contractDto.ContractForm.Data.Wages = new ContractWagesDto()
+            {
+                BasicAmount = salarymatrix.BasicAmount,
+                CBAEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CBAWageComponents),
+                OtherEarningComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CompanyWageComponents),
+                DeductionComponents = _mapper.Map<List<WageComponentDto>>(salarymatrix.CompanyWageComponents),
+                SpecialAllownce = salarymatrix.SpecialAllowance,
+                OTRateCard = _mapper.Map<OTRateCardDto>(salarymatrix.OTRate),
+                TotalMonthlyAmount = salarymatrix.TotalMonthlyWages
+            };
             
             var contractToCreate = _mapper.Map<Contract>(contractDto);
             await _contractRepository.InsertAsync(contractToCreate);

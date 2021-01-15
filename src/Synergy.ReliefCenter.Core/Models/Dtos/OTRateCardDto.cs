@@ -7,5 +7,12 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
     public class OTRateCardDto
     {
+        public int MinHours { get; set; }
+
+        public int MaxHours { get; set; }
+
+        public decimal PerHourRate { get; set; }
+
+        public decimal TotalAmount { get; set; }
     }
 }
