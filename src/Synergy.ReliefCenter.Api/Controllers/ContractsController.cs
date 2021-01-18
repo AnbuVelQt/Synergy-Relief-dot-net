@@ -63,5 +63,18 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet()]
+        [Route("active")]
+        [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Contract>> GetConracts([FromQuery] long vesselId,[FromQuery] long seafarerId)
+        {
+            var contractDetails = await _contractService.GetConracts(vesselId,seafarerId);
+            var getContractDetails = _mapper.Map<Contract>(contractDetails);
+            if (contractDetails == null)
+            {
+                return NotFound("No Data Found for the query");
+            }
+            return Ok(getContractDetails);
+        }
     }
 }

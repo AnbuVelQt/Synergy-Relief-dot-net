@@ -122,6 +122,21 @@ namespace Synergy.ReliefCenter.Services
             return ContractDetails;
         }
 
+        public async Task<ContractDto> GetConracts(long vesselId, long seafarerId)
+        {
+            var contracts = new ContractDto();
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.VesselId == vesselId && x.SeafarerId == seafarerId && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+            if (contract is null)
+            {
+                return null;
+            }
+            var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).FirstOrDefaultAsync();
+            
+            contracts = _mapper.Map <ContractDto>(contracts);
+            contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
+            return contracts;
+        }
+
         public async Task UpdateContract(UpdateContractDto contractDto,long id)
         {
             var contract = _contractRepository.Get(id);
