@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
+using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System.Threading.Tasks;
 
@@ -39,7 +40,6 @@ namespace Synergy.ReliefCenter.Api.Controllers
                 return BadRequest(result.Errors);
             }
             var AuthToken = Request.Headers["Authorization"];
-            //dynamic SalaryMatrixResponse = await ExtSalaryMatrix.GetSalaryMatrix(model.VesselId, model.SeafarerId, AuthToken);
             var contract =await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
             var createContractDetails = _mapper.Map<Contract>(contract);
             return Created("", createContractDetails);
@@ -48,8 +48,10 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateContract([FromBody] UpdateContractRequest requestModel)
+        public async Task<IActionResult> UpdateContract([FromBody] UpdateContractRequest model,long id)
         {
+            var requestModel = _mapper.Map<UpdateContractDto>(model);
+            await _contractService.UpdateContract(requestModel, id);
             return NoContent();
         }
 

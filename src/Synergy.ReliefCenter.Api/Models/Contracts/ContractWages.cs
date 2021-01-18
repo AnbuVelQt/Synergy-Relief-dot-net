@@ -6,7 +6,7 @@ namespace Synergy.ReliefCenter.Api.Models
     {
         public decimal BasicAmount { get; set; }
 
-        public decimal SpecialAllownce { get; set; }
+        public decimal SpecialAllowance { get; set; }
 
         public decimal TotalMonthlyAmount { get; set; }
 

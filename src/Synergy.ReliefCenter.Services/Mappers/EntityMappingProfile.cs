@@ -18,6 +18,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
             CreateMap<ContractWagesDto, SalaryMatrix>().ReverseMap();
             CreateMap<WageComponent, WageComponentDto>().ReverseMap();
             CreateMap<OTRateCard, OTRateCardDto>().ReverseMap();
+            CreateMap<UpdateContractWagesDto, ContractWagesDto>().ReverseMap();
         }
     }
 }

@@ -44,6 +44,12 @@ namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
             ReliefContext.Set<T>().Update(entity);
         }
 
+        public async Task UpdateAsync(T entity)
+        {
+            ReliefContext.Set<T>().UpdateRange(entity);
+            await SaveAsync();
+        }
+
         public void Delete(T entity)
         {
             ReliefContext.Set<T>().Remove(entity);

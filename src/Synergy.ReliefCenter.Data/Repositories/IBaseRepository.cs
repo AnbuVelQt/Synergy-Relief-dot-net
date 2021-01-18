@@ -18,6 +18,7 @@ namespace Synergy.ReliefCenter.Data.Repositories
 
         void Update(TEntity entity);
 
+        Task UpdateAsync(TEntity entity);
         void Delete(TEntity entity);
 
         int Save();

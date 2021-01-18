@@ -121,5 +121,30 @@ namespace Synergy.ReliefCenter.Services
             ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
             return ContractDetails;
         }
+
+        public async Task UpdateContract(UpdateContractDto contractDto,long id)
+        {
+            var contract = _contractRepository.Get(id);
+            var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
+            
+            var convertToDto = JsonConvert.DeserializeObject<ContractFormDataDto>(contractForm.Data);
+            var contractDetails = new ContractFormDataDto();
+            contract.StartDate = contractDto.TravelInfo.StartDate;
+            contract.EndDate = contractDto.TravelInfo.EndDate;
+            contractDetails.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
+            contractDetails.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
+            contractDetails.Wages = _mapper.Map(_mapper.Map<ContractWagesDto>(contractDto.Wages), convertToDto.Wages);
+            
+            var contractToUpdate = _mapper.Map(_mapper.Map<Contract>(contract), contract);
+            await _contractRepository.UpdateAsync(contractToUpdate);
+
+            var contactDataDto = _mapper.Map<ContractFormDataDto>(contractDetails);
+            var mapToContract = _mapper.Map(contactDataDto, convertToDto);
+            contractForm.Data = JsonConvert.SerializeObject(mapToContract);
+            await _contractFormRepository.UpdateAsync(_mapper.Map<ContractForm>(contractForm));
+            
+            return;
+        }
+
     }
 }

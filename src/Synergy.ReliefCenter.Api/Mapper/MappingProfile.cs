@@ -23,6 +23,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<TravelDetail, TravelDetailDto>().ReverseMap();
             CreateMap<OTRateCard, OTRateCardDto>().ReverseMap();
             CreateMap<WageComponent, WageComponentDto>().ReverseMap();
+            CreateMap<UpdateContractRequest, UpdateContractDto>().ReverseMap();
+            CreateMap<UpdateContractWages, UpdateContractWagesDto>().ReverseMap();
         }
     }
 }
