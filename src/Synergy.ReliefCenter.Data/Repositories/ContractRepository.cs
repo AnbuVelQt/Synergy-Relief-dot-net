@@ -1,14 +1,13 @@
-﻿using Synergy.ReliefCenter.Data.Contexts;
-using Synergy.ReliefCenter.Data.Entities;
+﻿using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
 
 namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
 {
-    public class ContractRepository: BaseReliefRepository<Contract>, IContractRepository
+    public class ContractRepository: BaseReliefRepository<VesselContract>, IContractRepository
     {
-        protected ReliefDbContext reliefContext;
+        protected synergy_manningContext reliefContext;
 
-        public ContractRepository(ReliefDbContext ReliefContext) : base(ReliefContext)
+        public ContractRepository(synergy_manningContext ReliefContext) : base(ReliefContext)
         {
             reliefContext = ReliefContext;
         }

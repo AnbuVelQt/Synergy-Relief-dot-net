@@ -1,8 +1,8 @@
-﻿using Synergy.ReliefCenter.Data.Entities;
+﻿using Synergy.ReliefCenter.Data.Models;
 
 namespace Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository
 {
-    public interface IContractRepository : IBaseRepository<Contract>
+    public interface IContractRepository : IBaseRepository<VesselContract>
     {
 
     }

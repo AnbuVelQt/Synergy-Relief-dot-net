@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
 using Synergy.ReliefCenter.Core.Models.Dtos;
-using Synergy.ReliefCenter.Data.Entities;
+using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 
 namespace Synergy.ReliefCenter.Services.Mappers
@@ -10,7 +10,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
     {
         public EntityMappingProfile()
         {
-            CreateMap<Contract, ContractDto>().ReverseMap();
+            CreateMap<VesselContract, ContractDto>().ReverseMap();
             CreateMap<ContractForm, ContractFormDto>()
                 .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<ContractFormDataDto>(src.Data)))
                 .ReverseMap()

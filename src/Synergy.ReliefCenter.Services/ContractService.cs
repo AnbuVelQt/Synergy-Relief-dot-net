@@ -8,11 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using AutoMapper;
-using Synergy.ReliefCenter.Data.Entities;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
+using Synergy.ReliefCenter.Data.Models;
+using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -52,6 +52,7 @@ namespace Synergy.ReliefCenter.Services
                 SeafarerId = seafarerAllDetails.SeafarerId,
                 VesselId = vesselDetails.Id,
                 Status = ContractStatus.InDraft,
+                Salary = salarymatrix.TotalMonthlyWages
             };
 
             var seafarer = new SeafarerDetailDto()
@@ -99,7 +100,7 @@ namespace Synergy.ReliefCenter.Services
                 TotalMonthlyAmount = salarymatrix.TotalMonthlyWages
             };
             
-            var contractToCreate = _mapper.Map<Contract>(contractDto);
+            var contractToCreate = _mapper.Map<VesselContract>(contractDto);
             await _contractRepository.InsertAsync(contractToCreate);
             await _contractRepository.SaveAsync();
             long ContractId = contractToCreate.Id;
@@ -149,8 +150,8 @@ namespace Synergy.ReliefCenter.Services
             contractDetails.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
             contractDetails.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
             contractDetails.Wages = _mapper.Map(_mapper.Map<ContractWagesDto>(contractDto.Wages), convertToDto.Wages);
-            
-            var contractToUpdate = _mapper.Map(_mapper.Map<Contract>(contract), contract);
+
+            var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
             await _contractRepository.UpdateAsync(contractToUpdate);
 
             var contactDataDto = _mapper.Map<ContractFormDataDto>(contractDetails);

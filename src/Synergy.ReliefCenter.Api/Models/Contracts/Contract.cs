@@ -6,6 +6,8 @@ namespace Synergy.ReliefCenter.Api.Models
     {
         public long Id { get; set; }
 
+        public decimal? Salary { get; set; }
+
         public ContractStatus Status { get; set; }
 
         public TravelDetail TravelInfo { get; set; }

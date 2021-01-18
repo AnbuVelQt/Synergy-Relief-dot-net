@@ -5,14 +5,15 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Data.Contexts;
+using Synergy.ReliefCenter.Data.Models;
 
 namespace Synergy.ReliefCenter.Data.Repositories.ReliefRepository
 {
     public class BaseReliefRepository<T> : IBaseRepository<T> where T : class
     {
-        protected ReliefDbContext ReliefContext;
+        protected synergy_manningContext ReliefContext;
 
-        protected BaseReliefRepository(ReliefDbContext reliefContext)
+        protected BaseReliefRepository(synergy_manningContext reliefContext)
         {
             ReliefContext = reliefContext;
         }

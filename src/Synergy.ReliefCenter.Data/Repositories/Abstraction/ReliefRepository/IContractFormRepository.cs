@@ -1,9 +1,4 @@
-﻿using Synergy.ReliefCenter.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Synergy.ReliefCenter.Data.Models;
 
 namespace Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository
 {

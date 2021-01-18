@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Synergy.ReliefCenter.Data.Contexts;
+using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
@@ -13,6 +14,7 @@ namespace Synergy.ReliefCenter.Services
     public static class ServiceCollectionExtensions
     {
         private const string ReliefDbConnectionString = "ReliefDB";
+        private const string ManningDbConnectionString = "ManningDB";
         private const string VesselDBConnectionString = "VesselDB";
         private const string SeafarerDBConnectionString = "SeafarerDB";
         private const string MasterDBConnectionString = "MasterDB";
@@ -34,6 +36,7 @@ namespace Synergy.ReliefCenter.Services
         {
             // All DB Connection Strings
             var ReliefDbString = configuration.GetConnectionString(ReliefDbConnectionString);
+            var ManningDbString = configuration.GetConnectionString(ManningDbConnectionString);
             var VesselString = configuration.GetConnectionString(VesselDBConnectionString);
             var SeafarerString = configuration.GetConnectionString(SeafarerDBConnectionString);
             var MasterString = configuration.GetConnectionString(MasterDBConnectionString);
@@ -50,6 +53,9 @@ namespace Synergy.ReliefCenter.Services
 
             services.AddDbContext<MasterDbContext>(opt =>
                 opt.UseNpgsql(MasterString).UseSnakeCaseNamingConvention());
+
+            services.AddDbContext<synergy_manningContext>(opt =>
+                opt.UseNpgsql(ManningDbString).UseSnakeCaseNamingConvention());
         }
     }
 }
