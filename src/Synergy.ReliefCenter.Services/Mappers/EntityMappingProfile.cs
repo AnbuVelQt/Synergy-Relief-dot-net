@@ -10,7 +10,8 @@ namespace Synergy.ReliefCenter.Services.Mappers
     {
         public EntityMappingProfile()
         {
-            CreateMap<VesselContract, ContractDto>().ReverseMap();
+            CreateMap<VesselContract, ContractDto>()
+                .ReverseMap();
             CreateMap<ContractForm, ContractFormDto>()
                 .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<ContractFormDataDto>(src.Data)))
                 .ReverseMap()
@@ -20,6 +21,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
             CreateMap<OTRateCard, OTRateCardDto>().ReverseMap();
             CreateMap<UpdateContractWagesDto, ContractWagesDto>().ReverseMap();
             CreateMap<ContractReviewer, ContractReviewerSetDto>().ReverseMap();
+            CreateMap<ContractReviewer, ReviewersDto>().ReverseMap();
         }
     }
 }

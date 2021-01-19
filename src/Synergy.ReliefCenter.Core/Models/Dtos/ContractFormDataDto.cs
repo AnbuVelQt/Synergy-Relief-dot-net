@@ -17,5 +17,9 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public ContractAttachmentDetailDto AttachmentDetail { get; set; }
 
         public ContractWagesDto Wages { get; set; }
+
+        public IList<ReviewersDto> ContractReviewers { get; set; }
+
+        public ReviewersDto NextReviewer { get; set; }
     }
 }

@@ -1810,6 +1810,10 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("next_reviewer");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("character varying")
+                        .HasColumnName("status");
+
                     b.Property<long?>("RankId")
                         .HasColumnType("bigint")
                         .HasColumnName("rank_id");

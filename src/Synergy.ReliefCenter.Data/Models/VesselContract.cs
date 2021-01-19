@@ -57,6 +57,9 @@ namespace Synergy.ReliefCenter.Data.Models
         [Column("next_reviewer")]
         public long? NextReviewer { get; set; }
 
+        [Column("status")]
+        public string Status { get; set; }
+
         [InverseProperty(nameof(Relief.VesselContract))]
         public virtual ICollection<Relief> Reliefs { get; set; }
 
