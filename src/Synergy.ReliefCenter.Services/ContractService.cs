@@ -123,12 +123,8 @@ namespace Synergy.ReliefCenter.Services
             var ContractDetails = new ContractDto();
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
-            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
-            var nextReviewer = reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault();
             ContractDetails = _mapper.Map<ContractDto>(contract);
             ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
-            ContractDetails.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewers);
-            ContractDetails.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(nextReviewer);
             return ContractDetails;
         }
 
@@ -141,13 +137,9 @@ namespace Synergy.ReliefCenter.Services
                 return null;
             }
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).FirstOrDefaultAsync();
-            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).ToListAsync();
-            var nextReviewer = reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault();
-
+            
             contracts = _mapper.Map <ContractDto>(contracts);
             contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
-            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewers);
-            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(nextReviewer);
             return contracts;
         }
 
@@ -197,7 +189,6 @@ namespace Synergy.ReliefCenter.Services
 
             }            
             await _contractReviewerRepository.SaveAsync();
-            contract.Status = ContractStatus.InVerification.ToString();
             contract.NextReviewer = await _contractReviewerRepository.GetAllIncluding().Where(x => x.ContractId == id).OrderBy(z => z.Id).Select(x => x.Id).FirstOrDefaultAsync();
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);

@@ -13,12 +13,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                 type: "bigint",
                 nullable: true);
 
-            migrationBuilder.AddColumn<long>(
-               name: "status",
-               table: "vessel_contracts",
-               type: "character varying",
-               nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "ContractReviewers",
                 columns: table => new
@@ -75,10 +69,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 
             migrationBuilder.DropColumn(
                 name: "next_reviewer",
-                table: "vessel_contracts");
-
-            migrationBuilder.DropColumn(
-                name: "status",
                 table: "vessel_contracts");
         }
     }

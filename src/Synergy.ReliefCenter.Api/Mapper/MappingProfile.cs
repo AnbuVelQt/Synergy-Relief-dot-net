@@ -15,9 +15,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
                 .ForMember(dest => dest.VesselInfo, opt => opt.MapFrom(src => src.ContractForm.Data.VesselInfo))
                 .ForMember(dest => dest.Wages, opt => opt.MapFrom(src => src.ContractForm.Data.Wages))
                 //.ForPath(dest => dest.Wages.OTRateCard, opt => opt.MapFrom(src => src.ContractForm.Data.Wages.OTRateCard))
-                .ForMember(dest => dest.AttachmentDetail, opt => opt.MapFrom(src => src.ContractForm.Data.AttachmentDetail))
-                .ForMember(dest => dest.ContractReviewers, opt => opt.MapFrom(src => src.ContractForm.Data.ContractReviewers))
-                .ForMember(dest => dest.NextReviewer, opt => opt.MapFrom(src => src.ContractForm.Data.NextReviewer));
+                .ForMember(dest => dest.AttachmentDetail, opt => opt.MapFrom(src => src.ContractForm.Data.AttachmentDetail));
             CreateMap<ContractAttachmentDetail, ContractAttachmentDetailDto>().ReverseMap();
             CreateMap<SeafarerDetail, SeafarerDetailDto>().ReverseMap();
             CreateMap<VesselDetail, VesselDetailDto>().ReverseMap();
@@ -29,7 +27,6 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<UpdateContractWages, UpdateContractWagesDto>().ReverseMap();
             CreateMap<ContractReviewerSet, ContractReviewerSetDto>().ReverseMap();
             CreateMap<ContractReviewer, ContractReviewerDto>().ReverseMap();
-            CreateMap<Reviewers, ReviewersDto>().ReverseMap();
         }
     }
 }
