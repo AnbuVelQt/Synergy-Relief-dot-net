@@ -14,12 +14,14 @@ namespace Synergy.ReliefCenter.Data.Models
     [Index(nameof(SeafarerId), Name = "index_vessel_contracts_on_seafarer_id")]
     [Index(nameof(StartDate), Name = "index_vessel_contracts_on_start_date")]
     [Index(nameof(VesselId), Name = "index_vessel_contracts_on_vessel_id")]
+    [Index(nameof(NextReviewer), Name = "index_vessel_contracts_on_next_reviewer")]
     public partial class VesselContract
     {
         public VesselContract()
         {
             Reliefs = new HashSet<Relief>();
             ContractForms = new HashSet<ContractForm>();
+            ContractReviewers = new HashSet<ContractReviewer>();
         }
 
         [Key]
@@ -52,10 +54,22 @@ namespace Synergy.ReliefCenter.Data.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
+        [Column("next_reviewer")]
+        public long? NextReviewer { get; set; }
+
         [InverseProperty(nameof(Relief.VesselContract))]
         public virtual ICollection<Relief> Reliefs { get; set; }
 
+        
         [InverseProperty(nameof(ContractForm.VesselContract))]
         public virtual ICollection<ContractForm> ContractForms { get; set; }
+
+        [InverseProperty(nameof(ContractReviewer.VesselContracts))]
+        public virtual ICollection<ContractReviewer> ContractReviewers { get; set; }
+
+
+        [ForeignKey(nameof(NextReviewer))]
+        [InverseProperty("Contract")]
+        public virtual ContractReviewer Reviewer { get; set; }
     }
 }

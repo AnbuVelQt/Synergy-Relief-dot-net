@@ -25,6 +25,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<WageComponent, WageComponentDto>().ReverseMap();
             CreateMap<UpdateContractRequest, UpdateContractDto>().ReverseMap();
             CreateMap<UpdateContractWages, UpdateContractWagesDto>().ReverseMap();
+            CreateMap<ContractReviewerSet, ContractReviewerSetDto>().ReverseMap();
+            CreateMap<ContractReviewer, ContractReviewerDto>().ReverseMap();
         }
     }
 }

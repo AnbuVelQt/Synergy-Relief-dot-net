@@ -1,8 +1,8 @@
 ﻿using Synergy.ReliefCenter.Core.Models;
 
-namespace Synergy.ReliefCenter.Api.Models
+namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractReviewer
+    public class ContractReviewerDto
     {
         public long Id { get; set; }
 

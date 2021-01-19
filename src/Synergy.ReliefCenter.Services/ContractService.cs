@@ -24,6 +24,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly ISeafarerDataRepository _seafarerDataRepository;
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
+        private readonly IContractReviewerRepository _contractReviewerRepository;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -31,7 +32,8 @@ namespace Synergy.ReliefCenter.Services
             IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
             IMapper mapper,
-            IExternalSalaryMatrixRepository externalSalaryMatrixRepository)
+            IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
+            IContractReviewerRepository contractReviewerRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -39,7 +41,10 @@ namespace Synergy.ReliefCenter.Services
             _seafarerDataRepository = seafarerRepository;
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
+            _contractReviewerRepository = contractReviewerRepository;
         }
+
+
         public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
@@ -162,5 +167,32 @@ namespace Synergy.ReliefCenter.Services
             return;
         }
 
+        public async Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto)
+        {
+            var contract = _contractRepository.Get(id);
+            var reviewer = new List<ContractReviewer>();
+            foreach (var data in reviewerSetDto.Reviewers)
+            {
+                reviewer.Add(new ContractReviewer()
+                {
+                    ReviewerId = data.Id,
+                    Role = data.Role.ToString(),
+                    ContractId = id
+                });
+
+            }
+            
+            var reviewerToBeAdded = _mapper.Map<List<ContractReviewer>>(reviewer);
+            foreach (var aa in reviewerToBeAdded)
+            {
+                await _contractReviewerRepository.InsertAsync(aa);
+
+            }            
+            await _contractReviewerRepository.SaveAsync();
+            contract.NextReviewer = await _contractReviewerRepository.GetAllIncluding().Where(x => x.ContractId == id).OrderBy(z => z.Id).Select(x => x.Id).FirstOrDefaultAsync();
+            var mapContract = _mapper.Map<VesselContract>(contract);
+            await _contractRepository.UpdateAsync(mapContract);
+            return;
+        }
     }
 }
