@@ -1,4 +1,6 @@
-﻿namespace Synergy.ReliefCenter.Data.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Synergy.ReliefCenter.Data.Entities
 {
     public class ContractForm
     {
@@ -6,6 +8,7 @@
 
         public long ContractId { get; set; }
 
+        [Column(TypeName = "jsonb")]
         public string Data { get; set; }
     }
 }

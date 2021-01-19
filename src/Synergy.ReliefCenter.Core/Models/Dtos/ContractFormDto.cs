@@ -9,5 +9,8 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
     public class ContractFormDto
     {
         public ContractFormDataDto Data { get; set; }
+        public long Id { get; set; }
+
+        public long ContractId { get; set; }
     }
 }

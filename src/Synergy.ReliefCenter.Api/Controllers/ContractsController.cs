@@ -1,36 +1,57 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.ReliefCenter.Api.Models;
-using System;
+using Synergy.ReliefCenter.Api.Validations;
+using Synergy.ReliefCenter.Core.Models.Dtos;
+using Synergy.ReliefCenter.Services.Abstraction;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
     public class ContractsController : ApiControllerBase
     {
-        private static Contract _mockContract => GetMockContract();
-        
+        private readonly IContractService _contractService;
+        private readonly IMapper _mapper;
 
+        public ContractsController(IContractService contractService,IMapper mapper)
+        {
+            _contractService = contractService;
+            _mapper = mapper;
+        }
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetConract([FromRoute] long id)
         {
-            return Ok(_mockContract);
+            var contractDetails =await _contractService.GetConract(id);
+            var getContractDetails = _mapper.Map<Contract>(contractDetails);
+            return Ok(getContractDetails);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
-        public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest requestModel)
+        public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
         {
-            return Created("", _mockContract); ;
+            var validator = new CreateContractRequestValidation();
+            var result = validator.Validate(model);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
+            var AuthToken = Request.Headers["Authorization"];
+            var contract =await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
+            var createContractDetails = _mapper.Map<Contract>(contract);
+            return Created("", createContractDetails);
         }
 
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateContract([FromBody] UpdateContractRequest requestModel)
+        public async Task<IActionResult> UpdateContract([FromBody] UpdateContractRequest model,long id)
         {
+            var requestModel = _mapper.Map<UpdateContractDto>(model);
+            await _contractService.UpdateContract(requestModel, id);
             return NoContent();
         }
 
@@ -42,49 +63,18 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
-        private static Contract GetMockContract()
+        [HttpGet()]
+        [Route("active")]
+        [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Contract>> GetConracts([FromQuery] long vesselId,[FromQuery] long seafarerId)
         {
-            return new Contract()
+            var contractDetails = await _contractService.GetConracts(vesselId,seafarerId);
+            var getContractDetails = _mapper.Map<Contract>(contractDetails);
+            if (contractDetails == null)
             {
-                Id = 1,
-                TravelInfo = new TravelDetail()
-                {
-                    StartDate = DateTime.Now.AddDays(10),
-                    EndDate = DateTime.Now.AddDays(40),
-                    PlaceOfEnagement = "SMRSPL - Chennai",
-                    ContractTerms = "9 Month(S) (+/-1 muatual consent of both parties)"
-                },
-                VesselInfo = new VesselDetail()
-                {
-                    CBA = "IBF JSU/NUSI/MUI-IMMAJ CA",
-                    EmployerAgent = "Synergy Marine Pte Ltd",
-                    Id = 1,
-                    IMONuber = "9735062",
-                    MLCHolder = "Synergy Marine Pte Ltd",
-                    Name = "BW MESSINA",
-                    Owner = "Sothern Route Maritime",
-                    PortOfRegistry = "PANAMA | PANAMA"
-                },
-                SeafarerDetail = new SeafarerDetail()
-                {
-                    Address = "VPO Kalanaur PO",
-                    CDCNumber = "MUM162653",
-                    CrewCode = "04291",
-                    PassportNumber = "R78223898",
-                    Age = 30,
-                    DateOfBirth = DateTime.Now.AddYears(-30),
-                    Id = 1,
-                    Name = "Malkeet Singh",
-                    Nationality = "INDIA",
-                    PlaceOfBirth = "Kalanaur",
-                    Rank = "Able Bodied Seamen"
-                },
-                AttachmentDetail = new ContractAttachmentDetail()
-                {
-                    MedicalCertificateAttached = true,
-                    NextOfKinFormAttached = true
-                }
-            };
+                return NotFound("No Data Found for the query");
+            }
+            return Ok(getContractDetails);
         }
     }
 }
