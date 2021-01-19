@@ -1,4 +1,5 @@
 ﻿using Synergy.ReliefCenter.Core.Models;
+using System.Collections.Generic;
 
 namespace Synergy.ReliefCenter.Api.Models
 {
@@ -19,5 +20,9 @@ namespace Synergy.ReliefCenter.Api.Models
         public ContractAttachmentDetail AttachmentDetail { get; set; }
 
         public ContractWages Wages { get; set; }
+
+        public IList<Reviewers> ContractReviewers { get; set; }
+
+        public Reviewers NextReviewer { get; set; }
     }
 }
