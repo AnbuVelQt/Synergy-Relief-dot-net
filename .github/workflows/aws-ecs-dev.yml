@@ -8,7 +8,7 @@ name: Deploy to Amazon ECS - Synergy Dev  -  Crew Wage API
 jobs:
   deploy:
     name: Deploy
-    runs-on: Test Environment
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
