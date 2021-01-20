@@ -7,13 +7,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["src/Synergy.ReliefCenter.Api/Synergy.ReliefCenter.Api.csproj", "src/Synergy.ReliefCenter.Api/"]
-COPY ["src/Synergy.ReliefCenter.Services/Synergy.ReliefCenter.Services.csproj", "src/Synergy.ReliefCenter.Services/"]
-COPY ["src/Synergy.ReliefCenter.Data/Synergy.ReliefCenter.Data.csproj", "src/Synergy.ReliefCenter.Data/"]
-COPY ["src/Synergy.ReliefCenter.Core/Synergy.ReliefCenter.Core.csproj", "src/Synergy.ReliefCenter.Core/"]
-RUN dotnet restore "src/Synergy.ReliefCenter.Api/Synergy.ReliefCenter.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Synergy.ReliefCenter.Api"
+
+WORKDIR "/src/Synergy.ReliefCenter.Api"
 RUN dotnet build "Synergy.ReliefCenter.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
