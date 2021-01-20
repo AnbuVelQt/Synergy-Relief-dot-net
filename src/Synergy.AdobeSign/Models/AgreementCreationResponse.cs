@@ -1,4 +1,4 @@
-﻿namespace Synergy.AdobeSign.Model
+﻿namespace Synergy.AdobeSign.Models
 {
     public class AgreementCreationResponse
     {

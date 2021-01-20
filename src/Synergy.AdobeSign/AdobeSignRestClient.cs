@@ -1,44 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Synergy.AdobeSign.Model;
-using Microsoft.Extensions.Configuration;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using Synergy.AdobeSign.Models;
+using System.Threading;
+using Synergy.AdobeSign.Configurations;
 
 namespace Synergy.AdobeSign
 {
-    public class AdobeSignRestClient
+    public class AdobeSignRestClient : IAdobeSignRestClient
     {
-        public readonly string _adobeSignRestClient = string.Empty, _adobeSignRestAgreementsPath = string.Empty;
-        public AdobeSignRestClient()
+        private readonly AdobeSignConfiguration _configuration;
+        
+        public AdobeSignRestClient(AdobeSignConfiguration configuration)
         {
-            var configurationBuilder = new ConfigurationBuilder();
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            configurationBuilder.AddJsonFile(path, false);
-
-            var root = configurationBuilder.Build();
-            _adobeSignRestClient = root.GetSection("AdobeSignConfigs").GetSection("RestBaseUrl").Value;
-            _adobeSignRestAgreementsPath = root.GetSection("AdobeSignConfigs").GetSection("RestAgreementsPath").Value;
+            _configuration = configuration;
         }
-        public async Task<AgreementCreationResponse> CreateAgreement(string authorization, AgreementCreationInfo agreementInfo)
+
+        public async Task<AgreementCreationResponse> CreateAgreementAsync(AgreementCreationInfo agreementInfo, CancellationToken cancellationToken = default)
         {
+            var agrrementPath = $"/api/rest/{_configuration.ApiVersion}/agreements";
+
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_adobeSignRestClient);
+                client.BaseAddress = new Uri(_configuration.ApiUrl);
 
                 
                 var json = JsonConvert.SerializeObject(agreementInfo, Formatting.Indented);
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("Authorization", authorization);
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration.AccessKey}");
 
                 //HTTP POST
-                var response = await client.PostAsync(_adobeSignRestAgreementsPath, stringContent);
+                var response = await client.PostAsync(agrrementPath, stringContent);
                 if (response.IsSuccessStatusCode)
                 {
                     var responseString = await response.Content.ReadAsStringAsync();

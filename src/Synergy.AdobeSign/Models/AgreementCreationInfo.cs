@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Synergy.AdobeSign.Model
+namespace Synergy.AdobeSign.Models
 {
     public class AgreementCreationInfo
     {
