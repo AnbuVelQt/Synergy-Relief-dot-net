@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Synergy.AdobeSign;
+using Synergy.AdobeSign.Models;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
@@ -13,11 +16,13 @@ namespace Synergy.ReliefCenter.Api.Controllers
     {
         private readonly IContractService _contractService;
         private readonly IMapper _mapper;
+        private readonly IAdobeSignRestClient _adobeSignRestClient;
 
-        public ContractsController(IContractService contractService,IMapper mapper)
+        public ContractsController(IContractService contractService,IMapper mapper, IAdobeSignRestClient adobeSignRestClient)
         {
             _contractService = contractService;
             _mapper = mapper;
+            _adobeSignRestClient = adobeSignRestClient;
         }
         [HttpGet]
         [Route("{id}")]
@@ -31,6 +36,38 @@ namespace Synergy.ReliefCenter.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
+        public async Task<ActionResult<Contract>> ApproveContract([FromBody] CreateContractRequest model)
+        {
+            var fileInfosList = new List<FileInformation>();
+            fileInfosList.Add(new FileInformation { libraryDocumentId = "CBJCHBCAABAA6n2lxqPkvqZzRzIph8fZ85m_hYzMntqf" });
+            var participantSetsInfoList = new List<ParticipantInfo>();
+            var memberInfoList = new List<MemberInfo>();
+            memberInfoList.Add(new MemberInfo { email = "pentagram@synergyship.com" });
+            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoList, order = 1, role = "FORM_FILLER" });
+            var agreementCreationInfo = new AgreementCreationInfo
+            {
+                fileInfos = fileInfosList,
+                name = "Demo Check 197",
+                participantSetsInfo = participantSetsInfoList,
+                signatureType = "ESIGN",
+                state = "DRAFT"
+            };
+            var adobeAgreementResponse = await _adobeSignRestClient.CreateAgreementAsync(agreementCreationInfo);
+
+            var validator = new CreateContractRequestValidation();
+            var result = validator.Validate(model);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
+            var AuthToken = Request.Headers["Authorization"];
+            var contract = await _contractService.CreateContract(model.VesselId, model.SeafarerId, AuthToken);
+            var createContractDetails = _mapper.Map<Contract>(contract);
+            return Created("", createContractDetails);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
         {
             var validator = new CreateContractRequestValidation();
@@ -40,7 +77,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
                 return BadRequest(result.Errors);
             }
             var AuthToken = Request.Headers["Authorization"];
-            var contract =await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
+            var contract = await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
             var createContractDetails = _mapper.Map<Contract>(contract);
             return Created("", createContractDetails);
         }

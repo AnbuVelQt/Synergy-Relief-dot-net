@@ -6,6 +6,6 @@ namespace Synergy.AdobeSign
 {
     public interface IAdobeSignRestClient
     {
-        Task<AgreementCreationResponse> CreateAgreementAsync(AgreementCreationInfo agreementInfo, CancellationToken cancellationToken = default)
+        Task<AgreementCreationResponse> CreateAgreementAsync(AgreementCreationInfo agreementInfo, CancellationToken cancellationToken = default);
     }
 }
