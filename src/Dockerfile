@@ -12,10 +12,10 @@ COPY . .
 WORKDIR "/src/src/Synergy.ReliefCenter.Api"
 RUN dotnet build "Synergy.ReliefCenter.Api.csproj" -c Release -o /app/build
 
-# FROM build AS publish
-# RUN dotnet publish "Synergy.ReliefCenter.Api.csproj" -c Release -o /app/publish
+FROM build AS publish
+RUN dotnet publish "Synergy.ReliefCenter.Api.csproj" -c Release -o /app/publish
 
-# FROM base AS final
-# WORKDIR /app
-# COPY --from=publish /app/publish .
-# ENTRYPOINT ["dotnet", "Synergy.ReliefCenter.Api.dll"]
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Synergy.ReliefCenter.Api.dll"]
