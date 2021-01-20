@@ -4,7 +4,7 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
     public class ContractReviewerDto
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public ReviewerRole Role { get; set; }
 

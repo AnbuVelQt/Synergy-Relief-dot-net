@@ -11,7 +11,7 @@ namespace Synergy.ReliefCenter.Api.Models
         
         public long ContractId { get; set; }
 
-        public long? ReviewerId { get; set; }
+        public string ReviewerId { get; set; }
 
         public string Role { get; set; }
 

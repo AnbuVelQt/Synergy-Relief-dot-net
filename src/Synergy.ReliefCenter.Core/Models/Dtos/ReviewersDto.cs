@@ -12,7 +12,7 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 
         public long ContractId { get; set; }
 
-        public long? ReviewerId { get; set; }
+        public string ReviewerId { get; set; }
 
         public string Role { get; set; }
 

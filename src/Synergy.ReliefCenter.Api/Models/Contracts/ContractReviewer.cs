@@ -4,7 +4,7 @@ namespace Synergy.ReliefCenter.Api.Models
 {
     public class ContractReviewer
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public ReviewerRole Role { get; set; }
 

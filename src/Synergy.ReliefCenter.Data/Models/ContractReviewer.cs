@@ -21,7 +21,7 @@ namespace Synergy.ReliefCenter.Data.Models
         public long ContractId { get; set; }
 
         [Column("reviewer_id")]
-        public long? ReviewerId { get; set; }
+        public string ReviewerId { get; set; }
 
         [Column("role")]
         public string Role { get; set; }
