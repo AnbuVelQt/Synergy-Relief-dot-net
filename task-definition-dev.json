@@ -22,8 +22,8 @@
                     "valueFrom": "/relief-dotnet-api/dev/ASPNETCORE_ENVIRONMENT"
                 },
                 {
-                    "name": "ConnectionStrings__CrewWageDB",
-                    "valueFrom": "/relief-dotnet-api/dev/ConnectionStrings__CrewWageDB"
+                    "name": "ConnectionStrings__ManningDB",
+                    "valueFrom": "/relief-dotnet-api/dev/ConnectionStrings__ManningDB"
                 },
                 {
                     "name": "ConnectionStrings__VesselDB",
