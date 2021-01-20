@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 using Synergy.ReliefCenter.Data.Models;
 using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
+using Synergy.Core.EmailService;
+using System.IO;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -25,6 +27,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IContractReviewerRepository _contractReviewerRepository;
+        private readonly IEmailService _emailService;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -33,7 +36,8 @@ namespace Synergy.ReliefCenter.Services
             ISeafarerDataRepository seafarerRepository,
             IMapper mapper,
             IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
-            IContractReviewerRepository contractReviewerRepository)
+            IContractReviewerRepository contractReviewerRepository,
+            IEmailService emailService)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -42,6 +46,7 @@ namespace Synergy.ReliefCenter.Services
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _contractReviewerRepository = contractReviewerRepository;
+            _emailService = emailService;
         }
 
 
@@ -157,19 +162,31 @@ namespace Synergy.ReliefCenter.Services
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             
             var convertToDto = JsonConvert.DeserializeObject<ContractFormDataDto>(contractForm.Data);
-            var contractDetails = new ContractFormDataDto();
             contract.StartDate = contractDto.TravelInfo.StartDate;
             contract.EndDate = contractDto.TravelInfo.EndDate;
-            contractDetails.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
-            contractDetails.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
-            contractDetails.Wages = _mapper.Map(_mapper.Map<ContractWagesDto>(contractDto.Wages), convertToDto.Wages);
+            convertToDto.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
+            convertToDto.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
+            ContractWagesDto wage= new ContractWagesDto();
+            List<WageComponentDto> otherEarnings = new List<WageComponentDto>();
+            otherEarnings.AddRange(convertToDto.Wages.OtherEarningComponents.ToList());
+            otherEarnings.AddRange(contractDto.Wages.OtherEarningComponents.ToList());
+            wage.OtherEarningComponents = otherEarnings;
+            List<WageComponentDto> deduction = new List<WageComponentDto>();
+            deduction.AddRange(convertToDto.Wages.DeductionComponents.ToList());
+            deduction.AddRange(contractDto.Wages.DeductionComponents.ToList());
+            wage.DeductionComponents = deduction;
+            wage.SpecialAllownce = convertToDto.Wages.SpecialAllownce + contractDto.Wages.SpecialAllowance;
+            
+            convertToDto.Wages.OtherEarningComponents = _mapper.Map(wage.OtherEarningComponents,convertToDto.Wages.OtherEarningComponents);
+            convertToDto.Wages.DeductionComponents = _mapper.Map(wage.DeductionComponents, convertToDto.Wages.DeductionComponents);
+            convertToDto.Wages.SpecialAllownce = _mapper.Map(wage.SpecialAllownce, convertToDto.Wages.SpecialAllownce);
+            convertToDto.Wages = _mapper.Map<ContractWagesDto>(convertToDto.Wages);
 
             var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
             await _contractRepository.UpdateAsync(contractToUpdate);
 
-            var contactDataDto = _mapper.Map<ContractFormDataDto>(contractDetails);
-            var mapToContract = _mapper.Map(contactDataDto, convertToDto);
-            contractForm.Data = JsonConvert.SerializeObject(mapToContract);
+            var contactDataDto = _mapper.Map<ContractFormDataDto>(convertToDto);
+            contractForm.Data = JsonConvert.SerializeObject(contactDataDto);
             await _contractFormRepository.UpdateAsync(_mapper.Map<ContractForm>(contractForm));
             
             return;
@@ -201,7 +218,28 @@ namespace Synergy.ReliefCenter.Services
             contract.NextReviewer = await _contractReviewerRepository.GetAllIncluding().Where(x => x.ContractId == id).OrderBy(z => z.Id).Select(x => x.Id).FirstOrDefaultAsync();
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);
+
+            await SendEmail("abhishek.p@solutelabs.com");
             return;
+        }
+
+        private async Task SendEmail(string email)
+        {
+            SendingMailInfo sendingMailInfo = new SendingMailInfo();
+            string[] To = { email };
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "OnBoarding.html");
+            var reader = new StreamReader(path);
+            var mailBody = reader.ReadToEnd();
+            reader.Dispose();
+            //mailBody = mailBody.Replace("{Logs}", htmlStr.ToString());
+            sendingMailInfo.Body = mailBody;
+            //sendingMailInfo.To = To.ToList();
+            sendingMailInfo.To.Add(email);
+            sendingMailInfo.Subject = "You have a contract to verify";
+            sendingMailInfo.Name = "Abhishek Pandey";
+            sendingMailInfo.From = "abhishek.p@solutelabs.com";
+            sendingMailInfo.IsBodyHtml = true;            
+            await _emailService.SendEmailAsync(sendingMailInfo);
         }
     }
 }
