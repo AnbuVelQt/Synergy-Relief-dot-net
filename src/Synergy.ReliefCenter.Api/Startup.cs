@@ -41,6 +41,7 @@ namespace Synergy.ReliefCenter.Api
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton(Configuration);
             services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
             services.AddAllValidators();
             services.AddAdobeSign(Configuration);   //For Adobe Sign
