@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.ReliefCenter.Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.ReliefCenter.Data", "src\Synergy.ReliefCenter.Data\Synergy.ReliefCenter.Data.csproj", "{F2F7CE7D-1682-4546-A0CB-6DA566C60E28}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.AdobeSign", "src\Synergy.AdobeSign\Synergy.AdobeSign.csproj", "{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,18 @@ Global
 		{F2F7CE7D-1682-4546-A0CB-6DA566C60E28}.Release|x64.Build.0 = Release|Any CPU
 		{F2F7CE7D-1682-4546-A0CB-6DA566C60E28}.Release|x86.ActiveCfg = Release|Any CPU
 		{F2F7CE7D-1682-4546-A0CB-6DA566C60E28}.Release|x86.Build.0 = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|x64.Build.0 = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Debug|x86.Build.0 = Debug|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|x64.ActiveCfg = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|x64.Build.0 = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|x86.ActiveCfg = Release|Any CPU
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +96,7 @@ Global
 		{E16E9168-BA3D-41EB-AB48-309342F8FCBC} = {0E761CFC-EB67-4649-9D75-B131960EDE59}
 		{2212CF9B-1591-49FF-BE7E-F5FCE0FE9E74} = {0E761CFC-EB67-4649-9D75-B131960EDE59}
 		{F2F7CE7D-1682-4546-A0CB-6DA566C60E28} = {0E761CFC-EB67-4649-9D75-B131960EDE59}
+		{81E3F6C2-D8CF-41D2-A08E-BE5013D82243} = {0E761CFC-EB67-4649-9D75-B131960EDE59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C66CF22E-F605-4D05-9F52-42F96BFEDC40}
