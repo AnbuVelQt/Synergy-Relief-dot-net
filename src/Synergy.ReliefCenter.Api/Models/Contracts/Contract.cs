@@ -24,5 +24,7 @@ namespace Synergy.ReliefCenter.Api.Models
         public IList<Reviewers> ContractReviewers { get; set; }
 
         public Reviewers NextReviewer { get; set; }
+
+        public IList<RevisedSalary> RevisedSalaries { get; set; }
     }
 }

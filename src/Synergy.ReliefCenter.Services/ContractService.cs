@@ -103,6 +103,7 @@ namespace Synergy.ReliefCenter.Services
             contractDto.ContractForm.Data.VesselInfo = vessels;
             contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
             contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
+            contractDto.ContractForm.Data.RevisedSalaries = new List<RevisedSalaryDto>();
             
             contractDto.ContractForm.Data.Wages = new ContractWagesDto()
             {
@@ -207,6 +208,7 @@ namespace Synergy.ReliefCenter.Services
             contract.EndDate = contractDto.TravelInfo.EndDate;
             convertToDto.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
             convertToDto.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
+
             ContractWagesDto wage= new ContractWagesDto();
             List<WageComponentDto> otherEarnings = new List<WageComponentDto>();
             otherEarnings.AddRange(convertToDto.Wages.OtherEarningComponents.ToList());
@@ -217,11 +219,16 @@ namespace Synergy.ReliefCenter.Services
             deduction.AddRange(contractDto.Wages.DeductionComponents.ToList());
             wage.DeductionComponents = deduction;
             wage.SpecialAllownce = convertToDto.Wages.SpecialAllownce + contractDto.Wages.SpecialAllowance;
+
+            List<RevisedSalaryDto> revisedSalaries = new List<RevisedSalaryDto>();
+            revisedSalaries.AddRange(contractDto.RevisedSalaries);
+            revisedSalaries.AddRange(convertToDto.RevisedSalaries);
             
             convertToDto.Wages.OtherEarningComponents = _mapper.Map(wage.OtherEarningComponents,convertToDto.Wages.OtherEarningComponents);
             convertToDto.Wages.DeductionComponents = _mapper.Map(wage.DeductionComponents, convertToDto.Wages.DeductionComponents);
             convertToDto.Wages.SpecialAllownce = _mapper.Map(wage.SpecialAllownce, convertToDto.Wages.SpecialAllownce);
             convertToDto.Wages = _mapper.Map<ContractWagesDto>(convertToDto.Wages);
+            convertToDto.RevisedSalaries = _mapper.Map<List<RevisedSalaryDto>>(revisedSalaries);
 
             var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
             await _contractRepository.UpdateAsync(contractToUpdate);

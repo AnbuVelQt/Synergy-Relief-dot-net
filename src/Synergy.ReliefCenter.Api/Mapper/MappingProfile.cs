@@ -10,6 +10,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
         {
             CreateMap<Contract, ContractDto>()
                 .ReverseMap()
+                .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.SeafarerDetail, opt => opt.MapFrom(src => src.ContractForm.Data.SeafarerDetail))
                 .ForMember(dest => dest.TravelInfo, opt => opt.MapFrom(src => src.ContractForm.Data.TravelInfo))
                 .ForMember(dest => dest.VesselInfo, opt => opt.MapFrom(src => src.ContractForm.Data.VesselInfo))
@@ -17,7 +19,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
                 //.ForPath(dest => dest.Wages.OTRateCard, opt => opt.MapFrom(src => src.ContractForm.Data.Wages.OTRateCard))
                 .ForMember(dest => dest.AttachmentDetail, opt => opt.MapFrom(src => src.ContractForm.Data.AttachmentDetail))
                 .ForMember(dest => dest.ContractReviewers, opt => opt.MapFrom(src => src.ContractForm.Data.ContractReviewers))
-                .ForMember(dest => dest.NextReviewer, opt => opt.MapFrom(src => src.ContractForm.Data.NextReviewer));
+                .ForMember(dest => dest.NextReviewer, opt => opt.MapFrom(src => src.ContractForm.Data.NextReviewer))
+                .ForMember(dest => dest.RevisedSalaries, opt => opt.MapFrom(src => src.ContractForm.Data.RevisedSalaries));
             CreateMap<ContractAttachmentDetail, ContractAttachmentDetailDto>().ReverseMap();
             CreateMap<SeafarerDetail, SeafarerDetailDto>().ReverseMap();
             CreateMap<VesselDetail, VesselDetailDto>().ReverseMap();
@@ -31,6 +34,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<ContractReviewer, ContractReviewerDto>().ReverseMap();
             CreateMap<Reviewers, ReviewersDto>().ReverseMap();
             CreateMap<UserDetails, UserDetailsDto>().ReverseMap();
+            CreateMap<RevisedSalary, RevisedSalaryDto>().ReverseMap();
         }
     }
 }
