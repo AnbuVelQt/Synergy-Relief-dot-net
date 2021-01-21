@@ -11,6 +11,7 @@ namespace Synergy.AdobeSign.Models
         public List<ParticipantInfo> participantSetsInfo { get; set; }
         public string signatureType { get; set; }
         public string state { get; set; }
+        public List<MergeFieldInfo> mergeFieldInfo { get; set; }
     }
 
     public class FileInformation
@@ -29,5 +30,11 @@ namespace Synergy.AdobeSign.Models
     public class MemberInfo
     {
         public string email { get; set; }
+    }
+
+    public class MergeFieldInfo
+    {
+        public string fieldName { get; set; }
+        public string defaultValue { get; set; }
     }
 }

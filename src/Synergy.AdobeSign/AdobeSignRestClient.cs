@@ -48,47 +48,11 @@ namespace Synergy.AdobeSign
                 }
                 else
                 {
-                    return null;
+                    throw new Exception(await response.Content.ReadAsStringAsync());
                 }
             }
             
         }
-
-        //public object GetAgreements(string authorization)
-        //{
-        //    var client = new RestClient("https://api.in1.echosign.com:443");
-        //    var request = new RestRequest("api/rest/v6/agreements", Method.GET);
-        //    request.AddHeader("Authorization", authorization);
-        //    request.RequestFormat = DataFormat.Json;
-        //    var queryResult = client.Execute<List<object>>(request).Data;
-        //    return queryResult;
-        //}
-
-        //public async Task<object> RestSharpPost(string authorization)
-        //{
-        //    var client = new RestClient(_adobeSignRestClient);
-        //    var request = new RestRequest(_adobeSignRestAgreementsPath, Method.POST);
-        //    request.RequestFormat = DataFormat.Json;
-        //    request.AddHeader("Authorization", authorization);
-        //    var fileInfosList = new List<FileInformation>();
-        //    fileInfosList.Add(new FileInformation { libraryDocumentId = "CBJCHBCAABAA6n2lxqPkvqZzRzIph8fZ85m_hYzMntqf" });
-        //    var participantSetsInfoList = new List<ParticipantInfo>();
-        //    var memberInfoList = new List<MemberInfo>();
-        //    memberInfoList.Add(new MemberInfo { email = "pentagram@synergyship.com" });
-        //    participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoList, order = 1, role = "FORM_FILLER" });
-        //    request.AddJsonBody(new AgreementCreationInfo
-        //    {
-        //        fileInfos = fileInfosList,
-        //        name = "Demo Check 195",
-        //        participantSetsInfo = participantSetsInfoList,
-        //        signatureType = "ESIGN",
-        //        state = "DRAFT"
-        //    });
-        //    IRestResponse response = await client.ExecuteAsync(request);
-        //    var responseJson = JsonConvert.DeserializeObject<AgreementCreationResponse>(response.Content);
-        //    return responseJson;
-        //}
-
         
     }
 }

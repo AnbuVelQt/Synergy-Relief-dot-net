@@ -52,13 +52,16 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var memberInfoList = new List<MemberInfo>();
             memberInfoList.Add(new MemberInfo { email = "pentagram@synergyship.com" });
             participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoList, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.FORM_FILLER) });
+            var mergeFieldInfoList = new List<MergeFieldInfo>();
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = "Jhon" });
             var agreementCreationInfo = new AgreementCreationInfo
             {
                 fileInfos = fileInfosList,
                 name = "Demo Check 197",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
-                state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.DRAFT)
+                state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.DRAFT),
+                mergeFieldInfo = mergeFieldInfoList
             };
             var adobeCreateAgreementResponse = await _adobeSignRestClient.CreateAgreementAsync(agreementCreationInfo);
             
