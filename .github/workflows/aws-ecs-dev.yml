@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - feature/DEVOPS-145-ecs-dev-test-setup
+      - develop
       
 name: Deploy to Amazon ECS - Synergy Dev  -  Crew Wage API
 
