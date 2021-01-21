@@ -31,6 +31,13 @@ namespace Synergy.ReliefCenter.Api
                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
             services.AddAllServices(Configuration);
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -64,6 +71,8 @@ namespace Synergy.ReliefCenter.Api
             manningContext.Database.Migrate();
 
             app.UseRouting();
+
+            app.UseCors("MyPolicy");
 
             app.UseAuthorization();
 
