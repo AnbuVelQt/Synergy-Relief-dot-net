@@ -7,6 +7,8 @@ using System.Text;
 using Synergy.AdobeSign.Models;
 using System.Threading;
 using Synergy.AdobeSign.Configurations;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace Synergy.AdobeSign
 {
@@ -44,6 +46,8 @@ namespace Synergy.AdobeSign
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
                     var responseJson = JsonConvert.DeserializeObject<AgreementCreationResponse>(responseString);
+                    var agreementId = responseJson.Id;
+                    responseJson.SigningUrls = await GetAgreementSigningUrlsAsync(agreementId);
                     return responseJson;
                 }
                 else
@@ -53,6 +57,38 @@ namespace Synergy.AdobeSign
             }
             
         }
-        
+
+        private async Task<IList<SigningUrl>> GetAgreementSigningUrlsAsync(string agreementId, CancellationToken cancellationToken = default)
+        {
+            if (_configuration.AccessKey == null || _configuration.ApiUrl == null || _configuration.ContractDocumentId == null || _configuration.ApiVersion == null)
+            {
+                throw new ArgumentOutOfRangeException("Invalid configuration values passed.");
+            }
+            var getSigningUrlsPath = $"/api/rest/{_configuration.ApiVersion}/agreements/{agreementId}/signingUrls";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_configuration.ApiUrl);
+
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration.AccessKey}");
+
+                //HTTP GET
+                var response = await client.GetAsync(getSigningUrlsPath);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+
+                    var signingUrlsResponse = JsonConvert.DeserializeObject<SigningUrlsResponse>(responseString);
+                    return signingUrlsResponse.signingUrlSetInfos[0].SigningUrls;
+                }
+                else
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+                }
+            }
+
+        }
+
     }
 }

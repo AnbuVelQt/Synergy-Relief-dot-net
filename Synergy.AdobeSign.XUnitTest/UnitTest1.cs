@@ -36,7 +36,7 @@ namespace Synergy.AdobeSign.XUnitTest
                 name = "Demo Check 197",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = "ESIGN",
-                state = "DRAFT",
+                state = "IN_PROCESS",
                 mergeFieldInfo = mergeFieldInfoList
             };
         }
