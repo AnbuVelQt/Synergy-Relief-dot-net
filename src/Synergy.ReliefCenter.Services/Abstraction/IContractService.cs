@@ -11,6 +11,8 @@ namespace Synergy.ReliefCenter.Services.Abstraction
     {
         Task<ContractDto> CreateContract(long vesselId, long seafarerId, string authToken, string crewWageApiBaseUrl);
 
+        Task ApproveAsync(long contractId);
+
         Task<ContractDto> GetConract(long id);
 
         Task UpdateContract(UpdateContractDto contractDto, long id);

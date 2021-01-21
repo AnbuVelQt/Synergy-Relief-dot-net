@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Synergy.AdobeSign.Models;
+using Microsoft.EntityFrameworkCore;
 using Synergy.ReliefCenter.Core.Models;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
@@ -13,6 +14,9 @@ using System.Collections.Generic;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 using Synergy.ReliefCenter.Data.Models;
 using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
+using Synergy.ReliefCenter.Services.Enums;
+using Microsoft.Extensions.Configuration;
+using Synergy.AdobeSign;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -24,6 +28,9 @@ namespace Synergy.ReliefCenter.Services
         private readonly ISeafarerDataRepository _seafarerDataRepository;
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
+        private readonly IConfiguration _configuration;
+        private readonly IAdobeSignRestClient _adobeSignRestClient;
+        private const string CONTRACT_DOC_ID_SECTION = "AbodeSign:ContractDocumentId";
 
         public ContractService(
             IContractRepository contractRepository,
@@ -31,7 +38,9 @@ namespace Synergy.ReliefCenter.Services
             IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
             IMapper mapper,
-            IExternalSalaryMatrixRepository externalSalaryMatrixRepository)
+            IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
+            IConfiguration configuration,
+            IAdobeSignRestClient adobeSignRestClient)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -39,6 +48,8 @@ namespace Synergy.ReliefCenter.Services
             _seafarerDataRepository = seafarerRepository;
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
+            _configuration = configuration;
+            _adobeSignRestClient = adobeSignRestClient;
         }
         public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string authToken, string crewWageApiBaseUrl)
         {
@@ -111,6 +122,37 @@ namespace Synergy.ReliefCenter.Services
             await _contractFormRepository.SaveAsync();
             
             return contractDto;
+        }
+
+        public async Task ApproveAsync(long contractId)
+        {
+            var fileInfosList = new List<FileInformation>();
+            string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION).Value;
+            fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
+            var participantSetsInfoList = new List<ParticipantInfo>();
+            var memberInfoList = new List<MemberInfo>();
+            memberInfoList.Add(new MemberInfo { email = "pentagram@synergyship.com" });
+            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoList, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.FORM_FILLER) });
+            var mergeFieldInfoList = new List<MergeFieldInfo>();
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = "Jhon" });
+            var agreementCreationInfo = new AgreementCreationInfo
+            {
+                fileInfos = fileInfosList,
+                name = "Demo Check 197",
+                participantSetsInfo = participantSetsInfoList,
+                signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
+                state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.IN_PROCESS),
+                mergeFieldInfo = mergeFieldInfoList
+            };
+            var adobeCreateAgreementResponse = await _adobeSignRestClient.CreateAgreementAsync(agreementCreationInfo);
+            string agreementId = adobeCreateAgreementResponse.Id;
+
+            var contract = _contractRepository.Get(contractId);
+            contract.ReferenceAgreementId = agreementId;
+            var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
+            await _contractRepository.UpdateAsync(contractToUpdate);
+
+            return;
         }
 
         public async Task<ContractDto> GetConract(long id)
