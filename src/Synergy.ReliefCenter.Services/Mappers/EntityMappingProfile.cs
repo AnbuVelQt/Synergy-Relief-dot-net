@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
+using Synergy.ReliefCenter.Data.Entities.Master;
 
 namespace Synergy.ReliefCenter.Services.Mappers
 {
@@ -22,6 +23,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
             CreateMap<UpdateContractWagesDto, ContractWagesDto>().ReverseMap();
             CreateMap<ContractReviewer, ContractReviewerSetDto>().ReverseMap();
             CreateMap<ContractReviewer, ReviewersDto>().ReverseMap();
+            CreateMap<UserDetails, UserDetailsDto>().ReverseMap();
         }
     }
 }

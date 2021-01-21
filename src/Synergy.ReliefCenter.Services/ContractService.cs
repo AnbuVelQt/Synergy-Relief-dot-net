@@ -15,6 +15,8 @@ using Synergy.ReliefCenter.Data.Models;
 using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 using Synergy.Core.EmailService;
 using System.IO;
+using Synergy.ReliefCenter.Data.Entities;
+using Synergy.ReliefCenter.Data.Entities.Master;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -28,6 +30,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IContractReviewerRepository _contractReviewerRepository;
         private readonly IEmailService _emailService;
+        private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -37,7 +40,8 @@ namespace Synergy.ReliefCenter.Services
             IMapper mapper,
             IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
             IContractReviewerRepository contractReviewerRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            IExternalUserDetailsRepository externalUserDetailsRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -47,6 +51,7 @@ namespace Synergy.ReliefCenter.Services
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _contractReviewerRepository = contractReviewerRepository;
             _emailService = emailService;
+            _externalUserDetailsRepository = externalUserDetailsRepository;
         }
 
 
@@ -129,11 +134,30 @@ namespace Synergy.ReliefCenter.Services
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
-            var nextReviewer = reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault();
+
+            var reviewer = new List<ReviewersDto>();
+            var userInfo = new UserDetails();
+            foreach (var data in reviewers)
+            {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                reviewer.Add(new ReviewersDto()
+                {
+                    ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
+                    Role = data.Role.ToString(),
+                    Approved = data.Approved,
+                    UserInfo = new UserDetailsDto()
+                    {
+                        Id = userInfo is null ? data.ReviewerId : userInfo.Id,
+                        Email = userInfo is null ? data.Email : userInfo.Email,
+                        Name = userInfo is null ? data.Name : userInfo.Name
+                    }
+                });
+            }
+
             ContractDetails = _mapper.Map<ContractDto>(contract);
             ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
-            ContractDetails.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewers);
-            ContractDetails.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(nextReviewer);
+            ContractDetails.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
+            ContractDetails.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
             return ContractDetails;
         }
 
@@ -147,12 +171,29 @@ namespace Synergy.ReliefCenter.Services
             }
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).FirstOrDefaultAsync();
             var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).ToListAsync();
-            var nextReviewer = reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault();
+            
+            var reviewer = new List<ReviewersDto>();
+            var userInfo = new UserDetails();
+            foreach (var data in reviewers)
+            {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                reviewer.Add(new ReviewersDto()
+                {
+                    ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
+                    Role = data.Role.ToString(),
+                    Approved = data.Approved,
+                    UserInfo = new UserDetailsDto(){
+                        Id = userInfo is null ? data.ReviewerId : userInfo.Id,
+                        Email = userInfo is null ? data.Email :userInfo.Email,
+                        Name = userInfo is null ? data.Name : userInfo.Name
+                    }                    
+                });
+            }
 
             contracts = _mapper.Map <ContractDto>(contracts);
             contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
-            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewers);
-            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(nextReviewer);
+            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
+            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
             return contracts;
         }
 
@@ -196,17 +237,21 @@ namespace Synergy.ReliefCenter.Services
         {
             var contract = _contractRepository.Get(id);
             var reviewer = new List<ContractReviewer>();
+            var userInfo = new UserDetails();
             foreach (var data in reviewerSetDto.Reviewers)
             {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.Id, "");
                 reviewer.Add(new ContractReviewer()
                 {
                     ReviewerId = data.Id,
                     Role = data.Role.ToString(),
-                    ContractId = id
+                    ContractId = id,
+                    Email = userInfo.Email,
+                    Name = userInfo.Name
                 });
 
             }
-            
+
             var reviewerToBeAdded = _mapper.Map<List<ContractReviewer>>(reviewer);
             foreach (var aa in reviewerToBeAdded)
             {

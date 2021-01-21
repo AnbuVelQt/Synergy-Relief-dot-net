@@ -23,11 +23,17 @@ namespace Synergy.ReliefCenter.Data.Models
         [Column("reviewer_id")]
         public string ReviewerId { get; set; }
 
+        [Column("name")]
+        public string Name { get; set; }
+
+        [Column("email")]
+        public string Email { get; set; }
+
         [Column("role")]
         public string Role { get; set; }
 
         [Column("approved")]
-        public bool Approved { get; set; }
+        public bool Approved { get; set; }        
 
         [ForeignKey(nameof(ContractId))]
         [InverseProperty("ContractReviewers")]

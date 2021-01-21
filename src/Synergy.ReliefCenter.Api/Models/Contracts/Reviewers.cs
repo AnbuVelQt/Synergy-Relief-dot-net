@@ -7,14 +7,12 @@ namespace Synergy.ReliefCenter.Api.Models
 {
     public class Reviewers
     {
-        public long Id { get; set; }
-        
-        public long ContractId { get; set; }
-
         public string ReviewerId { get; set; }
 
         public string Role { get; set; }
 
         public bool Approved { get; set; }
+
+        public UserDetails UserInfo { get; set; }
     }
 }

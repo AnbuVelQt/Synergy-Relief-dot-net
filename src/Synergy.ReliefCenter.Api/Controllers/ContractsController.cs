@@ -74,7 +74,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {
-                return NotFound("No Data Found for the query");
+                return NotFound();
             }
             return Ok(getContractDetails);
         }

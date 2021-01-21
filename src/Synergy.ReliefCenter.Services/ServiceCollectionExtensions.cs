@@ -33,6 +33,7 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IContractFormRepository, ContractFormRepository>();
             services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
             services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
+            services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
         }
 
         public static void AddEFContext(this IServiceCollection services, IConfiguration configuration)

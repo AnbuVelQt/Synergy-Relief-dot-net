@@ -7,6 +7,6 @@ namespace Synergy.ReliefCenter.Core.Models
     public enum ReviewerRole
     {
         SourcingExecutive,
-        FeetHead
+        FleetHead
     }
 }
