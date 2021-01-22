@@ -146,7 +146,7 @@ namespace Synergy.ReliefCenter.Services
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
                     Role = data.Role.ToString(),
                     Approved = data.Approved,
-                    UserInfo = new UserDetailsDto()
+                    UserInfo = new UserInfoDto()
                     {
                         Id = userInfo is null ? data.ReviewerId : userInfo.Id,
                         Email = userInfo is null ? data.Email : userInfo.Email,
@@ -183,7 +183,7 @@ namespace Synergy.ReliefCenter.Services
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
                     Role = data.Role.ToString(),
                     Approved = data.Approved,
-                    UserInfo = new UserDetailsDto(){
+                    UserInfo = new UserInfoDto(){
                         Id = userInfo is null ? data.ReviewerId : userInfo.Id,
                         Email = userInfo is null ? data.Email :userInfo.Email,
                         Name = userInfo is null ? data.Name : userInfo.Name
@@ -271,11 +271,11 @@ namespace Synergy.ReliefCenter.Services
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);
 
-            await SendEmail("abhishek.p@solutelabs.com");
+            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),mapContract);
             return;
         }
 
-        private async Task SendEmail(string email)
+        private async Task SendEmail(string email,VesselContract contract)
         {
             SendingMailInfo sendingMailInfo = new SendingMailInfo();
             string[] To = { email };

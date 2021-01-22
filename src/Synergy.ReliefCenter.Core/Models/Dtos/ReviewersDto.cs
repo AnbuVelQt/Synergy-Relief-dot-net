@@ -14,6 +14,6 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 
         public bool Approved { get; set; }
 
-        public UserDetailsDto UserInfo { get; set; }
+        public UserInfoDto UserInfo { get; set; }
     }
 }

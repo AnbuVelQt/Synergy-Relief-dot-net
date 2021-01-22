@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Models
 {
-    public class UserDetails
+    public class UserInfo
     {
         public string Id { get; set; }
 
