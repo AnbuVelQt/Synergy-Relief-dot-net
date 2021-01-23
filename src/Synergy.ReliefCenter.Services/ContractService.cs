@@ -40,12 +40,12 @@ namespace Synergy.ReliefCenter.Services
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
         }
-        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string authToken, string crewWageApiBaseUrl)
+        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string authToken)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
-            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId, authToken, crewWageApiBaseUrl);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId, authToken);
             
             var contractDto = new ContractDto()
             {

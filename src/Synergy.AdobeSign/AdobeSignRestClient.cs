@@ -21,10 +21,6 @@ namespace Synergy.AdobeSign
 
         public async Task<AgreementCreationResponse> CreateAgreementAsync(AgreementCreationInfo agreementInfo, CancellationToken cancellationToken = default)
         {
-            if (_configuration.AccessKey == null || _configuration.ApiUrl == null || _configuration.ContractDocumentId == null || _configuration.ApiVersion == null)
-            {
-                throw new ArgumentOutOfRangeException("Invalid configuration values passed.");
-            }
             var agrrementPath = $"/api/rest/{_configuration.ApiVersion}/agreements";
 
             using (var client = new HttpClient())

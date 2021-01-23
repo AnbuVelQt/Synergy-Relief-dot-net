@@ -22,7 +22,6 @@ namespace Synergy.ReliefCenter.Api.Controllers
         private readonly IAdobeSignRestClient _adobeSignRestClient;
         private readonly IConfiguration _configuration;
         private const string CONTRACT_DOC_ID_SECTION = "AbodeSign:ContractDocumentId";
-        private const string CREW_WAGE_APIURL_SECTION = "CrewWage:ApiUrl";
 
         public ContractsController(IContractService contractService,IMapper mapper, IAdobeSignRestClient adobeSignRestClient, IConfiguration configuration)
         {
@@ -74,8 +73,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
                 return BadRequest(result.Errors);
             }
             var AuthToken = Request.Headers["Authorization"];
-            string crewWageApiBaseUrl = _configuration.GetSection(CREW_WAGE_APIURL_SECTION).Value;
-            var contract = await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken, crewWageApiBaseUrl);
+            var contract = await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
             var createContractDetails = _mapper.Map<Contract>(contract);
             return Created("", createContractDetails);
         }
