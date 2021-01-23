@@ -16,5 +16,7 @@ namespace Synergy.ReliefCenter.Services.Abstraction
         Task UpdateContract(UpdateContractDto contractDto, long id);
 
         Task<ContractDto> GetConracts(long vesselId,long seafarerId);
+
+        Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto);
     }
 }

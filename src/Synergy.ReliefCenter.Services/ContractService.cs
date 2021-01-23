@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 using Synergy.ReliefCenter.Data.Models;
 using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
+using Synergy.Core.EmailService;
+using System.IO;
+using Synergy.ReliefCenter.Data.Entities;
+using Synergy.ReliefCenter.Data.Entities.Master;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -24,6 +28,9 @@ namespace Synergy.ReliefCenter.Services
         private readonly ISeafarerDataRepository _seafarerDataRepository;
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
+        private readonly IContractReviewerRepository _contractReviewerRepository;
+        private readonly IEmailService _emailService;
+        private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -31,7 +38,10 @@ namespace Synergy.ReliefCenter.Services
             IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
             IMapper mapper,
-            IExternalSalaryMatrixRepository externalSalaryMatrixRepository)
+            IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
+            IContractReviewerRepository contractReviewerRepository,
+            IEmailService emailService,
+            IExternalUserDetailsRepository externalUserDetailsRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -39,7 +49,12 @@ namespace Synergy.ReliefCenter.Services
             _seafarerDataRepository = seafarerRepository;
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
+            _contractReviewerRepository = contractReviewerRepository;
+            _emailService = emailService;
+            _externalUserDetailsRepository = externalUserDetailsRepository;
         }
+
+
         public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
@@ -88,6 +103,7 @@ namespace Synergy.ReliefCenter.Services
             contractDto.ContractForm.Data.VesselInfo = vessels;
             contractDto.ContractForm.Data.TravelInfo = new TravelDetailDto();
             contractDto.ContractForm.Data.AttachmentDetail = new ContractAttachmentDetailDto();
+            contractDto.ContractForm.Data.RevisedSalaries = new List<RevisedSalaryDto>();
             
             contractDto.ContractForm.Data.Wages = new ContractWagesDto()
             {
@@ -118,8 +134,31 @@ namespace Synergy.ReliefCenter.Services
             var ContractDetails = new ContractDto();
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
+
+            var reviewer = new List<ReviewersDto>();
+            var userInfo = new UserDetails();
+            foreach (var data in reviewers)
+            {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                reviewer.Add(new ReviewersDto()
+                {
+                    ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
+                    Role = data.Role.ToString(),
+                    Approved = data.Approved,
+                    UserInfo = new UserInfoDto()
+                    {
+                        Id = userInfo is null ? data.ReviewerId : userInfo.Id,
+                        Email = userInfo is null ? data.Email : userInfo.Email,
+                        Name = userInfo is null ? data.Name : userInfo.Name
+                    }
+                });
+            }
+
             ContractDetails = _mapper.Map<ContractDto>(contract);
             ContractDetails.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
+            ContractDetails.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
+            ContractDetails.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
             return ContractDetails;
         }
 
@@ -132,9 +171,30 @@ namespace Synergy.ReliefCenter.Services
                 return null;
             }
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).FirstOrDefaultAsync();
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).ToListAsync();
             
+            var reviewer = new List<ReviewersDto>();
+            var userInfo = new UserDetails();
+            foreach (var data in reviewers)
+            {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                reviewer.Add(new ReviewersDto()
+                {
+                    ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
+                    Role = data.Role.ToString(),
+                    Approved = data.Approved,
+                    UserInfo = new UserInfoDto(){
+                        Id = userInfo is null ? data.ReviewerId : userInfo.Id,
+                        Email = userInfo is null ? data.Email :userInfo.Email,
+                        Name = userInfo is null ? data.Name : userInfo.Name
+                    }                    
+                });
+            }
+
             contracts = _mapper.Map <ContractDto>(contracts);
             contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
+            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
+            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
             return contracts;
         }
 
@@ -144,23 +204,94 @@ namespace Synergy.ReliefCenter.Services
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             
             var convertToDto = JsonConvert.DeserializeObject<ContractFormDataDto>(contractForm.Data);
-            var contractDetails = new ContractFormDataDto();
             contract.StartDate = contractDto.TravelInfo.StartDate;
             contract.EndDate = contractDto.TravelInfo.EndDate;
-            contractDetails.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
-            contractDetails.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
-            contractDetails.Wages = _mapper.Map(_mapper.Map<ContractWagesDto>(contractDto.Wages), convertToDto.Wages);
+            convertToDto.AttachmentDetail = _mapper.Map(contractDto.AttachmentDetail, convertToDto.AttachmentDetail);
+            convertToDto.TravelInfo = _mapper.Map(contractDto.TravelInfo, convertToDto.TravelInfo);
+
+            ContractWagesDto wage= new ContractWagesDto();
+            List<WageComponentDto> otherEarnings = new List<WageComponentDto>();
+            otherEarnings.AddRange(convertToDto.Wages.OtherEarningComponents.ToList());
+            otherEarnings.AddRange(contractDto.Wages.OtherEarningComponents.ToList());
+            wage.OtherEarningComponents = otherEarnings;
+            List<WageComponentDto> deduction = new List<WageComponentDto>();
+            deduction.AddRange(convertToDto.Wages.DeductionComponents.ToList());
+            deduction.AddRange(contractDto.Wages.DeductionComponents.ToList());
+            wage.DeductionComponents = deduction;
+            wage.SpecialAllownce = convertToDto.Wages.SpecialAllownce + contractDto.Wages.SpecialAllowance;
+
+            List<RevisedSalaryDto> revisedSalaries = new List<RevisedSalaryDto>();
+            revisedSalaries.AddRange(contractDto.RevisedSalaries);
+            revisedSalaries.AddRange(convertToDto.RevisedSalaries);
+            
+            convertToDto.Wages.OtherEarningComponents = _mapper.Map(wage.OtherEarningComponents,convertToDto.Wages.OtherEarningComponents);
+            convertToDto.Wages.DeductionComponents = _mapper.Map(wage.DeductionComponents, convertToDto.Wages.DeductionComponents);
+            convertToDto.Wages.SpecialAllownce = _mapper.Map(wage.SpecialAllownce, convertToDto.Wages.SpecialAllownce);
+            convertToDto.Wages = _mapper.Map<ContractWagesDto>(convertToDto.Wages);
+            convertToDto.RevisedSalaries = _mapper.Map<List<RevisedSalaryDto>>(revisedSalaries);
 
             var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
             await _contractRepository.UpdateAsync(contractToUpdate);
 
-            var contactDataDto = _mapper.Map<ContractFormDataDto>(contractDetails);
-            var mapToContract = _mapper.Map(contactDataDto, convertToDto);
-            contractForm.Data = JsonConvert.SerializeObject(mapToContract);
+            var contactDataDto = _mapper.Map<ContractFormDataDto>(convertToDto);
+            contractForm.Data = JsonConvert.SerializeObject(contactDataDto);
             await _contractFormRepository.UpdateAsync(_mapper.Map<ContractForm>(contractForm));
             
             return;
         }
 
+        public async Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto)
+        {
+            var contract = _contractRepository.Get(id);
+            var reviewer = new List<ContractReviewer>();
+            var userInfo = new UserDetails();
+            foreach (var data in reviewerSetDto.Reviewers)
+            {
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.Id, "");
+                reviewer.Add(new ContractReviewer()
+                {
+                    ReviewerId = data.Id,
+                    Role = data.Role.ToString(),
+                    ContractId = id,
+                    Email = userInfo.Email,
+                    Name = userInfo.Name
+                });
+
+            }
+
+            var reviewerToBeAdded = _mapper.Map<List<ContractReviewer>>(reviewer);
+            foreach (var aa in reviewerToBeAdded)
+            {
+                await _contractReviewerRepository.InsertAsync(aa);
+
+            }            
+            await _contractReviewerRepository.SaveAsync();
+            contract.Status = ContractStatus.InVerification.ToString();
+            contract.NextReviewer = await _contractReviewerRepository.GetAllIncluding().Where(x => x.ContractId == id).OrderBy(z => z.Id).Select(x => x.Id).FirstOrDefaultAsync();
+            var mapContract = _mapper.Map<VesselContract>(contract);
+            await _contractRepository.UpdateAsync(mapContract);
+
+            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),mapContract);
+            return;
+        }
+
+        private async Task SendEmail(string email,VesselContract contract)
+        {
+            SendingMailInfo sendingMailInfo = new SendingMailInfo();
+            string[] To = { email };
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "OnBoarding.html");
+            var reader = new StreamReader(path);
+            var mailBody = reader.ReadToEnd();
+            reader.Dispose();
+            //mailBody = mailBody.Replace("{Logs}", htmlStr.ToString());
+            sendingMailInfo.Body = mailBody;
+            //sendingMailInfo.To = To.ToList();
+            sendingMailInfo.To.Add(email);
+            sendingMailInfo.Subject = "You have a contract to verify";
+            sendingMailInfo.Name = "Abhishek Pandey";
+            sendingMailInfo.From = "abhishek.p@solutelabs.com";
+            sendingMailInfo.IsBodyHtml = true;            
+            await _emailService.SendEmailAsync(sendingMailInfo);
+        }
     }
 }

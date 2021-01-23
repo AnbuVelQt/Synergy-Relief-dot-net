@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Synergy.Core.EmailService;
 using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories;
@@ -21,6 +22,7 @@ namespace Synergy.ReliefCenter.Services
         public static void AddReliefServices(this IServiceCollection services)
         {
             services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<IEmailService, EmailSender>();
         }
 
         public static void AddReliefRepositories(this IServiceCollection services)
@@ -30,6 +32,8 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IContractFormRepository, ContractFormRepository>();
             services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
+            services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
+            services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
         }
 
         public static void AddEFContext(this IServiceCollection services, IConfiguration configuration)

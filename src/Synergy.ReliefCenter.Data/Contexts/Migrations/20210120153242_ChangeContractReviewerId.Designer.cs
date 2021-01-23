@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.ReliefCenter.Data.Models;
@@ -9,9 +10,10 @@ using Synergy.ReliefCenter.Data.Models;
 namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 {
     [DbContext(typeof(synergy_manningContext))]
-    partial class synergy_manningContextModelSnapshot : ModelSnapshot
+    [Migration("20210120153242_ChangeContractReviewerId")]
+    partial class ChangeContractReviewerId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -338,14 +340,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Property<long>("ContractId")
                         .HasColumnType("bigint")
                         .HasColumnName("contract_id");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
 
                     b.Property<string>("ReviewerId")
                         .HasColumnType("text")
