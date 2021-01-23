@@ -18,7 +18,6 @@ namespace Synergy.ReliefCenter.Api.Controllers
         private readonly IMapper _mapper;
         
         private readonly IConfiguration _configuration;
-        private const string CREW_WAGE_APIURL_SECTION = "CrewWage:ApiUrl";
 
         public ContractsController(IContractService contractService,IMapper mapper, IConfiguration configuration)
         {
@@ -47,8 +46,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
                 return BadRequest(result.Errors);
             }
             var AuthToken = Request.Headers["Authorization"];
-            string crewWageApiBaseUrl = _configuration.GetSection(CREW_WAGE_APIURL_SECTION).Value;
-            var contract = await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken, crewWageApiBaseUrl);
+            var contract = await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken);
             var createContractDetails = _mapper.Map<Contract>(contract);
             return Created("", createContractDetails);
         }
