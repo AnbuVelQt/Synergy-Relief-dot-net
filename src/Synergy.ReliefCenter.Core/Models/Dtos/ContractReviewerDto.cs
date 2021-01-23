@@ -7,7 +7,5 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public string Id { get; set; }
 
         public ReviewerRole Role { get; set; }
-
-        //public int ReviewingOrder { get; set; }
     }
 }

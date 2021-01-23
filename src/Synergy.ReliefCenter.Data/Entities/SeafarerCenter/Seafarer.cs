@@ -26,5 +26,7 @@ namespace Synergy.ReliefCenter.Data.Entities.SeafarerCenter
         public long RankId { get; set; }
 
         public string CdcWithoutCode { get; set; }
+
+        public string IdentityUserId { get; set; }
     }
 }

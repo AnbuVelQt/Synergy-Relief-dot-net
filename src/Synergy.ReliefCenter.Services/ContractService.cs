@@ -77,12 +77,14 @@ namespace Synergy.ReliefCenter.Services
                 CDCNumber = seafarerDetails.CdcNumber,
                 CrewCode = seafarerDetails.CrewCode,
                 DateOfBirth = seafarerDetails.DateOfBirth,
-                Name = seafarerDetails.FirstName + "" + seafarerDetails.LastName,
+                Name = seafarerDetails.FirstName + " " + seafarerDetails.LastName,
                 Nationality = seafarerDetails.NationalityId.ToString(),
                 PlaceOfBirth = seafarerDetails.PlaceOfBirth,
                 Rank = seafarerDetails.RankId.ToString(),
                 PassportNumber =null,
-                Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year
+                Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year,
+                Email = seafarerAllDetails.Email,
+                Phone = seafarerAllDetails.Phone
             };
 
             var vessels = new VesselDetailDto()
@@ -191,7 +193,7 @@ namespace Synergy.ReliefCenter.Services
                 });
             }
 
-            contracts = _mapper.Map <ContractDto>(contracts);
+            contracts = _mapper.Map <ContractDto>(contract);
             contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
             contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
             contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
@@ -243,6 +245,7 @@ namespace Synergy.ReliefCenter.Services
         public async Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto)
         {
             var contract = _contractRepository.Get(id);
+            var contractForm =await _contractFormRepository.GetAllIncluding().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             var reviewer = new List<ContractReviewer>();
             var userInfo = new UserDetails();
             foreach (var data in reviewerSetDto.Reviewers)
@@ -271,27 +274,29 @@ namespace Synergy.ReliefCenter.Services
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);
 
-            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),mapContract);
+            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),_mapper.Map<ContractFormDto>(contractForm));
             return;
         }
 
-        private async Task SendEmail(string email,VesselContract contract)
+        private async Task SendEmail(string email,ContractFormDto contract)
         {
             SendingMailInfo sendingMailInfo = new SendingMailInfo();
-            string[] To = { email };
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "OnBoarding.html");
+            var path = Path.Combine(Directory.GetCurrentDirectory(),"Templates" ,"TravelDetails.html");
             var reader = new StreamReader(path);
             var mailBody = reader.ReadToEnd();
             reader.Dispose();
-            //mailBody = mailBody.Replace("{Logs}", htmlStr.ToString());
+            mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
+            mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
+            mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
             sendingMailInfo.Body = mailBody;
-            //sendingMailInfo.To = To.ToList();
-            sendingMailInfo.To.Add(email);
-            sendingMailInfo.Subject = "You have a contract to verify";
-            sendingMailInfo.Name = "Abhishek Pandey";
-            sendingMailInfo.From = "abhishek.p@solutelabs.com";
+            sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
+            sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
+            sendingMailInfo.Name = "Synergy Marine";
+            sendingMailInfo.From = "support@synergymarinetest.com";
             sendingMailInfo.IsBodyHtml = true;            
             await _emailService.SendEmailAsync(sendingMailInfo);
         }
+
+        
     }
 }

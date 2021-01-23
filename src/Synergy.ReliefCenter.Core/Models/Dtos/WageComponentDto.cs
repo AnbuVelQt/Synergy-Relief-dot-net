@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
     public class WageComponentDto
-    {
-        public int Id { get; set; }
-
+    {  
         public string Name { get; set; }
 
         public string AccountCode { get; set; }
