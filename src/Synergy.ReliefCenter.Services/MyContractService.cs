@@ -44,7 +44,7 @@ namespace Synergy.ReliefCenter.Services
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
-        public async Task<ContractDto> GetSeafarerConract(long vesselId, string userId)
+        public async Task<ContractDto> GetSeafarerConract(long vesselId, string userId, string apiKey, string userDetailsApiBaseUrl)
         {
             var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
             var contracts = new ContractDto();
@@ -65,7 +65,7 @@ namespace Synergy.ReliefCenter.Services
             var userInfo = new UserDetails();
             foreach (var data in reviewers)
             {
-                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
                 reviewer.Add(new ReviewersDto()
                 {
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
