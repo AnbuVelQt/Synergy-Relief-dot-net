@@ -11,6 +11,9 @@ using Synergy.ReliefCenter.Api.Mappers;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Services.Mappers;
+using Synergy.Core.EmailService;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -37,8 +40,13 @@ namespace Synergy.ReliefCenter.Api
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
-
+            using var loggerFactory = LoggerFactory.Create(b => Console.WriteLine());
             services.AddAllServices(Configuration);
+            services.AddSingleton<ILogger<EmailSender>>(loggerFactory.CreateLogger<EmailSender>());
+            var emailLogger = loggerFactory.CreateLogger<IEmailService>();
+
+            services.AddSingleton<ILogger<IEmailService>>(emailLogger);
+            services.AddEmailService(Configuration);
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new EntityMappingProfile());

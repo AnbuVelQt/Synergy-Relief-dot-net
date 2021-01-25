@@ -17,7 +17,7 @@ namespace Synergy.ReliefCenter.Api.Models
 
         public string MLCHolder { get; set; }
 
-        public string IMONuber { get; set; }
+        public string IMONumber { get; set; }
 
         public string PortOfRegistry { get; set; }
 

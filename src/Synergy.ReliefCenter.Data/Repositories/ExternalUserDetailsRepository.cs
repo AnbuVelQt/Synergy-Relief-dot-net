@@ -9,13 +9,12 @@ namespace Synergy.ReliefCenter.Data.Repositories
 {
     public class ExternalUserDetailsRepository : IExternalUserDetailsRepository
     {
-        public async Task<UserDetails> GetUserDetails(string userId, string AuthToken)
+        public async Task<UserDetails> GetUserDetails(string userId, string apiKey, string userDetailsApiBaseUrl)
         {
             using (var client = new HttpClient())
             {
-                AuthToken = "E2d9shgYnvFqmA4tJJFuduXGvJtJbvvHKcT8WX5NnIBOwPZ1";
-                client.BaseAddress = new Uri("https://login-shore.synergymarinetest.com/");
-                client.DefaultRequestHeaders.Add("apikey", AuthToken);
+                client.BaseAddress = new Uri(userDetailsApiBaseUrl);
+                client.DefaultRequestHeaders.Add("apikey", apiKey);
                 //HTTP GET
                 var response = await client.GetAsync("User/UserRole/"+ userId);
                 if (response.IsSuccessStatusCode)

@@ -24,6 +24,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
             CreateMap<ContractReviewer, ContractReviewerSetDto>().ReverseMap();
             CreateMap<ContractReviewer, ReviewersDto>().ReverseMap();
             CreateMap<UserDetails, UserInfoDto>().ReverseMap();
+            
         }
     }
 }

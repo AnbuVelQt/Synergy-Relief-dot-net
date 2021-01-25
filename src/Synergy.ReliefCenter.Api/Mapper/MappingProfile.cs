@@ -9,9 +9,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
         public MappingProfile()
         {
             CreateMap<Contract, ContractDto>()
-                .ReverseMap()
-                .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap()                
                 .ForMember(dest => dest.SeafarerDetail, opt => opt.MapFrom(src => src.ContractForm.Data.SeafarerDetail))
                 .ForMember(dest => dest.TravelInfo, opt => opt.MapFrom(src => src.ContractForm.Data.TravelInfo))
                 .ForMember(dest => dest.VesselInfo, opt => opt.MapFrom(src => src.ContractForm.Data.VesselInfo))
@@ -35,6 +33,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<Reviewers, ReviewersDto>().ReverseMap();
             CreateMap<UserInfo, UserInfoDto>().ReverseMap();
             CreateMap<RevisedSalary, RevisedSalaryDto>().ReverseMap();
+            CreateMap<MyContracts, MyContractsDto>().ReverseMap();
         }
     }
 }
