@@ -194,12 +194,38 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedBy", defaultValue = "" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedOn", defaultValue = "" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "monthlyWagesHeader1" });
+            
+            //Wages component
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "Basic Wages" });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = FormData.Wages.BasicAmount.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allownce" });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = FormData.Wages.SpecialAllownce.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "totalMonthlyWages", defaultValue = FormData.Wages.TotalMonthlyAmount.ToString() });
 
+            int otherEarningsSNo = 0;
+            foreach (var data in FormData.Wages.OtherEarningComponents)
+            {
+                otherEarningsSNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsSNo"+ otherEarningsSNo.ToString(), defaultValue = otherEarningsSNo.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsTitle"+ otherEarningsSNo.ToString(), defaultValue = data.Name });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsAmount"+ otherEarningsSNo.ToString(), defaultValue = data.Amount.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsDate" + otherEarningsSNo.ToString(), defaultValue = "Not Available" });
+            }
+
+            int deductionsSNo = 0;
+            foreach (var data in FormData.Wages.DeductionComponents)
+            {
+                deductionsSNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsSNo" + deductionsSNo.ToString(), defaultValue = deductionsSNo.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsTitle" + deductionsSNo.ToString(), defaultValue = data.Name });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsAmount" + deductionsSNo.ToString(), defaultValue = data.Amount.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsDate" + deductionsSNo.ToString(), defaultValue = "Not Available" });
+            }
 
             var agreementCreationInfo = new AgreementCreationInfo
             {
                 fileInfos = fileInfosList,
-                name = "Demo Check 199",
+                name = "Demo Check 200",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
                 state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.IN_PROCESS),
