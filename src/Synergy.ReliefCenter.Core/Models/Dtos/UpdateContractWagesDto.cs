@@ -8,5 +8,7 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public decimal SpecialAllowance { get; set; }
 
         public IList<WageComponentDto> OtherEarningComponents { get; set; }
+
+        public IList<WageComponentDto> DeductionComponents { get; set; }
     }
 }

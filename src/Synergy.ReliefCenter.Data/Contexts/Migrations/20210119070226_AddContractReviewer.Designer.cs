@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.ReliefCenter.Data.Models;
@@ -9,9 +10,10 @@ using Synergy.ReliefCenter.Data.Models;
 namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 {
     [DbContext(typeof(synergy_manningContext))]
-    partial class synergy_manningContextModelSnapshot : ModelSnapshot
+    [Migration("20210119070226_AddContractReviewer")]
+    partial class AddContractReviewer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,21 +339,13 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 
                     b.Property<long>("ContractId")
                         .HasColumnType("bigint")
-                        .HasColumnName("contract_id");
+                        .HasColumnName("vessel_contract_id");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<string>("ReviewerId")
-                        .HasColumnType("text")
+                    b.Property<long?>("ReviewerId")
+                        .HasColumnType("bigint")
                         .HasColumnName("reviewer_id");
 
-                    b.Property<string>("Role")
+                    b.Property<long?>("Role")
                         .HasColumnType("text")
                         .HasColumnName("role");
 
@@ -359,7 +353,7 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasName("pk_contract_reviewers");
 
                     b.HasIndex(new[] { "ContractId" }, "index_contract_reviewer_on_contract_id")
-                        .HasDatabaseName("ix_contract_reviewers_contract_id");
+                        .HasDatabaseName("ix_contract_reviewers_vessel_contract_id");
 
                     b.ToTable("ContractReviewers");
                 });
@@ -1816,13 +1810,13 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("next_reviewer");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("character varying")
+                        .HasColumnName("status");
+
                     b.Property<long?>("RankId")
                         .HasColumnType("bigint")
                         .HasColumnName("rank_id");
-
-                    b.Property<string>("ReferenceAgreementId")
-                        .HasColumnType("character varying")
-                        .HasColumnName("ref_agreement_id");
 
                     b.Property<double?>("Salary")
                         .HasColumnType("double precision")
@@ -1835,10 +1829,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("start_date");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("text")
-                        .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp(6) without time zone")
@@ -1908,7 +1898,7 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.HasOne("Synergy.ReliefCenter.Data.Models.VesselContract", "VesselContracts")
                         .WithMany("ContractReviewers")
                         .HasForeignKey("ContractId")
-                        .HasConstraintName("fk_contract_reviewers_vessel_contracts_contract_id")
+                        .HasConstraintName("fk_contract_reviewers_vessel_contracts_vessel_contract_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

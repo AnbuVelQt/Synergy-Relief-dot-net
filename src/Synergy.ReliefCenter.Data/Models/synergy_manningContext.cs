@@ -46,6 +46,8 @@ namespace Synergy.ReliefCenter.Data.Models
 
         public virtual DbSet<ContractForm> ContractForm { get; set; }
 
+        public virtual DbSet<ContractReviewer> ContractReviewers { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

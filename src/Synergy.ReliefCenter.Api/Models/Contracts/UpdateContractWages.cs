@@ -10,5 +10,7 @@ namespace Synergy.ReliefCenter.Api.Models
         public decimal SpecialAllowance { get; set; }
 
         public IList<WageComponent> OtherEarningComponents { get; set; }
+
+        public IList<WageComponent> DeductionComponents { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.ReliefCenter.Data.Models;
@@ -9,9 +10,10 @@ using Synergy.ReliefCenter.Data.Models;
 namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 {
     [DbContext(typeof(synergy_manningContext))]
-    partial class synergy_manningContextModelSnapshot : ModelSnapshot
+    [Migration("20210121080220_AddContractReviewerDetails")]
+    partial class AddContractReviewerDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1819,10 +1821,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Property<long?>("RankId")
                         .HasColumnType("bigint")
                         .HasColumnName("rank_id");
-
-                    b.Property<string>("ReferenceAgreementId")
-                        .HasColumnType("character varying")
-                        .HasColumnName("ref_agreement_id");
 
                     b.Property<double?>("Salary")
                         .HasColumnType("double precision")
