@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using Synergy.ReliefCenter.Data.Entities.SalaryMatrix;
 using Synergy.ReliefCenter.Data.Models;
 using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
-using Synergy.Core.EmailService;
+//using Synergy.Core.EmailService;
 using System.IO;
 using Synergy.ReliefCenter.Data.Entities;
 using Synergy.ReliefCenter.Data.Entities.Master;
@@ -29,7 +29,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IContractReviewerRepository _contractReviewerRepository;
-        private readonly IEmailService _emailService;
+        //private readonly IEmailService _emailService;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
 
         public ContractService(
@@ -40,7 +40,7 @@ namespace Synergy.ReliefCenter.Services
             IMapper mapper,
             IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
             IContractReviewerRepository contractReviewerRepository,
-            IEmailService emailService,
+            //IEmailService emailService,
             IExternalUserDetailsRepository externalUserDetailsRepository)
         {
             _contractRepository = contractRepository;
@@ -50,7 +50,7 @@ namespace Synergy.ReliefCenter.Services
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _contractReviewerRepository = contractReviewerRepository;
-            _emailService = emailService;
+            //_emailService = emailService;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
 
@@ -280,21 +280,21 @@ namespace Synergy.ReliefCenter.Services
 
         private async Task SendEmail(string email,ContractFormDto contract)
         {
-            SendingMailInfo sendingMailInfo = new SendingMailInfo();
-            var path = Path.Combine(Directory.GetCurrentDirectory(),"Templates" ,"TravelDetails.html");
-            var reader = new StreamReader(path);
-            var mailBody = reader.ReadToEnd();
-            reader.Dispose();
-            mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
-            mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
-            mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
-            sendingMailInfo.Body = mailBody;
-            sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
-            sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
-            sendingMailInfo.Name = "Synergy Marine";
-            sendingMailInfo.From = "support@synergymarinetest.com";
-            sendingMailInfo.IsBodyHtml = true;
-            await _emailService.SendEmailAsync(sendingMailInfo);
+            //SendingMailInfo sendingMailInfo = new SendingMailInfo();
+            //var path = Path.Combine(Directory.GetCurrentDirectory(),"Templates" ,"TravelDetails.html");
+            //var reader = new StreamReader(path);
+            //var mailBody = reader.ReadToEnd();
+            //reader.Dispose();
+            //mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
+            //mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
+            //mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
+            //sendingMailInfo.Body = mailBody;
+            //sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
+            //sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
+            //sendingMailInfo.Name = "Synergy Marine";
+            //sendingMailInfo.From = "support@synergymarinetest.com";
+            //sendingMailInfo.IsBodyHtml = true;
+            //await _emailService.SendEmailAsync(sendingMailInfo);
         }
 
         
