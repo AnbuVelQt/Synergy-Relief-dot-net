@@ -7,8 +7,6 @@ namespace Synergy.ReliefCenter.Api.Models
 {
     public class WageComponent
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public string AccountCode { get; set; }
@@ -18,5 +16,7 @@ namespace Synergy.ReliefCenter.Api.Models
         public string Type { get; set; }
 
         public decimal Amount { get; set; }
+
+        public DateTime EffectiveDate { get; set; }
     }
 }

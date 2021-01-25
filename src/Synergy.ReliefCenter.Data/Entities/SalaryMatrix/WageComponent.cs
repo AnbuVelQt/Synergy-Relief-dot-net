@@ -18,5 +18,7 @@ namespace Synergy.ReliefCenter.Data.Entities.SalaryMatrix
         public string Type { get; set; }
 
         public decimal Amount { get; set; }
+
+        public DateTime EffectiveDate { get; set; }
     }
 }

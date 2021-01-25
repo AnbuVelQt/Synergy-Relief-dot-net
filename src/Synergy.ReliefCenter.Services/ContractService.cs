@@ -17,7 +17,7 @@ using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 using Synergy.ReliefCenter.Services.Enums;
 using Microsoft.Extensions.Configuration;
 using Synergy.AdobeSign;
-using Synergy.Core.EmailService;
+//using Synergy.Core.EmailService;
 using System.IO;
 using Synergy.ReliefCenter.Data.Entities;
 using Synergy.ReliefCenter.Data.Entities.Master;
@@ -35,8 +35,10 @@ namespace Synergy.ReliefCenter.Services
         private readonly IConfiguration _configuration;
         private readonly IAdobeSignRestClient _adobeSignRestClient;
         private const string CONTRACT_DOC_ID_SECTION = "AbodeSign:ContractDocumentId";
+        private const string USER_DETAILS_APIURL_SECTION = "UserDetails:ApiUrl";
+        private const string USER_DETAILS_APIKEY_SECTION = "UserDetails:ApiKey";
         private readonly IContractReviewerRepository _contractReviewerRepository;
-        private readonly IEmailService _emailService;
+        //private readonly IEmailService _emailService;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
 
         public ContractService(
@@ -49,7 +51,7 @@ namespace Synergy.ReliefCenter.Services
             IConfiguration configuration,
             IAdobeSignRestClient adobeSignRestClient,
             IContractReviewerRepository contractReviewerRepository,
-            IEmailService emailService,
+            //IEmailService emailService,
             IExternalUserDetailsRepository externalUserDetailsRepository)
         {
             _contractRepository = contractRepository;
@@ -61,16 +63,17 @@ namespace Synergy.ReliefCenter.Services
             _configuration = configuration;
             _adobeSignRestClient = adobeSignRestClient;
             _contractReviewerRepository = contractReviewerRepository;
-            _emailService = emailService;
+            //_emailService = emailService;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
 
-        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken)
+
+        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken, string crewWageApiBaseUrl)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
-            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId, authToken);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId,AuthToken, crewWageApiBaseUrl);
             
             var contractDto = new ContractDto()
             {
@@ -87,12 +90,14 @@ namespace Synergy.ReliefCenter.Services
                 CDCNumber = seafarerDetails.CdcNumber,
                 CrewCode = seafarerDetails.CrewCode,
                 DateOfBirth = seafarerDetails.DateOfBirth,
-                Name = seafarerDetails.FirstName + "" + seafarerDetails.LastName,
+                Name = seafarerDetails.FirstName + " " + seafarerDetails.LastName,
                 Nationality = seafarerDetails.NationalityId.ToString(),
                 PlaceOfBirth = seafarerDetails.PlaceOfBirth,
                 Rank = seafarerDetails.RankId.ToString(),
                 PassportNumber =null,
-                Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year
+                Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year,
+                Email = seafarerAllDetails.Email,
+                Phone = seafarerAllDetails.Phone
             };
 
             var vessels = new VesselDetailDto()
@@ -154,13 +159,15 @@ namespace Synergy.ReliefCenter.Services
             participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListSeafarer, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 2" });
             var mergeFieldInfoList = new List<MergeFieldInfo>();
 
-            var contractData = await GetConract(contractId);
+            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
+            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
+            var contractData = await GetConract(contractId,userDetailsApiKey, userDetailsApiBaseUrl);
 
             var FormData = contractData.ContractForm.Data;
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = FormData.SeafarerDetail.Name });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "crewCode", defaultValue = FormData.SeafarerDetail.CrewCode });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "age", defaultValue = FormData.SeafarerDetail.Age.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "dateOfBirth", defaultValue = FormData.SeafarerDetail.DateOfBirth.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "dateOfBirth", defaultValue = convertDateString(FormData.SeafarerDetail.DateOfBirth) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "placeOfBirth", defaultValue = FormData.SeafarerDetail.PlaceOfBirth });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "nationality", defaultValue = FormData.SeafarerDetail.Nationality });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "ppNo", defaultValue = FormData.SeafarerDetail.PassportNumber });
@@ -176,8 +183,8 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "portOfRegistry", defaultValue = FormData.VesselInfo.PortOfRegistry });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "placeOfEngagement", defaultValue = FormData.TravelInfo.PlaceOfEnagement });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractTerm", defaultValue = FormData.TravelInfo.ContractTerms });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractStartDate", defaultValue = FormData.TravelInfo.StartDate.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractExpiryDate", defaultValue = FormData.TravelInfo.EndDate.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractStartDate", defaultValue = convertDateString(FormData.TravelInfo.StartDate) });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractExpiryDate", defaultValue = convertDateString(FormData.TravelInfo.EndDate) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isKinDetailsProvided", defaultValue = FormData.AttachmentDetail.NextOfKinFormAttached.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isMedicalCertificateIssued", defaultValue = FormData.AttachmentDetail.MedicalCertificateAttached.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerContractTitle", defaultValue = "Seaman's Employment Contract - " });
@@ -209,7 +216,16 @@ namespace Synergy.ReliefCenter.Services
             return;
         }
 
-        public async Task<ContractDto> GetConract(long id)
+        public static string convertDateString(DateTime dateToConvert)
+        {
+            string dateString = dateToConvert.ToString(), convertedDateString = "";
+            if (dateString != "01-01-0001 00:00:00") {
+                convertedDateString = dateToConvert.ToString("dd/MMMM/yyyy");
+            }
+            return convertedDateString;
+        }
+
+        public async Task<ContractDto> GetConract(long id, string apiKey, string userDetailsApiBaseUrl)
         {
             var ContractDetails = new ContractDto();
             var contract =await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
@@ -220,7 +236,7 @@ namespace Synergy.ReliefCenter.Services
             var userInfo = new UserDetails();
             foreach (var data in reviewers)
             {
-                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
                 reviewer.Add(new ReviewersDto()
                 {
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
@@ -242,7 +258,7 @@ namespace Synergy.ReliefCenter.Services
             return ContractDetails;
         }
 
-        public async Task<ContractDto> GetConracts(long vesselId, long seafarerId)
+        public async Task<ContractDto> GetConracts(long vesselId, long seafarerId, string apiKey, string userDetailsApiBaseUrl)
         {
             var contracts = new ContractDto();
             var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.VesselId == vesselId && x.SeafarerId == seafarerId && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
@@ -257,7 +273,7 @@ namespace Synergy.ReliefCenter.Services
             var userInfo = new UserDetails();
             foreach (var data in reviewers)
             {
-                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, "");
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
                 reviewer.Add(new ReviewersDto()
                 {
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
@@ -271,7 +287,7 @@ namespace Synergy.ReliefCenter.Services
                 });
             }
 
-            contracts = _mapper.Map <ContractDto>(contracts);
+            contracts = _mapper.Map <ContractDto>(contract);
             contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
             contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
             contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
@@ -320,14 +336,15 @@ namespace Synergy.ReliefCenter.Services
             return;
         }
 
-        public async Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto)
+        public async Task AssignReviewers(long id, ContractReviewerSetDto reviewerSetDto, string apiKey, string userDetailsApiBaseUrl)
         {
             var contract = _contractRepository.Get(id);
+            var contractForm =await _contractFormRepository.GetAllIncluding().Where(x => x.ContractId == id).FirstOrDefaultAsync();
             var reviewer = new List<ContractReviewer>();
             var userInfo = new UserDetails();
             foreach (var data in reviewerSetDto.Reviewers)
             {
-                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.Id, "");
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.Id, apiKey,userDetailsApiBaseUrl);
                 reviewer.Add(new ContractReviewer()
                 {
                     ReviewerId = data.Id,
@@ -351,27 +368,29 @@ namespace Synergy.ReliefCenter.Services
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);
 
-            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),mapContract);
+            await SendEmail(reviewerToBeAdded.Select(x=>x.Email).FirstOrDefault(),_mapper.Map<ContractFormDto>(contractForm));
             return;
         }
 
-        private async Task SendEmail(string email,VesselContract contract)
+        private async Task SendEmail(string email,ContractFormDto contract)
         {
-            SendingMailInfo sendingMailInfo = new SendingMailInfo();
-            string[] To = { email };
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "OnBoarding.html");
-            var reader = new StreamReader(path);
-            var mailBody = reader.ReadToEnd();
-            reader.Dispose();
-            //mailBody = mailBody.Replace("{Logs}", htmlStr.ToString());
-            sendingMailInfo.Body = mailBody;
-            //sendingMailInfo.To = To.ToList();
-            sendingMailInfo.To.Add(email);
-            sendingMailInfo.Subject = "You have a contract to verify";
-            sendingMailInfo.Name = "Abhishek Pandey";
-            sendingMailInfo.From = "abhishek.p@solutelabs.com";
-            sendingMailInfo.IsBodyHtml = true;            
-            await _emailService.SendEmailAsync(sendingMailInfo);
+            //SendingMailInfo sendingMailInfo = new SendingMailInfo();
+            //var path = Path.Combine(Directory.GetCurrentDirectory(),"Templates" ,"TravelDetails.html");
+            //var reader = new StreamReader(path);
+            //var mailBody = reader.ReadToEnd();
+            //reader.Dispose();
+            //mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
+            //mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
+            //mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
+            //sendingMailInfo.Body = mailBody;
+            //sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
+            //sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
+            //sendingMailInfo.Name = "Synergy Marine";
+            //sendingMailInfo.From = "support@synergymarinetest.com";
+            //sendingMailInfo.IsBodyHtml = true;
+            //await _emailService.SendEmailAsync(sendingMailInfo);
         }
+
+        
     }
 }
