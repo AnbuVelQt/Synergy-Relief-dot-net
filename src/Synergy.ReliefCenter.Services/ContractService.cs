@@ -293,7 +293,7 @@ namespace Synergy.ReliefCenter.Services
             sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
             sendingMailInfo.Name = "Synergy Marine";
             sendingMailInfo.From = "support@synergymarinetest.com";
-            sendingMailInfo.IsBodyHtml = true;            
+            sendingMailInfo.IsBodyHtml = true;
             await _emailService.SendEmailAsync(sendingMailInfo);
         }
 
