@@ -66,8 +66,10 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpPut]
         [Route("{id}/reviewers")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AssignReviewers([FromRoute] long id)
+        public async Task<IActionResult> AssignReviewers([FromRoute] long id,[FromBody] ContractReviewerSet model)
         {
+            var requestModel = _mapper.Map<ContractReviewerSetDto>(model);
+            await _contractService.AssignReviewers(id,requestModel);
             return NoContent();
         }
 
@@ -80,7 +82,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {
-                return NotFound("No Data Found for the query");
+                return NotFound();
             }
             return Ok(getContractDetails);
         }
