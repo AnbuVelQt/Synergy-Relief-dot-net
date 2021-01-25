@@ -51,12 +51,12 @@ namespace Synergy.ReliefCenter.Services
             _configuration = configuration;
             _adobeSignRestClient = adobeSignRestClient;
         }
-        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken)
+        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string authToken)
         {
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
-            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId, AuthToken);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId, authToken);
             
             var contractDto = new ContractDto()
             {
@@ -130,54 +130,15 @@ namespace Synergy.ReliefCenter.Services
             string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION).Value;
             fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
             var participantSetsInfoList = new List<ParticipantInfo>();
-            var memberInfoListFleetHead = new List<MemberInfo>();
-            memberInfoListFleetHead.Add(new MemberInfo { email = "pentagram@synergyship.com" });
-            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListFleetHead, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 1" });
-
-            var memberInfoListSeafarer = new List<MemberInfo>();
-            memberInfoListSeafarer.Add(new MemberInfo { email = "anbu.vel@qantler.com" });
-            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListSeafarer, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 2" });
+            var memberInfoList = new List<MemberInfo>();
+            memberInfoList.Add(new MemberInfo { email = "pentagram@synergyship.com" });
+            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoList, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.FORM_FILLER) });
             var mergeFieldInfoList = new List<MergeFieldInfo>();
-
-            var contractData = await GetConract(contractId);
-
-            var FormData = contractData.ContractForm.Data;
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = FormData.SeafarerDetail.Name });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "crewCode", defaultValue = FormData.SeafarerDetail.CrewCode });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "age", defaultValue = FormData.SeafarerDetail.Age.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "dateOfBirth", defaultValue = FormData.SeafarerDetail.DateOfBirth.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "placeOfBirth", defaultValue = FormData.SeafarerDetail.PlaceOfBirth });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "nationality", defaultValue = FormData.SeafarerDetail.Nationality });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "ppNo", defaultValue = FormData.SeafarerDetail.PassportNumber });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "cdcNo", defaultValue = FormData.SeafarerDetail.CDCNumber });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "rank", defaultValue = FormData.SeafarerDetail.Rank });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerAddress", defaultValue = FormData.SeafarerDetail.Address });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "vesselOwner", defaultValue = FormData.VesselInfo.Owner });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "employerAgent", defaultValue = FormData.VesselInfo.EmployerAgent });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "docHolder", defaultValue = FormData.VesselInfo.MLCHolder });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "vesselName", defaultValue = FormData.VesselInfo.Name });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "imoNo", defaultValue = FormData.VesselInfo.IMONumber.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "cba", defaultValue = FormData.VesselInfo.CBA });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "portOfRegistry", defaultValue = FormData.VesselInfo.PortOfRegistry });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "placeOfEngagement", defaultValue = FormData.TravelInfo.PlaceOfEnagement });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractTerm", defaultValue = FormData.TravelInfo.ContractTerms });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractStartDate", defaultValue = FormData.TravelInfo.StartDate.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractExpiryDate", defaultValue = FormData.TravelInfo.EndDate.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isKinDetailsProvided", defaultValue = FormData.AttachmentDetail.NextOfKinFormAttached.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isMedicalCertificateIssued", defaultValue = FormData.AttachmentDetail.MedicalCertificateAttached.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerContractTitle", defaultValue = "Seaman's Employment Contract - " });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerEffectiveFrom", defaultValue = "Effective From: " });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerLicenseNo", defaultValue = "RPS-License No: " });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerCompanyName", defaultValue = "Synergy Maritime Recruitment Services Pvt Ltd, Delhi." });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedBy", defaultValue = "" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedOn", defaultValue = "" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "monthlyWagesHeader1" });
-
-
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = "Jhon" });
             var agreementCreationInfo = new AgreementCreationInfo
             {
                 fileInfos = fileInfosList,
-                name = "Demo Check 199",
+                name = "Demo Check 197",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
                 state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.IN_PROCESS),
