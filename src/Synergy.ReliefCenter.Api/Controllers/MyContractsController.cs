@@ -30,9 +30,9 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("mycontracts")]
         [ProducesResponseType(typeof(List<MyContracts>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetSeafarerConracts([FromQuery] long vesselId, [FromQuery] string auth)
+        public async Task<ActionResult> GetSeafarerConracts([FromQuery] string imoNumber, [FromQuery] string auth)
         {
-            var contractDetails = await _contractService.GetSeafarerConracts(vesselId, auth);
+            var contractDetails = await _contractService.GetSeafarerConracts(imoNumber, auth);
             var getContractDetails = _mapper.Map<List<MyContracts>>(contractDetails);
             if (contractDetails == null)
             {
@@ -44,11 +44,11 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("mycontract/active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Contract>> GetSeafarerConract([FromQuery] long vesselId, [FromQuery] string auth)
+        public async Task<ActionResult<Contract>> GetSeafarerConract([FromQuery] string imoNumber, [FromQuery] string auth)
         {
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetSeafarerConract(vesselId, auth,userDetailsApiKey,userDetailsApiBaseUrl);
+            var contractDetails = await _contractService.GetSeafarerConract(imoNumber, auth,userDetailsApiKey,userDetailsApiBaseUrl);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {

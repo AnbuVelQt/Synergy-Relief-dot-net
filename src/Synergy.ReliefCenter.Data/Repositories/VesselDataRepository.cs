@@ -2,6 +2,7 @@
 using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.VesselCenter;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,9 +17,10 @@ namespace Synergy.ReliefCenter.Data.Repositories
             _context = context;
         }
 
-        public async ValueTask<Vessel> GetVesselByIdAsync(long id)
+        public async ValueTask<Vessel> GetVesselByIdAsync(string id)
         {
-            return await _context.Vessels.Include(x=>x.OwnerDetails).Include(x => x.PortDetails).Include(x => x.FleetVesselsDetails).FirstOrDefaultAsync(x=>x.Id == id);
+            long imoNumber = Convert.ToInt64(id);
+            return await _context.Vessels.Include(x=>x.OwnerDetails).Include(x => x.PortDetails).Include(x => x.FleetVesselsDetails).FirstOrDefaultAsync(x=>x.ImoNumber == imoNumber);
         }
     }
 }

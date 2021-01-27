@@ -16,9 +16,9 @@ namespace Synergy.ReliefCenter.Data.Repositories
             _context = context;
         }
 
-        public async ValueTask<Seafarer> GetSeafarerByIdAsync(long id)
+        public async ValueTask<Seafarer> GetSeafarerByIdAsync(string id)
         {
-            return await _context.Seafarers.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Seafarers.FirstOrDefaultAsync(x => x.CdcNumber == id);
         }
 
         public async ValueTask<SeafarerContactDetails> GetSeafarerContactDetailsByIdAsync(long id)

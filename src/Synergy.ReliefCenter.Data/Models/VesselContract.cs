@@ -15,6 +15,8 @@ namespace Synergy.ReliefCenter.Data.Models
     [Index(nameof(StartDate), Name = "index_vessel_contracts_on_start_date")]
     [Index(nameof(VesselId), Name = "index_vessel_contracts_on_vessel_id")]
     [Index(nameof(NextReviewer), Name = "index_vessel_contracts_on_next_reviewer")]
+    [Index(nameof(CdcNumber), Name = "index_vessel_contracts_on_cdc_number")]
+    [Index(nameof(ImoNumber), Name = "index_vessel_contracts_on_imo_number")]
     public partial class VesselContract
     {
         public VesselContract()
@@ -59,6 +61,18 @@ namespace Synergy.ReliefCenter.Data.Models
 
         [Column("status")]
         public string Status { get; set; }
+
+        [Column("imo_number")]
+        public string ImoNumber { get; set; }
+
+        [Column("cdc_number")]
+        public string CdcNumber { get; set; }
+
+        [Column("verifiedBy")]
+        public string VerifiedBy { get; set; }
+
+        [Column("verifiedOn")]
+        public DateTime? VerifiedOn { get; set; }
 
         [InverseProperty(nameof(Relief.VesselContract))]
         public virtual ICollection<Relief> Reliefs { get; set; }

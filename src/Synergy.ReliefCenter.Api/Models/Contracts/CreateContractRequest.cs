@@ -2,8 +2,8 @@
 {
     public class CreateContractRequest
     {
-        public int VesselId { get; set; }
+        public string ImoNumber { get; set; }
 
-        public int SeafarerId { get; set; }
+        public string CdcNumber { get; set; }
     }
 }

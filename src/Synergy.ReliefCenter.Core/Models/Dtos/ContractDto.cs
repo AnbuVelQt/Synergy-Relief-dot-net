@@ -16,6 +16,13 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public ContractStatus Status { get; set; }
 
         public decimal? Salary { get; set; }
+
+        public string ImoNumber { get; set; }
+        public string CdcNumber { get; set; }
+
+        public string VerifiedBy { get; set; }
+        public DateTime? VerifiedOn { get; set; }
+
         public ContractFormDto ContractForm { get; set; }
     }
 }

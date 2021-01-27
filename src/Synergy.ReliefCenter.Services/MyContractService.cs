@@ -44,15 +44,15 @@ namespace Synergy.ReliefCenter.Services
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
-        public async Task<ContractDto> GetSeafarerConract(long vesselId, string userId, string apiKey, string userDetailsApiBaseUrl)
+        public async Task<ContractDto> GetSeafarerConract(string imoNumber, string userId, string apiKey, string userDetailsApiBaseUrl)
         {
             var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
             var contracts = new ContractDto();
 
             var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.SeafarerId == seafarerDetails.Result.Id && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null))).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
-            if (vesselId > 0)
+            if (imoNumber != null)
             {
-                contract.VesselId = vesselId;
+                contract.ImoNumber = imoNumber;
             }
             if (contract is null)
             {
@@ -87,7 +87,7 @@ namespace Synergy.ReliefCenter.Services
             return contracts;
         }
 
-        public async Task<IList<MyContractsDto>> GetSeafarerConracts(long vesselId, string userId)
+        public async Task<IList<MyContractsDto>> GetSeafarerConracts(string imoNumber, string userId)
         {
             var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
            
@@ -95,9 +95,9 @@ namespace Synergy.ReliefCenter.Services
                 .Where(x => x.SeafarerId == seafarerDetails.Result.Id && 
                 ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)))
                 .OrderByDescending(x => x.Id).ToListAsync();
-            if (vesselId > 0)
+            if (imoNumber != null)
             {
-                contract.Where(s => s.VesselId == vesselId);
+                contract.Where(s => s.ImoNumber == imoNumber);
             }
             if (contract is null)
             {

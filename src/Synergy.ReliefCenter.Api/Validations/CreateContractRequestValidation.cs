@@ -9,8 +9,8 @@ namespace Synergy.ReliefCenter.Api.Validations
     {
         public CreateContractRequestValidation()
         {
-            RuleFor(x => x.VesselId).GreaterThan(1);
-            RuleFor(x => x.SeafarerId).GreaterThan(1);
+            //RuleFor(x => x.VesselId).GreaterThan(1);
+            //RuleFor(x => x.SeafarerId).GreaterThan(1);
         }
     
     }
