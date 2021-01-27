@@ -30,5 +30,10 @@ namespace Synergy.ReliefCenter.Data.Repositories
         {
             return await _context.Seafarers.Where(x => x.IdentityUserId == userId).FirstOrDefaultAsync();
         }
+
+        public async ValueTask<SeafarerDocuments> GetSeafarerDocumentsByIdAsync(long seafarerId, long id)
+        {
+            return await _context.SeafarerDocuments.Where(x => x.SeafarerId == seafarerId && x.DocumentSubCategoryId == id).FirstOrDefaultAsync();
+        }
     }
 }

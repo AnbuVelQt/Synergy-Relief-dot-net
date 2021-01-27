@@ -13,5 +13,7 @@ namespace Synergy.ReliefCenter.Data.Repositories.Abstraction
         ValueTask<SeafarerContactDetails> GetSeafarerContactDetailsByIdAsync(long id);
 
         ValueTask<Seafarer> GetSeafarerByIdentityAsync(string userId);
+
+        ValueTask<SeafarerDocuments> GetSeafarerDocumentsByIdAsync(long seafarerId, long id);
     }
 }
