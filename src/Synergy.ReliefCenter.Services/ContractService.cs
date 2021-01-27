@@ -63,7 +63,7 @@ namespace Synergy.ReliefCenter.Services
             var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselImoNumber);
             var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerCdcNumber);
             var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerDetails.Id);
-            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselDetails.Id, seafarerDetails.Id,AuthToken, crewWageApiBaseUrl);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselImoNumber, seafarerCdcNumber,AuthToken, crewWageApiBaseUrl);
             
             var contractDto = new ContractDto()
             {

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System;
@@ -11,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
-    
+    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class MyContractsController : ApiControllerBase
     {
         private readonly IMyContractService _contractService;
@@ -30,9 +33,10 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("mycontracts")]
         [ProducesResponseType(typeof(List<MyContracts>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetSeafarerConracts([FromQuery] string imoNumber, [FromQuery] string auth)
+        public async Task<ActionResult> GetSeafarerConracts([FromQuery] string imoNumber)
         {
-            var contractDetails = await _contractService.GetSeafarerConracts(imoNumber, auth);
+            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
+            var contractDetails = await _contractService.GetSeafarerConracts(imoNumber, userId);
             var getContractDetails = _mapper.Map<List<MyContracts>>(contractDetails);
             if (contractDetails == null)
             {
@@ -44,11 +48,12 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("mycontract/active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Contract>> GetSeafarerConract([FromQuery] string imoNumber, [FromQuery] string auth)
+        public async Task<ActionResult<Contract>> GetSeafarerConract([FromQuery] string imoNumber)
         {
+            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetSeafarerConract(imoNumber, auth,userDetailsApiKey,userDetailsApiBaseUrl);
+            var contractDetails = await _contractService.GetSeafarerConract(imoNumber, userId,userDetailsApiKey,userDetailsApiBaseUrl);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {
