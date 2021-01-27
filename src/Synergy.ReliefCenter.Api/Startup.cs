@@ -14,6 +14,8 @@ using Synergy.ReliefCenter.Services.Mappers;
 //using Synergy.Core.EmailService;
 using Microsoft.Extensions.Logging;
 using System;
+using Synergy.ReliefCenter.Api.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -56,6 +58,38 @@ namespace Synergy.ReliefCenter.Api
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddAllValidators();
+
+            // For JwtBearerConfiguration
+
+            var jwtBearerConfiguration = Configuration.GetSection(nameof(JwtBearerConfiguration)).Get<JwtBearerConfiguration>();
+
+            services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
+                .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
+                {
+                    options.Authority = jwtBearerConfiguration.ShoreIdp.AuthorityUrl;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.ValidIssuer,
+                        ValidateIssuer = true,
+                        ValidateLifetime = true,
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        //ValidAudiences = new string[] { "Manning_app", "waveapi" }
+                    };
+                })
+                .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
+                {
+                    options.Authority = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.ValidIssuer,
+                        ValidateIssuer = true,
+                        ValidateLifetime = false,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidAudiences = new string[] {  "waveapi" }
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Core.Models.Dtos;
@@ -10,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
+    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
