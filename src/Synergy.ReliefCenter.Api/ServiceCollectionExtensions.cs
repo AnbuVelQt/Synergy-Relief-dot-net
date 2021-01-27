@@ -25,6 +25,30 @@ namespace Synergy.ReliefCenter.Api
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Relief Center Api", Version = "v1" });
 
+                options.AddSecurityDefinition("api_key", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "api_key",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Relief Center API With Identity Authentication"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "api_key"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+
                 // options.ExampleFilters();
                 options.DescribeAllParametersInCamelCase();
 
@@ -45,6 +69,8 @@ namespace Synergy.ReliefCenter.Api
                 //        }
                 //    }
                 //});
+
+               
             });
 
             services.AddSwaggerGenNewtonsoftSupport();
