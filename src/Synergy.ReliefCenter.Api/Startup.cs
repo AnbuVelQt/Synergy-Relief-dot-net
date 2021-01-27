@@ -69,12 +69,11 @@ namespace Synergy.ReliefCenter.Api
                     options.Authority = jwtBearerConfiguration.ShoreIdp.AuthorityUrl;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.ValidIssuer,
+                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.AuthorityUrl,
                         ValidateIssuer = true,
                         ValidateLifetime = true,
-                        ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
-                        //ValidAudiences = new string[] { "Manning_app", "waveapi" }
+                        ValidateAudience = false
                     };
                 })
                 .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
@@ -82,12 +81,11 @@ namespace Synergy.ReliefCenter.Api
                     options.Authority = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.ValidIssuer,
+                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl,
                         ValidateIssuer = true,
-                        ValidateLifetime = false,
-                        ValidateAudience = true,
+                        ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidAudiences = new string[] {  "waveapi" }
+                        ValidateAudience = false
                     };
                 });
         }

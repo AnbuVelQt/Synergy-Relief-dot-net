@@ -14,7 +14,6 @@ namespace Synergy.ReliefCenter.Api.Configuration
     public class IdentityProviderProperties
     {
         public string AuthorityUrl { get; set; }
-        public string ValidIssuer { get; set; }
 
     }
 
