@@ -17,6 +17,7 @@ using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 using System.IO;
 using Synergy.ReliefCenter.Data.Entities;
 using Synergy.ReliefCenter.Data.Entities.Master;
+using Synergy.Core.EmailService;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -29,7 +30,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IMapper _mapper;
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IContractReviewerRepository _contractReviewerRepository;
-        //private readonly IEmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
         private readonly IMasterDataRepository _masterDataRepository;
 
@@ -41,7 +42,7 @@ namespace Synergy.ReliefCenter.Services
             IMapper mapper,
             IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
             IContractReviewerRepository contractReviewerRepository,
-            //IEmailService emailService,
+            IEmailService emailService,
             IExternalUserDetailsRepository externalUserDetailsRepository,
             IMasterDataRepository masterDataRepository)
         {
@@ -52,7 +53,7 @@ namespace Synergy.ReliefCenter.Services
             _mapper = mapper;
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _contractReviewerRepository = contractReviewerRepository;
-            //_emailService = emailService;
+            _emailService = emailService;
             _externalUserDetailsRepository = externalUserDetailsRepository;
             _masterDataRepository = masterDataRepository;
         }
@@ -172,7 +173,7 @@ namespace Synergy.ReliefCenter.Services
         public async Task<ContractDto> GetConracts(string vesselImoNumber, string seafarerCdcNumber, string apiKey, string userDetailsApiBaseUrl)
         {
             var contracts = new ContractDto();
-            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.ImoNumber == vesselImoNumber && x.CdcNumber == seafarerCdcNumber && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.ImoNumber == vesselImoNumber && x.CdcNumber == seafarerCdcNumber && ((x.EndDate >= DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
             if (contract is null)
             {
                 return null;
@@ -285,21 +286,21 @@ namespace Synergy.ReliefCenter.Services
 
         private async Task SendEmail(string email,ContractFormDto contract)
         {
-            //SendingMailInfo sendingMailInfo = new SendingMailInfo();
-            //var path = Path.Combine(Directory.GetCurrentDirectory(),"Templates" ,"TravelDetails.html");
-            //var reader = new StreamReader(path);
-            //var mailBody = reader.ReadToEnd();
-            //reader.Dispose();
-            //mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
-            //mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
-            //mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
-            //sendingMailInfo.Body = mailBody;
-            //sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
-            //sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
-            //sendingMailInfo.Name = "Synergy Marine";
-            //sendingMailInfo.From = "support@synergymarinetest.com";
-            //sendingMailInfo.IsBodyHtml = true;
-            //await _emailService.SendEmailAsync(sendingMailInfo);
+            SendingMailInfo sendingMailInfo = new SendingMailInfo();
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "TravelDetails.html");
+            var reader = new StreamReader(path);
+            var mailBody = reader.ReadToEnd();
+            reader.Dispose();
+            mailBody = mailBody.Replace("{NAME}", contract.Data.SeafarerDetail.Name);
+            mailBody = mailBody.Replace("{EMAIL}", contract.Data.SeafarerDetail.Email);
+            mailBody = mailBody.Replace("{AGE}", contract.Data.SeafarerDetail.Age.ToString());
+            sendingMailInfo.Body = mailBody;
+            sendingMailInfo.To.Add("abhishek.p@solutelabs.com");
+            sendingMailInfo.Subject = "Seafarer Profile Assigned for Approval";
+            sendingMailInfo.Name = "Synergy Marine";
+            sendingMailInfo.From = "support@synergymarinetest.com";
+            sendingMailInfo.IsBodyHtml = true;
+            await _emailService.SendEmailAsync(sendingMailInfo);
         }
 
         
