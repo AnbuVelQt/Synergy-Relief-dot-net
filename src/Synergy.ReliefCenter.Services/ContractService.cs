@@ -31,6 +31,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IContractReviewerRepository _contractReviewerRepository;
         //private readonly IEmailService _emailService;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
+        private readonly IMasterDataRepository _masterDataRepository;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -41,7 +42,8 @@ namespace Synergy.ReliefCenter.Services
             IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
             IContractReviewerRepository contractReviewerRepository,
             //IEmailService emailService,
-            IExternalUserDetailsRepository externalUserDetailsRepository)
+            IExternalUserDetailsRepository externalUserDetailsRepository,
+            IMasterDataRepository masterDataRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -52,24 +54,27 @@ namespace Synergy.ReliefCenter.Services
             _contractReviewerRepository = contractReviewerRepository;
             //_emailService = emailService;
             _externalUserDetailsRepository = externalUserDetailsRepository;
+            _masterDataRepository = masterDataRepository;
         }
 
 
-        public async Task<ContractDto> CreateContract(long vesselId, long seafarerId,string AuthToken, string crewWageApiBaseUrl)
+        public async Task<ContractDto> CreateContract(string vesselImoNumber, string seafarerCdcNumber,string AuthToken, string crewWageApiBaseUrl)
         {
-            var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselId);
-            var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerId);
-            var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerId);
-            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselId, seafarerId,AuthToken, crewWageApiBaseUrl);
+            var vesselDetails =await _vesselDataRepository.GetVesselByIdAsync(vesselImoNumber);
+            var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdAsync(seafarerCdcNumber);
+            var seafarerAllDetails = await _seafarerDataRepository.GetSeafarerContactDetailsByIdAsync(seafarerDetails.Id);
+            var salarymatrix =await _externalSalaryMatrixRepository.GetSalaryMatrix(vesselImoNumber, seafarerCdcNumber,AuthToken, crewWageApiBaseUrl);
             
             var contractDto = new ContractDto()
             {
                 SeafarerId = seafarerAllDetails.SeafarerId,
                 VesselId = vesselDetails.Id,
                 Status = ContractStatus.InDraft,
-                Salary = salarymatrix.TotalMonthlyWages
+                Salary = salarymatrix.TotalMonthlyWages,
+                CdcNumber = seafarerDetails.CdcNumber,
+                ImoNumber = vesselDetails.ImoNumber.ToString()
             };
-
+           
             var seafarer = new SeafarerDetailDto()
             {
                 Id = seafarerDetails.Id,
@@ -81,7 +86,7 @@ namespace Synergy.ReliefCenter.Services
                 Nationality = seafarerDetails.NationalityId.ToString(),
                 PlaceOfBirth = seafarerDetails.PlaceOfBirth,
                 Rank = seafarerDetails.RankId.ToString(),
-                PassportNumber =null,
+                PassportNumber =  _seafarerDataRepository.GetSeafarerDocumentsByIdAsync(seafarerDetails.Id, _masterDataRepository.GetDocumentCategoryByIdAsync("Passport")).Result.Number,
                 Age = DateTime.Now.Year-seafarerDetails.DateOfBirth.Year,
                 Email = seafarerAllDetails.Email,
                 Phone = seafarerAllDetails.Phone
@@ -164,10 +169,10 @@ namespace Synergy.ReliefCenter.Services
             return ContractDetails;
         }
 
-        public async Task<ContractDto> GetConracts(long vesselId, long seafarerId, string apiKey, string userDetailsApiBaseUrl)
+        public async Task<ContractDto> GetConracts(string vesselImoNumber, string seafarerCdcNumber, string apiKey, string userDetailsApiBaseUrl)
         {
             var contracts = new ContractDto();
-            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.VesselId == vesselId && x.SeafarerId == seafarerId && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.ImoNumber == vesselImoNumber && x.CdcNumber == seafarerCdcNumber && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate ==null && x.EndDate == null))).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
             if (contract is null)
             {
                 return null;

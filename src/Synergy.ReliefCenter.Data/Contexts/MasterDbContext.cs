@@ -16,5 +16,7 @@ namespace Synergy.ReliefCenter.Data.Contexts
         public DbSet<Country> Countries { get; set; }
 
         public DbSet<Nationality> Nationalities { get; set; }
+
+        public DbSet<DocumentSubCategory> DocumentSubCategories { get; set; }
     }
 }
