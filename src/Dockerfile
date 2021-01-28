@@ -9,7 +9,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 ARG NUGET_SRC
 ARG NUGET_NS
 ARG NUGET_USER
