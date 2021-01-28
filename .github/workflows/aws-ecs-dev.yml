@@ -34,6 +34,10 @@ jobs:
         REGION: ap-south-1  
         ECS_CLUSTER: relief-dotnet-dev-test
         SERVICE_NAME: relief-dotnet-dev-test
+        NUGET_SRC: ${{ secrets.NUGET_SRC }}
+        NUGET_NS: ${{ secrets.NUGET_NS }}
+        NUGET_USER: ${{ secrets.NUGET_USER }}
+        NUGET_SECRET: ${{ secrets.NUGET_SECRET }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
