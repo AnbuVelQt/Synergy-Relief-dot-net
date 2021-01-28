@@ -34,7 +34,8 @@ namespace Synergy.ReliefCenter.Services
         private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IConfiguration _configuration;
         private readonly IAdobeSignRestClient _adobeSignRestClient;
-        private const string CONTRACT_DOC_ID_SECTION = "AbodeSign:ContractDocumentId";
+        private const string CONTRACT_DOC_ID_SECTION_LESS_ROWS = "AbodeSign:ContractDocumentId_v1.1";
+        private const string CONTRACT_DOC_ID_SECTION_MORE_ROWS = "AbodeSign:ContractDocumentId_v1.2";
         private const string USER_DETAILS_APIURL_SECTION = "UserDetails:ApiUrl";
         private const string USER_DETAILS_APIKEY_SECTION = "UserDetails:ApiKey";
         private readonly IContractReviewerRepository _contractReviewerRepository;
@@ -144,21 +145,17 @@ namespace Synergy.ReliefCenter.Services
             return contractDto;
         }
 
-        public async Task ApproveAsync(long contractId)
+        private AgreementCreationInfo GetAgreementCreationInfo(ContractDto contractData)
         {
+            var FormData = contractData.ContractForm.Data;
             var fileInfosList = new List<FileInformation>();
-            string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION).Value;
+            string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION_LESS_ROWS).Value;
+            
             fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
             var participantSetsInfoList = new List<ParticipantInfo>();
             var memberInfoListFleetHead = new List<MemberInfo>();
             memberInfoListFleetHead.Add(new MemberInfo { email = "anbu.vel@qantler.com" });
             participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListFleetHead, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 1" });
-
-            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
-            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractData = await GetConract(contractId,userDetailsApiKey, userDetailsApiBaseUrl);
-
-            var FormData = contractData.ContractForm.Data;
             var memberInfoListSeafarer = new List<MemberInfo>();
             memberInfoListSeafarer.Add(new MemberInfo { email = FormData.SeafarerDetail.Email });
             participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListSeafarer, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 2" });
@@ -188,9 +185,9 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractExpiryDate", defaultValue = convertDateString(FormData.TravelInfo.EndDate) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isKinDetailsProvided", defaultValue = FormData.AttachmentDetail.NextOfKinFormAttached.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isMedicalCertificateIssued", defaultValue = FormData.AttachmentDetail.MedicalCertificateAttached.ToString() });
-            
+
             //Need set these as dynamic after the fields ready
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerContractTitle", defaultValue = "Seaman's Employment Contract - " });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerContractTitle", defaultValue = "Seaman's Employment Contract" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerEffectiveFrom", defaultValue = "Effective From: " });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerLicenseNo", defaultValue = "RPS-License No: " });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerCompanyName", defaultValue = "Synergy Maritime Recruitment Services Pvt Ltd, Delhi." });
@@ -199,18 +196,36 @@ namespace Synergy.ReliefCenter.Services
 
             //Wages component table section
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "Basic Wages" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = FormData.Wages.BasicAmount.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = convertAmountString(FormData.Wages.BasicAmount) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allownce" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = FormData.Wages.SpecialAllownce.ToString() });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "totalMonthlyWages", defaultValue = FormData.Wages.TotalMonthlyAmount.ToString() });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = convertAmountString(FormData.Wages.SpecialAllownce) });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "totalMonthlyWages", defaultValue = convertAmountString(FormData.Wages.TotalMonthlyAmount) });
+
+            int wageLastStaticRowNo = 2;
+            if (FormData.Wages.OTRateCard != null)
+            {
+                wageLastStaticRowNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader" + wageLastStaticRowNo.ToString(), defaultValue = $"Fixed Overtime ({FormData.Wages.OTRateCard.MinHours} Hrs)" });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue" + wageLastStaticRowNo.ToString(), defaultValue = convertAmountString(FormData.Wages.OTRateCard.TotalAmount) });
+                wageLastStaticRowNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader" + wageLastStaticRowNo.ToString(), defaultValue = "Overtime Rate per Hour" });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue" + wageLastStaticRowNo.ToString(), defaultValue = convertAmountString(FormData.Wages.OTRateCard.PerHourRate) });
+            }
+
+            foreach (var CBAEarning in FormData.Wages.CBAEarningComponents)
+            {
+                wageLastStaticRowNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader" + wageLastStaticRowNo.ToString(), defaultValue = CBAEarning.Name });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue" + wageLastStaticRowNo.ToString(), defaultValue = convertAmountString(CBAEarning.Amount) });
+            }
 
             int otherEarningsSNo = 0;
             foreach (var data in FormData.Wages.OtherEarningComponents)
             {
                 otherEarningsSNo++;
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsSNo"+ otherEarningsSNo.ToString(), defaultValue = otherEarningsSNo.ToString() });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsTitle"+ otherEarningsSNo.ToString(), defaultValue = data.Name });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsAmount"+ otherEarningsSNo.ToString(), defaultValue = data.Amount.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsSNo" + otherEarningsSNo.ToString(), defaultValue = otherEarningsSNo.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsTitle" + otherEarningsSNo.ToString(), defaultValue = data.Name });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsAmount" + otherEarningsSNo.ToString(), defaultValue = convertAmountString(data.Amount) });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsDate" + otherEarningsSNo.ToString(), defaultValue = "Not Available" });
             }
 
@@ -220,7 +235,7 @@ namespace Synergy.ReliefCenter.Services
                 deductionsSNo++;
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsSNo" + deductionsSNo.ToString(), defaultValue = deductionsSNo.ToString() });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsTitle" + deductionsSNo.ToString(), defaultValue = data.Name });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsAmount" + deductionsSNo.ToString(), defaultValue = data.Amount.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsAmount" + deductionsSNo.ToString(), defaultValue = convertAmountString(data.Amount) });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsDate" + deductionsSNo.ToString(), defaultValue = "Not Available" });
             }
 
@@ -230,19 +245,35 @@ namespace Synergy.ReliefCenter.Services
                 revisedSalarySNo++;
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalarySNo" + revisedSalarySNo.ToString(), defaultValue = revisedSalarySNo.ToString() });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryEffectiveFrom" + revisedSalarySNo.ToString(), defaultValue = convertDateString(data.EffectiveFromDate) });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryAmount" + revisedSalarySNo.ToString(), defaultValue = data.TotalMonthlyWage.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryAmount" + revisedSalarySNo.ToString(), defaultValue = convertAmountString(data.TotalMonthlyWage) });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryRemarks" + revisedSalarySNo.ToString(), defaultValue = data.ReasonForRevision });
+            }
+
+            if (FormData.Wages.OtherEarningComponents.Count > 5 || FormData.Wages.DeductionComponents.Count > 5 || wageLastStaticRowNo > 8)
+            {   // default template v1.1 have only limited rows, so use this to have upto 7 rows.
+                contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION_MORE_ROWS).Value;
             }
 
             var agreementCreationInfo = new AgreementCreationInfo
             {
                 fileInfos = fileInfosList,
-                name = "Demo Check 201",
+                name = "Seaman's Employment Contract",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
                 state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.IN_PROCESS),
                 mergeFieldInfo = mergeFieldInfoList
             };
+
+            return agreementCreationInfo;
+        }
+
+        public async Task ApproveAsync(long contractId)
+        {
+            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
+            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
+            var contractData = await GetConract(contractId,userDetailsApiKey, userDetailsApiBaseUrl);
+
+            var agreementCreationInfo = GetAgreementCreationInfo(contractData);
             var adobeCreateAgreementResponse = await _adobeSignRestClient.CreateAgreementAsync(agreementCreationInfo);
             string agreementId = adobeCreateAgreementResponse.Id;
 
@@ -261,6 +292,11 @@ namespace Synergy.ReliefCenter.Services
                 convertedDateString = dateToConvert.ToString("dd'/'MMM'/'yyyy");
             }
             return convertedDateString;
+        }
+
+        public static string convertAmountString(decimal Amount)
+        {
+            return (Amount > 0 ? Amount.ToString() : "0");
         }
 
         public async Task<ContractDto> GetConract(long id, string apiKey, string userDetailsApiBaseUrl)

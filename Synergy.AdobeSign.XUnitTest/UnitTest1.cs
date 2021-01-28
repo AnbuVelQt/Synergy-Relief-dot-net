@@ -18,7 +18,6 @@ namespace Synergy.AdobeSign.XUnitTest
             {
                 AccessKey = "3AAABLblqZhDUcRVexDXgOSEd0TWOxz-XYfWgPxBQhF1eYu5osWZoWZ-2ZPX3wRkLBYpBKExgOWXsNhQyUa4EykXbZUPqWFaA",
                 ApiUrl = "https://api.in1.echosign.com:443",
-                ContractDocumentId = "CBJCHBCAABAAuIj3UtlJc9u7_PKAdBAu3UqrGBXJWqrT",
                 ApiVersion = "v6"
             };
             adobeSignRestClient = new AdobeSignRestClient(_configuration);
