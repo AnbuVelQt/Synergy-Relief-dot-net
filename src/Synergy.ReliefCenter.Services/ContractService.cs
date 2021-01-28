@@ -151,19 +151,19 @@ namespace Synergy.ReliefCenter.Services
             fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
             var participantSetsInfoList = new List<ParticipantInfo>();
             var memberInfoListFleetHead = new List<MemberInfo>();
-            memberInfoListFleetHead.Add(new MemberInfo { email = "pentagram@synergyship.com" });
+            memberInfoListFleetHead.Add(new MemberInfo { email = "anbu.vel@qantler.com" });
             participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListFleetHead, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 1" });
-
-            var memberInfoListSeafarer = new List<MemberInfo>();
-            memberInfoListSeafarer.Add(new MemberInfo { email = "anbu.vel@qantler.com" });
-            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListSeafarer, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 2" });
-            var mergeFieldInfoList = new List<MergeFieldInfo>();
 
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
             var contractData = await GetConract(contractId,userDetailsApiKey, userDetailsApiBaseUrl);
 
             var FormData = contractData.ContractForm.Data;
+            var memberInfoListSeafarer = new List<MemberInfo>();
+            memberInfoListSeafarer.Add(new MemberInfo { email = FormData.SeafarerDetail.Email });
+            participantSetsInfoList.Add(new ParticipantInfo { memberInfos = memberInfoListSeafarer, order = 1, role = Enum.GetName<AdobeRoleEnum>(AdobeRoleEnum.SIGNER), label = "Participant 2" });
+            var mergeFieldInfoList = new List<MergeFieldInfo>();
+
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "seafarerName", defaultValue = FormData.SeafarerDetail.Name });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "crewCode", defaultValue = FormData.SeafarerDetail.CrewCode });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "age", defaultValue = FormData.SeafarerDetail.Age.ToString() });
@@ -180,6 +180,7 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "vesselName", defaultValue = FormData.VesselInfo.Name });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "imoNo", defaultValue = FormData.VesselInfo.IMONumber.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "cba", defaultValue = FormData.VesselInfo.CBA });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "currentCBANo", defaultValue = FormData.VesselInfo.CBA });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "portOfRegistry", defaultValue = FormData.VesselInfo.PortOfRegistry });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "placeOfEngagement", defaultValue = FormData.TravelInfo.PlaceOfEnagement });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractTerm", defaultValue = FormData.TravelInfo.ContractTerms });
@@ -187,15 +188,16 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "contractExpiryDate", defaultValue = convertDateString(FormData.TravelInfo.EndDate) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isKinDetailsProvided", defaultValue = FormData.AttachmentDetail.NextOfKinFormAttached.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "isMedicalCertificateIssued", defaultValue = FormData.AttachmentDetail.MedicalCertificateAttached.ToString() });
+            
+            //Need set these as dynamic after the fields ready
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerContractTitle", defaultValue = "Seaman's Employment Contract - " });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerEffectiveFrom", defaultValue = "Effective From: " });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerLicenseNo", defaultValue = "RPS-License No: " });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerCompanyName", defaultValue = "Synergy Maritime Recruitment Services Pvt Ltd, Delhi." });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedBy", defaultValue = "" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedOn", defaultValue = "" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "monthlyWagesHeader1" });
-            
-            //Wages component
+
+            //Wages component table section
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "Basic Wages" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = FormData.Wages.BasicAmount.ToString() });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allownce" });
@@ -222,10 +224,20 @@ namespace Synergy.ReliefCenter.Services
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsDate" + deductionsSNo.ToString(), defaultValue = "Not Available" });
             }
 
+            int revisedSalarySNo = 0;
+            foreach (var data in FormData.RevisedSalaries)
+            {
+                revisedSalarySNo++;
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalarySNo" + revisedSalarySNo.ToString(), defaultValue = revisedSalarySNo.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryEffectiveFrom" + revisedSalarySNo.ToString(), defaultValue = convertDateString(data.EffectiveFromDate) });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryAmount" + revisedSalarySNo.ToString(), defaultValue = data.TotalMonthlyWage.ToString() });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryRemarks" + revisedSalarySNo.ToString(), defaultValue = data.ReasonForRevision });
+            }
+
             var agreementCreationInfo = new AgreementCreationInfo
             {
                 fileInfos = fileInfosList,
-                name = "Demo Check 200",
+                name = "Demo Check 201",
                 participantSetsInfo = participantSetsInfoList,
                 signatureType = Enum.GetName<AdobeSignatureTypeEnum>(AdobeSignatureTypeEnum.ESIGN),
                 state = Enum.GetName<AdobeStateEnum>(AdobeStateEnum.IN_PROCESS),
@@ -246,7 +258,7 @@ namespace Synergy.ReliefCenter.Services
         {
             string dateString = dateToConvert.ToString(), convertedDateString = "";
             if (dateString != "01-01-0001 00:00:00") {
-                convertedDateString = dateToConvert.ToString("dd/MMMM/yyyy");
+                convertedDateString = dateToConvert.ToString("dd'/'MMM'/'yyyy");
             }
             return convertedDateString;
         }

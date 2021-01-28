@@ -43,7 +43,8 @@ namespace Synergy.AdobeSign
                     var responseString = await response.Content.ReadAsStringAsync();
                     var responseJson = JsonConvert.DeserializeObject<AgreementCreationResponse>(responseString);
                     var agreementId = responseJson.Id;
-                    responseJson.SigningUrls = await GetAgreementSigningUrlsAsync(agreementId);
+                    Thread.Sleep(2000);
+                    responseJson.signingUrlSetInfos = await GetAgreementSigningUrlsAsync(agreementId);
                     return responseJson;
                 }
                 else
@@ -54,7 +55,7 @@ namespace Synergy.AdobeSign
             
         }
 
-        private async Task<IList<SigningUrl>> GetAgreementSigningUrlsAsync(string agreementId, CancellationToken cancellationToken = default)
+        private async Task<IList<SigningUrlSetInfo>> GetAgreementSigningUrlsAsync(string agreementId, CancellationToken cancellationToken = default)
         {
             var getSigningUrlsPath = $"/api/rest/{_configuration.ApiVersion}/agreements/{agreementId}/signingUrls";
 
@@ -72,7 +73,7 @@ namespace Synergy.AdobeSign
                     var responseString = await response.Content.ReadAsStringAsync();
 
                     var signingUrlsResponse = JsonConvert.DeserializeObject<SigningUrlsResponse>(responseString);
-                    return signingUrlsResponse.signingUrlSetInfos[0].SigningUrls;
+                    return signingUrlsResponse.signingUrlSetInfos;
                 }
                 else
                 {
