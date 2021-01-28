@@ -43,7 +43,7 @@ jobs:
         # push it to ECR so that it can
         # be deployed to ECS.
         cd src
-        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ../.
+        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg NUGET_SRC=$NUGET_SRC --build-arg NUGET_NS=$NUGET_NS --build-arg NUGET_USER=$NUGET_USER --build-arg NUGET_SECRET=$NUGET_SECRET ../.
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
