@@ -68,11 +68,6 @@ namespace Synergy.ReliefCenter.Data.Models
         [Column("cdc_number")]
         public string CdcNumber { get; set; }
 
-        [Column("verifiedBy")]
-        public string VerifiedBy { get; set; }
-
-        [Column("verifiedOn")]
-        public DateTime? VerifiedOn { get; set; }
 
         [InverseProperty(nameof(Relief.VesselContract))]
         public virtual ICollection<Relief> Reliefs { get; set; }
