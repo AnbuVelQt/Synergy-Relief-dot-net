@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class WageComponentDto
+    public class WageComponentDTO
     {  
         public string Name { get; set; }
 

@@ -44,12 +44,12 @@ namespace Synergy.ReliefCenter.Services
             _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
-        public async Task<ContractDto> GetSeafarerConract(string imoNumber, string userId, string apiKey, string userDetailsApiBaseUrl)
+        public async Task<ContractDTO> GetSeafarerConract(string imoNumber, string userId, string apiKey, string userDetailsApiBaseUrl)
         {
             var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
-            var contracts = new ContractDto();
+            var contracts = new ContractDTO();
 
-            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.SeafarerId == seafarerDetails.Result.Id && ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null))).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.SeafarerId == seafarerDetails.Result.Id && ((x.EndDate >= DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)) && x.Status != ContractStatus.Cancelled.ToString() && x.Status != ContractStatus.InDraft.ToString()).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
             if (imoNumber != null)
             {
                 contract.ImoNumber = imoNumber;
@@ -61,17 +61,17 @@ namespace Synergy.ReliefCenter.Services
             var contractForm = await _contractFormRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).FirstOrDefaultAsync();
             var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == contract.Id).ToListAsync();
 
-            var reviewer = new List<ReviewersDto>();
+            var reviewer = new List<ReviewersDTO>();
             var userInfo = new UserDetails();
             foreach (var data in reviewers)
             {
                 userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
-                reviewer.Add(new ReviewersDto()
+                reviewer.Add(new ReviewersDTO()
                 {
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
                     Role = data.Role.ToString(),
                     Approved = data.Approved,
-                    UserInfo = new UserInfoDto()
+                    UserInfo = new UserInfoDTO()
                     {
                         Id = userInfo is null ? data.ReviewerId : userInfo.Id,
                         Email = userInfo is null ? data.Email : userInfo.Email,
@@ -80,20 +80,20 @@ namespace Synergy.ReliefCenter.Services
                 });
             }
 
-            contracts = _mapper.Map<ContractDto>(contract);
-            contracts.ContractForm = _mapper.Map<ContractFormDto>(contractForm);
-            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDto>>(reviewer);
-            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDto>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
+            contracts = _mapper.Map<ContractDTO>(contract);
+            contracts.ContractForm = _mapper.Map<ContractFormDTO>(contractForm);
+            contracts.ContractForm.Data.ContractReviewers = _mapper.Map<List<ReviewersDTO>>(reviewer);
+            contracts.ContractForm.Data.NextReviewer = _mapper.Map<ReviewersDTO>(reviewer.Where(x => x.ReviewerId == reviewers.Where(x => x.Id == contract.NextReviewer).FirstOrDefault().ReviewerId).FirstOrDefault());
             return contracts;
         }
 
-        public async Task<IList<MyContractsDto>> GetSeafarerConracts(string imoNumber, string userId)
+        public async Task<IList<MyContractsDTO>> GetSeafarerConracts(string imoNumber, string userId)
         {
             var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
            
             var contract = await _contractRepository.GetAllIncluding().AsNoTracking()
                 .Where(x => x.SeafarerId == seafarerDetails.Result.Id && 
-                ((x.EndDate >= DateTime.UtcNow && x.StartDate < DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)))
+                ((x.EndDate >= DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)) && x.Status != ContractStatus.Cancelled.ToString() && x.Status != ContractStatus.InDraft.ToString())
                 .OrderByDescending(x => x.Id).ToListAsync();
             if (imoNumber != null)
             {
@@ -103,12 +103,12 @@ namespace Synergy.ReliefCenter.Services
             {
                 return null;
             }
-            var contractDetails = new List<MyContractsDto>();
+            var contractDetails = new List<MyContractsDTO>();
             foreach(var data in contract)
             {
                 var contractForm = _contractFormRepository.GetAllIncluding().AsNoTracking().Where(s => s.ContractId == data.Id).FirstOrDefaultAsync();
-                var mapToDto = _mapper.Map<ContractFormDto>(contractForm.Result);
-                contractDetails.Add(new MyContractsDto()
+                var mapToDto = _mapper.Map<ContractFormDTO>(contractForm.Result);
+                contractDetails.Add(new MyContractsDTO()
                 {
                     Id = data.Id,
                     Salary = Convert.ToDecimal(data.Salary),
@@ -130,7 +130,7 @@ namespace Synergy.ReliefCenter.Services
                 });
             }            
             
-            var contracts = _mapper.Map<List<MyContractsDto>>(contractDetails);
+            var contracts = _mapper.Map<List<MyContractsDTO>>(contractDetails);
             return contracts;
         }
     }

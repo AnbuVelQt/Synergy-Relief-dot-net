@@ -8,7 +8,7 @@ namespace Synergy.ReliefCenter.Api.Mappers
     {
         public MappingProfile()
         {
-            CreateMap<Contract, ContractDto>()
+            CreateMap<Contract, ContractDTO>()
                 .ReverseMap()                
                 .ForMember(dest => dest.SeafarerDetail, opt => opt.MapFrom(src => src.ContractForm.Data.SeafarerDetail))
                 .ForMember(dest => dest.TravelInfo, opt => opt.MapFrom(src => src.ContractForm.Data.TravelInfo))
@@ -19,21 +19,21 @@ namespace Synergy.ReliefCenter.Api.Mappers
                 .ForMember(dest => dest.ContractReviewers, opt => opt.MapFrom(src => src.ContractForm.Data.ContractReviewers))
                 .ForMember(dest => dest.NextReviewer, opt => opt.MapFrom(src => src.ContractForm.Data.NextReviewer))
                 .ForMember(dest => dest.RevisedSalaries, opt => opt.MapFrom(src => src.ContractForm.Data.RevisedSalaries));
-            CreateMap<ContractAttachmentDetail, ContractAttachmentDetailDto>().ReverseMap();
-            CreateMap<SeafarerDetail, SeafarerDetailDto>().ReverseMap();
-            CreateMap<VesselDetail, VesselDetailDto>().ReverseMap();
-            CreateMap<ContractWages, ContractWagesDto>().ReverseMap();
-            CreateMap<TravelDetail, TravelDetailDto>().ReverseMap();
-            CreateMap<OTRateCard, OTRateCardDto>().ReverseMap();
-            CreateMap<WageComponent, WageComponentDto>().ReverseMap();
-            CreateMap<UpdateContractRequest, UpdateContractDto>().ReverseMap();
-            CreateMap<UpdateContractWages, UpdateContractWagesDto>().ReverseMap();
-            CreateMap<ContractReviewerSet, ContractReviewerSetDto>().ReverseMap();
-            CreateMap<ContractReviewer, ContractReviewerDto>().ReverseMap();
-            CreateMap<Reviewers, ReviewersDto>().ReverseMap();
-            CreateMap<UserInfo, UserInfoDto>().ReverseMap();
-            CreateMap<RevisedSalary, RevisedSalaryDto>().ReverseMap();
-            CreateMap<MyContracts, MyContractsDto>().ReverseMap();
+            CreateMap<ContractAttachmentDetail, ContractAttachmentDetailDTO>().ReverseMap();
+            CreateMap<SeafarerDetail, SeafarerDetailDTO>().ReverseMap();
+            CreateMap<VesselDetail, VesselDetailDTO>().ReverseMap();
+            CreateMap<ContractWages, ContractWagesDTO>().ReverseMap();
+            CreateMap<TravelDetail, TravelDetailDTO>().ReverseMap();
+            CreateMap<OTRateCard, OTRateCardDTO>().ReverseMap();
+            CreateMap<WageComponent, WageComponentDTO>().ReverseMap();
+            CreateMap<UpdateContractRequest, UpdateContractDTO>().ReverseMap();
+            CreateMap<UpdateContractWages, UpdateContractWagesDTO>().ReverseMap();
+            CreateMap<ContractReviewerSet, ContractReviewerSetDTO>().ReverseMap();
+            CreateMap<ContractReviewer, ContractReviewerDTO>().ReverseMap();
+            CreateMap<Reviewers, ReviewersDTO>().ReverseMap();
+            CreateMap<UserInfo, UserInfoDTO>().ReverseMap();
+            CreateMap<RevisedSalary, RevisedSalaryDTO>().ReverseMap();
+            CreateMap<MyContracts, MyContractsDTO>().ReverseMap();
         }
     }
 }
