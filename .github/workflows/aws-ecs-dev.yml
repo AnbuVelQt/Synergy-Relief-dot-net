@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - develop
+      - hotfix/docker-build-github-failing
       
 name: Deploy to Amazon ECS - Synergy Dev  -  Crew Wage API
 
