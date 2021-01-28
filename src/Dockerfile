@@ -1,6 +1,6 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.102-1-buster-slim-amd64 AS base
 ARG NUGET_SRC
 ARG NUGET_NS
 ARG NUGET_USER
@@ -9,7 +9,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.102-1-buster-slim-amd64 AS build
 ARG NUGET_SRC
 ARG NUGET_NS
 ARG NUGET_USER
