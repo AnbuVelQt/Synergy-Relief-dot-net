@@ -2,7 +2,7 @@
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractWagesDto
+    public class ContractWagesDTO
     {
         public decimal BasicAmount { get; set; }
 
@@ -10,12 +10,12 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 
         public decimal TotalMonthlyAmount { get; set; }
 
-        public IList<WageComponentDto> CBAEarningComponents { get; set; }
+        public IList<WageComponentDTO> CBAEarningComponents { get; set; }
 
-        public IList<WageComponentDto> OtherEarningComponents { get; set; }
+        public IList<WageComponentDTO> OtherEarningComponents { get; set; }
 
-        public IList<WageComponentDto> DeductionComponents { get; set; }
+        public IList<WageComponentDTO> DeductionComponents { get; set; }
 
-        public OTRateCardDto OTRateCard {get;set;}
+        public OTRateCardDTO OTRateCard {get;set;}
     }
 }

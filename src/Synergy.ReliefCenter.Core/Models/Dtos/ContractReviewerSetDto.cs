@@ -2,8 +2,8 @@
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractReviewerSetDto
+    public class ContractReviewerSetDTO
     {
-        public ContractReviewerDto[] Reviewers { get; set; }
+        public ContractReviewerDTO[] Reviewers { get; set; }
     }
 }

@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractFormDataDto
+    public class ContractFormDataDTO
     {
-        public TravelDetailDto TravelInfo { get; set; }
+        public TravelDetailDTO TravelInfo { get; set; }
 
-        public VesselDetailDto VesselInfo { get; set; }
+        public VesselDetailDTO VesselInfo { get; set; }
 
-        public SeafarerDetailDto SeafarerDetail { get; set; }
+        public SeafarerDetailDTO SeafarerDetail { get; set; }
 
-        public ContractAttachmentDetailDto AttachmentDetail { get; set; }
+        public ContractAttachmentDetailDTO AttachmentDetail { get; set; }
 
-        public ContractWagesDto Wages { get; set; }
+        public ContractWagesDTO Wages { get; set; }
 
-        public IList<ReviewersDto> ContractReviewers { get; set; }
+        public IList<ReviewersDTO> ContractReviewers { get; set; }
 
-        public ReviewersDto NextReviewer { get; set; }
+        public ReviewersDTO NextReviewer { get; set; }
 
-        public IList<RevisedSalaryDto> RevisedSalaries { get; set; }
+        public IList<RevisedSalaryDTO> RevisedSalaries { get; set; }
     }
 }

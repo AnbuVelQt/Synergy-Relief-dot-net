@@ -16,9 +16,9 @@ namespace Synergy.ReliefCenter.Data.Repositories
             _context = context;
         }
 
-        public async ValueTask<Seafarer> GetSeafarerByIdAsync(long id)
+        public async ValueTask<Seafarer> GetSeafarerByIdAsync(string id)
         {
-            return await _context.Seafarers.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Seafarers.FirstOrDefaultAsync(x => x.CdcNumber == id);
         }
 
         public async ValueTask<SeafarerContactDetails> GetSeafarerContactDetailsByIdAsync(long id)
@@ -29,6 +29,11 @@ namespace Synergy.ReliefCenter.Data.Repositories
         public async ValueTask<Seafarer> GetSeafarerByIdentityAsync(string userId)
         {
             return await _context.Seafarers.Where(x => x.IdentityUserId == userId).FirstOrDefaultAsync();
+        }
+
+        public async ValueTask<SeafarerDocuments> GetSeafarerDocumentsByIdAsync(long seafarerId, long id)
+        {
+            return await _context.SeafarerDocuments.Where(x => x.SeafarerId == seafarerId && x.DocumentSubCategoryId == id).FirstOrDefaultAsync();
         }
     }
 }

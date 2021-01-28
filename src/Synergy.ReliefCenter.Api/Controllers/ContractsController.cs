@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Core.Models.Dtos;
@@ -12,6 +14,8 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
+    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
@@ -51,7 +55,11 @@ namespace Synergy.ReliefCenter.Api.Controllers
             }
             string crewWageApiBaseUrl = _configuration.GetSection(CREW_WAGE_APIURL_SECTION).Value;
             var AuthToken = Request.Headers["Authorization"];
-            var contract =await _contractService.CreateContract(model.VesselId,model.SeafarerId, AuthToken, crewWageApiBaseUrl);
+            var contract =await _contractService.CreateContract(model.VesselImoNumber,model.SeafarerCdcNumber, AuthToken, crewWageApiBaseUrl);
+            if(contract is null)
+            {
+                return Conflict();
+            }
             var createContractDetails = _mapper.Map<Contract>(contract);
             return Created("", createContractDetails);
         }
@@ -62,8 +70,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         public async Task<IActionResult> UpdateContract([FromBody] UpdateContractRequest model,long id)
         {
             await _contractService.ApproveAsync(id);  //This will be used for on approve contract & send for Adobe sign
-
-            var requestModel = _mapper.Map<UpdateContractDto>(model);
+            var requestModel = _mapper.Map<UpdateContractDTO>(model);
             await _contractService.UpdateContract(requestModel, id);
             return NoContent();
         }
@@ -75,7 +82,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         {
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var requestModel = _mapper.Map<ContractReviewerSetDto>(model);
+            var requestModel = _mapper.Map<ContractReviewerSetDTO>(model);
             await _contractService.AssignReviewers(id,requestModel, userDetailsApiKey, userDetailsApiBaseUrl);
             return NoContent();
         }
@@ -83,11 +90,11 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Contract>> GetConracts([FromQuery] long vesselId,[FromQuery] long seafarerId)
+        public async Task<ActionResult<Contract>> GetConracts([FromQuery] string vesselImoNumber,[FromQuery] string seafarerCdcNumber)
         {
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetConracts(vesselId,seafarerId,userDetailsApiKey,userDetailsApiBaseUrl);
+            var contractDetails = await _contractService.GetConracts(vesselImoNumber,seafarerCdcNumber,userDetailsApiKey,userDetailsApiBaseUrl);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {

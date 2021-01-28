@@ -2,14 +2,14 @@
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class UpdateContractDto
+    public class UpdateContractDTO
     {
-        public TravelDetailDto TravelInfo { get; set; }
+        public TravelDetailDTO TravelInfo { get; set; }
 
-        public UpdateContractWagesDto Wages { get; set; }
+        public UpdateContractWagesDTO Wages { get; set; }
 
-        public ContractAttachmentDetailDto AttachmentDetail { get; set; }
+        public ContractAttachmentDetailDTO AttachmentDetail { get; set; }
 
-        public IList<RevisedSalaryDto> RevisedSalaries { get; set; }
+        public IList<RevisedSalaryDTO> RevisedSalaries { get; set; }
     }
 }

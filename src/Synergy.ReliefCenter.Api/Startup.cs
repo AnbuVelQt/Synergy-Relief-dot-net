@@ -12,9 +12,11 @@ using Synergy.ReliefCenter.Api.Mappers;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Services.Mappers;
-//using Synergy.Core.EmailService;
+using Synergy.Core.EmailService;
 using Microsoft.Extensions.Logging;
 using System;
+using Synergy.ReliefCenter.Api.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -43,11 +45,13 @@ namespace Synergy.ReliefCenter.Api
             }));
             using var loggerFactory = LoggerFactory.Create(b => Console.WriteLine());
             services.AddAllServices(Configuration);
-            //services.AddSingleton<ILogger<EmailSender>>(loggerFactory.CreateLogger<EmailSender>());
-            //var emailLogger = loggerFactory.CreateLogger<IEmailService>();
 
-            //services.AddSingleton<ILogger<IEmailService>>(emailLogger);
-            //services.AddEmailService(Configuration);
+            services.AddSingleton<ILogger<EmailSender>>(loggerFactory.CreateLogger<EmailSender>());
+            var emailLogger = loggerFactory.CreateLogger<IEmailService>();
+
+            services.AddSingleton<ILogger<IEmailService>>(emailLogger);
+            services.AddEmailService(Configuration);
+
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new EntityMappingProfile());
@@ -59,6 +63,36 @@ namespace Synergy.ReliefCenter.Api
             services.AddSingleton(Configuration);
             services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
             services.AddAllValidators();
+
+            // For JwtBearerConfiguration
+
+            var jwtBearerConfiguration = Configuration.GetSection(nameof(JwtBearerConfiguration)).Get<JwtBearerConfiguration>();
+
+            services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
+                .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
+                {
+                    options.Authority = jwtBearerConfiguration.ShoreIdp.AuthorityUrl;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.AuthorityUrl,
+                        ValidateIssuer = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateAudience = false
+                    };
+                })
+                .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
+                {
+                    options.Authority = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl,
+                        ValidateIssuer = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateAudience = false
+                    };
+                });
             services.AddAdobeSign(Configuration);   //For Adobe Sign
         }
 

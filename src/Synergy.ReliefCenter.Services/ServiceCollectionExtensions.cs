@@ -32,6 +32,7 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
             services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
             services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
+            services.AddScoped<IMasterDataRepository, MasterDataRepository>();
         }
 
         public static void AddEFContext(this IServiceCollection services, IConfiguration configuration)
@@ -43,6 +44,7 @@ namespace Synergy.ReliefCenter.Services
             var MasterString = configuration.GetConnectionString(MasterDBConnectionString);
 
             // Context Register
+            
             services.AddDbContext<VesselDbContext>(opt =>
                 opt.UseNpgsql(VesselString).UseSnakeCaseNamingConvention());
 

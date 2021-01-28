@@ -9,6 +9,6 @@ namespace Synergy.ReliefCenter.Data.Repositories.Abstraction
 {
     public interface IVesselDataRepository
     {
-        ValueTask<Vessel> GetVesselByIdAsync(long id);
+        ValueTask<Vessel> GetVesselByIdAsync(string id);
     }
 }
