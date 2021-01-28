@@ -310,25 +310,9 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("vessel_contract_id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp(6) without time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("character varying")
-                        .HasColumnName("created_by");
-
                     b.Property<string>("Data")
                         .HasColumnType("jsonb")
                         .HasColumnName("data");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp(6) without time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("character varying")
-                        .HasColumnName("updated_by");
 
                     b.HasKey("Id")
                         .HasName("pk_contract_form");
@@ -351,17 +335,13 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("approved");
 
+                    b.Property<DateTime>("ApprovedOn")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("approved_on");
+
                     b.Property<long>("ContractId")
                         .HasColumnType("bigint")
                         .HasColumnName("contract_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp(6) without time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("character varying")
-                        .HasColumnName("created_by");
 
                     b.Property<string>("Email")
                         .HasColumnType("text")
@@ -378,14 +358,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("text")
                         .HasColumnName("role");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp(6) without time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("character varying")
-                        .HasColumnName("updated_by");
 
                     b.HasKey("Id")
                         .HasName("pk_contract_reviewers");
