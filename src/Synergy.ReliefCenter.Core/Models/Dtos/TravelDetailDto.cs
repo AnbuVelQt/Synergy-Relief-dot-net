@@ -2,7 +2,7 @@
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class TravelDetailDto
+    public class TravelDetailDTO
     {
         public DateTime StartDate { get; set; }
 

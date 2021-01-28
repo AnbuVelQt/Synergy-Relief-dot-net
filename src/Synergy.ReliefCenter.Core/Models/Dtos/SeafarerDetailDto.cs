@@ -2,7 +2,7 @@
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class SeafarerDetailDto
+    public class SeafarerDetailDTO
     {
         public long Id { get; set; }
 

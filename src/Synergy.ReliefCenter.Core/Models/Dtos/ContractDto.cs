@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractDto
+    public class ContractDTO
     {
         public long Id { get; set; }
         public DateTime? StartDate { get; set; }
@@ -20,9 +20,12 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public string ImoNumber { get; set; }
         public string CdcNumber { get; set; }
 
-        public string VerifiedBy { get; set; }
-        public DateTime? VerifiedOn { get; set; }
+        public DateTime? VerifyDate { get; set; }
 
-        public ContractFormDto ContractForm { get; set; }
+        public string? VerifierName { get; set; }
+
+        public string? VerifierEmail { get; set; }
+
+        public ContractFormDTO ContractForm { get; set; }
     }
 }

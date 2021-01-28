@@ -1,6 +1,6 @@
 ﻿namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class VesselDetailDto
+    public class VesselDetailDTO
     {
         public long Id { get; set; }
 

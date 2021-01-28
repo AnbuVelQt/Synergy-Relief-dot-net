@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class UserInfoDto
+    public class UserInfoDTO
     {
         public string Id { get; set; }
 

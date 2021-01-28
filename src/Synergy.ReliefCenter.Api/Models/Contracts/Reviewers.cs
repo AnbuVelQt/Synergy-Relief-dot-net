@@ -13,6 +13,8 @@ namespace Synergy.ReliefCenter.Api.Models
 
         public bool Approved { get; set; }
 
+        public DateTime ApprovedOn { get; set; }
+
         public UserInfo UserInfo { get; set; }
     }
 }

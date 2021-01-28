@@ -1,6 +1,6 @@
 ﻿namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ContractAttachmentDetailDto
+    public class ContractAttachmentDetailDTO
     {
         public bool NextOfKinFormAttached { get; set; }
 

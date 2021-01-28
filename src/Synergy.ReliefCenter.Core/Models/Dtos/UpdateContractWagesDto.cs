@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class UpdateContractWagesDto
+    public class UpdateContractWagesDTO
     {
         public decimal SpecialAllowance { get; set; }
 
-        public IList<WageComponentDto> OtherEarningComponents { get; set; }
+        public IList<WageComponentDTO> OtherEarningComponents { get; set; }
 
-        public IList<WageComponentDto> DeductionComponents { get; set; }
+        public IList<WageComponentDTO> DeductionComponents { get; set; }
     }
 }

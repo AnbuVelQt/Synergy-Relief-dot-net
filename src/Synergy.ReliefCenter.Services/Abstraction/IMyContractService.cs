@@ -9,7 +9,7 @@ namespace Synergy.ReliefCenter.Services.Abstraction
 {
     public interface IMyContractService
     {
-        Task<ContractDto> GetSeafarerConract(string imoNumber, string userId, string apiKey,string userDetailsApiBaseUrl);
-        Task<IList<MyContractsDto>> GetSeafarerConracts(string imoNumber, string userId);
+        Task<ContractDTO> GetSeafarerConract(string imoNumber, string userId, string apiKey,string userDetailsApiBaseUrl);
+        Task<IList<MyContractsDTO>> GetSeafarerConracts(string imoNumber, string userId);
     }
 }
