@@ -158,9 +158,7 @@ namespace Synergy.ReliefCenter.Services
         {
             var FormData = contractData.ContractForm.Data;
             var fileInfosList = new List<FileInformation>();
-            string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION_LESS_ROWS).Value;
             
-            fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
             var participantSetsInfoList = new List<ParticipantInfo>();
             var memberInfoListFleetHead = new List<MemberInfo>();
             memberInfoListFleetHead.Add(new MemberInfo { email = contractData.VerifierEmail != null ? contractData.VerifierEmail : "pentagram@synergyship.com" });
@@ -202,12 +200,12 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "headerCompanyName", defaultValue = "Synergy Maritime Recruitment Services Pvt Ltd, Delhi." });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedBy", defaultValue = contractData.VerifierName });
             if(contractData.VerifyDate != null)
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedOn", defaultValue = convertDateString((DateTime)contractData.VerifyDate) });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "verifiedOn", defaultValue = convertDateTimeString((DateTime)contractData.VerifyDate) });
 
             //Wages component table section
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "Basic Wages" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = convertAmountString(FormData.Wages.BasicAmount) });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allownce" });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allowance" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = convertAmountString(FormData.Wages.SpecialAllownce) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "totalMonthlyWages", defaultValue = convertAmountString(FormData.Wages.TotalMonthlyAmount) });
 
@@ -236,7 +234,7 @@ namespace Synergy.ReliefCenter.Services
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsSNo" + otherEarningsSNo.ToString(), defaultValue = otherEarningsSNo.ToString() });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsTitle" + otherEarningsSNo.ToString(), defaultValue = data.Name });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsAmount" + otherEarningsSNo.ToString(), defaultValue = convertAmountString(data.Amount) });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsDate" + otherEarningsSNo.ToString(), defaultValue = "Not Available" });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "otherEarningsDate" + otherEarningsSNo.ToString(), defaultValue = convertDateString(data.EffectiveDate) });
             }
 
             int deductionsSNo = 0;
@@ -246,7 +244,7 @@ namespace Synergy.ReliefCenter.Services
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsSNo" + deductionsSNo.ToString(), defaultValue = deductionsSNo.ToString() });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsTitle" + deductionsSNo.ToString(), defaultValue = data.Name });
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsAmount" + deductionsSNo.ToString(), defaultValue = convertAmountString(data.Amount) });
-                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsDate" + deductionsSNo.ToString(), defaultValue = "Not Available" });
+                mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "deductionsDate" + deductionsSNo.ToString(), defaultValue = convertDateString(data.EffectiveDate) });
             }
 
             int revisedSalarySNo = 0;
@@ -259,10 +257,12 @@ namespace Synergy.ReliefCenter.Services
                 mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "revisedSalaryRemarks" + revisedSalarySNo.ToString(), defaultValue = data.ReasonForRevision });
             }
 
+            string contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION_LESS_ROWS).Value;
             if (FormData.Wages.OtherEarningComponents.Count > 5 || FormData.Wages.DeductionComponents.Count > 5 || wageLastStaticRowNo > 8)
             {   // default template v1.1 have only limited rows, so use this to have upto 7 rows.
                 contractDocumentId = _configuration.GetSection(CONTRACT_DOC_ID_SECTION_MORE_ROWS).Value;
             }
+            fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
 
             var agreementCreationInfo = new AgreementCreationInfo
             {
@@ -300,6 +300,16 @@ namespace Synergy.ReliefCenter.Services
             string dateString = dateToConvert.ToString(), convertedDateString = "";
             if (dateString != "01-01-0001 00:00:00") {
                 convertedDateString = dateToConvert.ToString("dd'/'MMM'/'yyyy");
+            }
+            return convertedDateString;
+        }
+
+        public static string convertDateTimeString(DateTime dateToConvert)
+        {
+            string dateString = dateToConvert.ToString(), convertedDateString = "";
+            if (dateString != "01-01-0001 00:00:00")
+            {
+                convertedDateString = dateToConvert.ToString("dd'/'MMM'/'yyyy h:mm:ss tt K");
             }
             return convertedDateString;
         }
