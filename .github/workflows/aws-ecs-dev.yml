@@ -34,12 +34,16 @@ jobs:
         REGION: ap-south-1  
         ECS_CLUSTER: relief-dotnet-dev-test
         SERVICE_NAME: relief-dotnet-dev-test
+        NUGET_SRC: ${{ secrets.NUGET_SRC }}
+        NUGET_NS: ${{ secrets.NUGET_NS }}
+        NUGET_USER: ${{ secrets.NUGET_USER }}
+        NUGET_SECRET: ${{ secrets.NUGET_SECRET }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
         cd src
-        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ../.
+        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg NUGET_SRC=$NUGET_SRC --build-arg NUGET_NS=$NUGET_NS --build-arg NUGET_USER=$NUGET_USER --build-arg NUGET_SECRET=$NUGET_SECRET ../.
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
