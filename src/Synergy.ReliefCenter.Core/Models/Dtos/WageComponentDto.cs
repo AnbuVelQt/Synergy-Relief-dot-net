@@ -16,5 +16,7 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public string Type { get; set; }
 
         public decimal Amount { get; set; }
+
+        public DateTime EffectiveDate { get; set; }
     }
 }
