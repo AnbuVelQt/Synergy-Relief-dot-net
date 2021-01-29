@@ -14,7 +14,7 @@ namespace Synergy.ReliefCenter.Data.Repositories
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(crewWageApiBaseUrl);
-                client.DefaultRequestHeaders.Add("Authorization", AuthToken);
+                client.DefaultRequestHeaders.Add("Authorization", AuthToken.Replace("Bearer ", ""));
                 //HTTP GET
                 var response = await client.GetAsync("SalaryMatrix?vesselIMONumber=" + vesselImoNumber + "&seafarerCDCNumber=" + seafarerCdcNumer );
                 if (response.IsSuccessStatusCode)
