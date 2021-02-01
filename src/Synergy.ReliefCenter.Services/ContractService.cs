@@ -155,14 +155,14 @@ namespace Synergy.ReliefCenter.Services
                 userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
                 reviewer.Add(new ReviewersDTO()
                 {
-                    ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,
+                    ReviewerId = userInfo.Id is null ? data.ReviewerId : userInfo.Id,
                     Role = data.Role.ToString(),
                     Approved = data.Approved,
                     UserInfo = new UserInfoDTO()
                     {
-                        Id = userInfo is null ? data.ReviewerId : userInfo.Id,
-                        Email = userInfo is null ? data.Email : userInfo.Email,
-                        Name = userInfo is null ? data.Name : userInfo.Name
+                        Id = userInfo.Id is null ? data.ReviewerId : userInfo.Id,
+                        Email = userInfo.Email is null ? data.Email : userInfo.Email,
+                        Name = userInfo.Name is null ? data.Name : userInfo.Name
                     }
                 });
             }
