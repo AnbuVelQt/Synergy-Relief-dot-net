@@ -45,6 +45,14 @@
                   {
                     "name": "JwtBearerConfiguration_SeafarerIdp__AuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "CrewWage__ApiUrl",
+                    "value": "https://api-crew-wage-dev.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "UserDetails__ApiUrl",
+                    "valueFrom": "https://login-shore.synergymarinetest.com/"
                   }
               ],
             "mountPoints": [],
@@ -101,6 +109,18 @@
                 {
                     "name": "AwsS3__Region",
                     "valueFrom": "/relief-dotnet-api/dev/AwsS3__Region"
+                },
+                {
+                    "name": "SmtpConfiguration__Login",
+                    "valueFrom": "/dev/smtp_username"
+                },
+                {
+                    "name": "SmtpConfiguration__Password",
+                    "valueFrom": "/dev/smtp_password"
+                },
+                {
+                    "name": "UserDetails__ApiKey",
+                    "valueFrom": "/relief-dotnet-api/dev/api_key"
                 }
             ],
             "logConfiguration": {
