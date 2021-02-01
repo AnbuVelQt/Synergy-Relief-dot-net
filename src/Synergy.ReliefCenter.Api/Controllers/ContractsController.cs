@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Synergy.ReliefCenter.Api.Configuration;
+using Synergy.ReliefCenter.Api.Filter;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
+using Synergy.ReliefCenter.Core.Constants;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System.Threading.Tasks;
@@ -29,6 +31,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _mapper = mapper;
             _configuration = configuration;
         }
+        [AuthorizationPolicy(PolicyNames.AccessContract)]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
@@ -40,7 +43,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             return Ok(getContractDetails);
         }
-
+        [AuthorizationPolicy(PolicyNames.DraftContract)]
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)

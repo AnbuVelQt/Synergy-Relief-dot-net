@@ -5,6 +5,7 @@ using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.PolicyRepository;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
 using Synergy.ReliefCenter.Services.Abstraction;
@@ -22,6 +23,7 @@ namespace Synergy.ReliefCenter.Services
         {
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<IMyContractService, MyContractService>();
+            services.AddScoped<IAuthorizationPolicyService, AuthorizationPolicyService>();
         }
 
         public static void AddReliefRepositories(this IServiceCollection services)
@@ -33,6 +35,10 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
             services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
             services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
+            services.AddScoped<IAccessPoliciesRepository, AccessPoliciesRepository>();
+            services.AddScoped<IPolicyRolesRepository, PolicyRolesRepository>();
+            services.AddScoped<IPolicyUsersRepository, PolicyUsersRepository>();
+
         }
 
         public static void AddEFContext(this IServiceCollection services, IConfiguration configuration)
