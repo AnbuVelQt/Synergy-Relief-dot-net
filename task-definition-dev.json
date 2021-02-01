@@ -52,7 +52,7 @@
                   },
                   {
                     "name": "UserDetails__ApiUrl",
-                    "valueFrom": "https://login-shore.synergymarinetest.com/"
+                    "value": "https://login-shore.synergymarinetest.com/"
                   }
               ],
             "mountPoints": [],
