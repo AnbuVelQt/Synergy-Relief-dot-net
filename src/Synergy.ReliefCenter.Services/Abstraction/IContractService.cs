@@ -18,5 +18,11 @@ namespace Synergy.ReliefCenter.Services.Abstraction
         Task<ContractDTO> GetConracts(string vesselImoNumber, string seafarerCdcNumber, string apiKey, string userDetailsApiBaseUrl);
 
         Task AssignReviewers(long id, ContractReviewerSetDTO reviewerSetDto, string apiKey, string userDetailsApiBaseUrl);
+
+        Task<object> ApproveContract(long id,string userId,string comment);
+
+        Task<object> VerifyContract(long id, string userId, string comment);
+
+        Task RejectContract(long id, string userId, string comment);
     }
 }

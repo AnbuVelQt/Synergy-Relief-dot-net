@@ -16,6 +16,7 @@ using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 using System.IO;
 using Synergy.ReliefCenter.Data.Entities.Master;
 using Synergy.Core.EmailService;
+using Synergy.ReliefCenter.Core.Domain.Models;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -322,6 +323,66 @@ namespace Synergy.ReliefCenter.Services
             await _emailService.SendEmailAsync(sendingMailInfo);
         }
 
-        
+        public async Task<object> ApproveContract(long id, string userId,string comment)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (contract is null)
+            {
+                return null;
+            }
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
+            var approver = reviewers.Where(x => x.ReviewerId == userId && x.Role.Equals(ReviewerRole.FleetHead.ToString())).FirstOrDefault();
+            if (approver is null)
+            {
+                return null;
+            }
+
+            Contract contractDomainModel = new Contract();
+            contractDomainModel.Status = (ContractStatus)Enum.Parse(typeof(ContractStatus), contract.Status);
+            contractDomainModel.NextReviewer = _mapper.Map<ContractReviewers>(approver);
+            contractDomainModel.Approve(comment);
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.NextReviewer));
+            contract.Status = contractDomainModel.Status.ToString();
+            await _contractRepository.UpdateAsync(contract);
+            return 0;
+        }
+
+        public async Task<object> VerifyContract(long id, string userId, string comment)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (contract is null)
+            {
+                return null;
+            }
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
+            var approver = reviewers.Where(x => x.ReviewerId == userId && x.Role.Equals(ReviewerRole.SourcingExecutive.ToString())).FirstOrDefault();
+            if (approver is null)
+            {
+                return null;
+            }
+            Contract contractDomainModel = new Contract();
+            contractDomainModel.Status = (ContractStatus)Enum.Parse(typeof(ContractStatus), contract.Status);
+            contractDomainModel.NextReviewer = _mapper.Map<ContractReviewers>(approver);
+            contractDomainModel.Approve(comment);
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.NextReviewer));
+            contract.Status = contractDomainModel.Status.ToString();
+            await _contractRepository.UpdateAsync(contract);
+            return 0;
+        }
+
+        public async Task RejectContract(long id, string userId, string comment)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            
+            var reviewer = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id && x.ReviewerId == userId).FirstOrDefaultAsync();
+            
+            Contract contractDomainModel = new Contract();
+            contractDomainModel.NextReviewer = _mapper.Map<ContractReviewers>(reviewer);
+            contractDomainModel.Reject(comment);
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.NextReviewer));
+            contract.Status = contractDomainModel.Status.ToString();
+            await _contractRepository.UpdateAsync(contract);
+            return ;
+        }
     }
 }

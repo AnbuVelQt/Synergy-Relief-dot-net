@@ -8,6 +8,8 @@ using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
@@ -87,7 +89,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpGet()]
         [Route("active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Contract>> GetConracts([FromQuery] string vesselImoNumber,[FromQuery] string seafarerCdcNumber)
+        public async Task<ActionResult<Contract>> GetContracts([FromQuery] string vesselImoNumber,[FromQuery] string seafarerCdcNumber)
         {
             string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
             string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
@@ -99,6 +101,43 @@ namespace Synergy.ReliefCenter.Api.Controllers
             }
             return Ok(getContractDetails);
         }
-        
+
+        [HttpPut]
+        [Route("{id}/approve")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> ApproveContract([FromRoute] long id,[FromQuery] string comment)
+        {
+            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
+            var response = await _contractService.ApproveContract(id,userId,comment);
+            if (response is null)
+            {
+                return BadRequest();
+            }
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/verify")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> VerifyContract([FromRoute] long id, [FromQuery] string comment)
+        {
+            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
+            var response = await _contractService.VerifyContract(id, userId, comment);
+            if(response is null)
+            {
+                return BadRequest();
+            }
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{id}/reject")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> RejectContract([FromRoute] long id, [FromQuery] string comment)
+        {
+            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
+            await _contractService.RejectContract(id, userId, comment);
+            return NoContent();
+        }
     }
 }
