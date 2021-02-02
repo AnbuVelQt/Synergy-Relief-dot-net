@@ -25,12 +25,18 @@ namespace Synergy.AdobeSign.Models
         public int order { get; set; }
         public string role { get; set; }
         public string label { get; set; }
+        public string status { get; set; }
+        public string id { get; set; }
 
     }
 
     public class MemberInfo
     {
+        public string id { get; set; }
+        public string name { get; set; }
         public string email { get; set; }
+        public string company { get; set; }
+        public string status { get; set; }
     }
 
     public class MergeFieldInfo

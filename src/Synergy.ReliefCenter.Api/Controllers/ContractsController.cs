@@ -102,6 +102,6 @@ namespace Synergy.ReliefCenter.Api.Controllers
             }
             return Ok(getContractDetails);
         }
-        
+
     }
 }
