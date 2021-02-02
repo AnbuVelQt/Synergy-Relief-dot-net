@@ -14,8 +14,6 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
-    //[Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-    //   Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;

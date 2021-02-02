@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Synergy.ReliefCenter.Services;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Filter
 {
