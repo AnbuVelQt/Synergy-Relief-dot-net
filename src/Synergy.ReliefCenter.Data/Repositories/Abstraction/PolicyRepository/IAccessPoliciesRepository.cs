@@ -1,9 +1,9 @@
-﻿using Synergy.ReliefCenter.Data.Entities.Master;
+﻿using Synergy.ReliefCenter.Core.Models;
 
 namespace Synergy.ReliefCenter.Data.Repositories.Abstraction.PolicyRepository
 {
     public interface IAccessPoliciesRepository 
     {
-        public AccessPolicies GetAllowedRoles(string policyName, string UserId);
+        public AccessPolicyModel GetAccessPolicy(string policyIdentifier);
     }
 }

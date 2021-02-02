@@ -1,4 +1,5 @@
-﻿using Synergy.ReliefCenter.Data.Contexts;
+﻿using Synergy.ReliefCenter.Core.Models;
+using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Entities.Master;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.PolicyRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
@@ -20,18 +21,22 @@ namespace Synergy.ReliefCenter.Data.Repositories
             masterDbContext = MasterDbContext;
         }
 
-        public AccessPolicies GetAllowedRoles(string policyName, string UserId)
+        public AccessPolicyModel GetAccessPolicy(string policyIdentifier)
         {
-            
-            var AllowedRoles = (from ap in masterDbContext.AccessPolicies
+           
+            var AccessPolicy = (from ap in masterDbContext.AccessPolicies
                                 join pr in masterDbContext.PolicyRoles on ap.Id equals pr.AccessPolicyId
                                 join pu in masterDbContext.PolicyUsers on ap.Id equals pu.AccessPolicyId
-                                where pr.Role == policyName || pu.UserId == UserId
-                                select new AccessPolicies
+                                where ap.Identifier == policyIdentifier 
+                                select new AccessPolicyModel
                                 {
-                                    Name= ap.Name
+                                    Name= ap.Name,
+                                    Identifier=ap.Identifier,
+                                    AllowedRoles=  new string[] {pr.Role },
+                                    AllowedUsers = new string[] {pu.UserId }
                                 }).FirstOrDefault();
-            return AllowedRoles;
+           
+            return AccessPolicy;
         }
 
     }

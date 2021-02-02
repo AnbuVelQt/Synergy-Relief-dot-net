@@ -8,15 +8,19 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Data.Entities.Master
 {
-    public class PolicyRoles
+    public class PolicyUser
     {
         [Key]
         public int Id { get; set; }
         [ForeignKey("Access_Policy")]
         public int AccessPolicyId { get; set; }
-        public AccessPolicies AccessPolicy { get; set; }
-        public string Role { get; set; } 
+
+        public AccessPolicy AccessPolicy { get; set; }
+
+        public string UserId { get; set; }
+
         public string[] Actions { get; set; }
+
         public string[] AllowedRanks { get; set; }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories;
@@ -24,6 +26,8 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<IMyContractService, MyContractService>();
             services.AddScoped<IAuthorizationPolicyService, AuthorizationPolicyService>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IApiRequestContext, ApiRequestContext>();
         }
 
         public static void AddReliefRepositories(this IServiceCollection services)
@@ -64,6 +68,7 @@ namespace Synergy.ReliefCenter.Services
 
             services.AddDbContext<synergy_manningContext>(opt =>
                 opt.UseNpgsql(ManningDbString).UseSnakeCaseNamingConvention());
+          
         }
     }
 }

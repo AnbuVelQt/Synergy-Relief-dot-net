@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Services.Abstraction
 {
-    public interface IAuthorizationPolicyService
+    public interface IApiRequestContext
     {
-        bool Validate( string policy);
+       public string UserId { get; }
+       public List<string> AllowedRoles { get; }
     }
 }
