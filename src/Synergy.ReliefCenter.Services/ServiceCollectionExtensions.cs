@@ -36,8 +36,7 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
             services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
             services.AddScoped<IAccessPoliciesRepository, AccessPoliciesRepository>();
-            services.AddScoped<IPolicyRolesRepository, PolicyRolesRepository>();
-            services.AddScoped<IPolicyUsersRepository, PolicyUsersRepository>();
+            
 
         }
 

@@ -2,7 +2,8 @@
 
 namespace Synergy.ReliefCenter.Data.Repositories.Abstraction.PolicyRepository
 {
-    public interface IAccessPoliciesRepository : IBasePoliciesRepository<AccessPolicies>
+    public interface IAccessPoliciesRepository 
     {
+        public AccessPolicies GetAllowedRoles(string policyName, string UserId);
     }
 }

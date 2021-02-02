@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
+    //[Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+    //   Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
@@ -31,7 +31,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _mapper = mapper;
             _configuration = configuration;
         }
-        [AuthorizationPolicy(PolicyNames.AccessContract)]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+            HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
@@ -43,7 +44,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             return Ok(getContractDetails);
         }
-        [AuthorizationPolicy(PolicyNames.DraftContract)]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp), 
+            HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)

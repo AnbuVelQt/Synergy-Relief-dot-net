@@ -18,7 +18,5 @@ namespace Synergy.ReliefCenter.Data.Entities.Master
         public string Role { get; set; } 
         public string[] Actions { get; set; }
         public string[] AllowedRanks { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
     }
 }

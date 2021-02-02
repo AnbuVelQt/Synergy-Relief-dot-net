@@ -12,7 +12,6 @@ namespace Synergy.ReliefCenter.Data.Entities.Master
     {
         [Key]
         public int Id { get; set; }
-
         [ForeignKey("Access_Policy")]
         public int AccessPolicyId { get; set; }
 
@@ -23,9 +22,5 @@ namespace Synergy.ReliefCenter.Data.Entities.Master
         public string[] Actions { get; set; }
 
         public string[] AllowedRanks { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
     }
 }

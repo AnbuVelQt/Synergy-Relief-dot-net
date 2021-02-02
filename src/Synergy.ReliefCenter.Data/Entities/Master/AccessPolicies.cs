@@ -8,18 +8,9 @@ namespace Synergy.ReliefCenter.Data.Entities.Master
     {
         [Key]
         public int Id { get; set; }
-
         public string Name { get; set; }
-
-        public string Description { get; set; }
-
         public string Identifier { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
-
-        public IList<PolicyRoles> PolicyRoles { get; set; }
-        public IList<PolicyUsers> PolicyUsers { get; set; }
+        public PolicyRoles PolicyRoles { get; set; }
+        public PolicyUsers PolicyUsers { get; set; }
     }
 }

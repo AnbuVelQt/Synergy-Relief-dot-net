@@ -10,14 +10,29 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Data.Repositories
 {
-    public class AccessPoliciesRepository : BasePoliciesRepository<AccessPolicies>, IAccessPoliciesRepository
+    public class AccessPoliciesRepository :  IAccessPoliciesRepository
     {
         protected MasterDbContext masterDbContext;
+        private object policyRoles;
 
-        public AccessPoliciesRepository(MasterDbContext MasterDbContext) : base(MasterDbContext)
+        public AccessPoliciesRepository(MasterDbContext MasterDbContext) : base()
         {
             masterDbContext = MasterDbContext;
         }
-    
+
+        public AccessPolicies GetAllowedRoles(string policyName, string UserId)
+        {
+            
+            var AllowedRoles = (from ap in masterDbContext.AccessPolicies
+                                join pr in masterDbContext.PolicyRoles on ap.Id equals pr.AccessPolicyId
+                                join pu in masterDbContext.PolicyUsers on ap.Id equals pu.AccessPolicyId
+                                where pr.Role == policyName || pu.UserId == UserId
+                                select new AccessPolicies
+                                {
+                                    Name= ap.Name
+                                }).FirstOrDefault();
+            return AllowedRoles;
+        }
+
     }
 }

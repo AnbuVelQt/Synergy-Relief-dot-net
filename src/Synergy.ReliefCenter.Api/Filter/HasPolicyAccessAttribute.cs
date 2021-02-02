@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Filter
 {
-    internal class AuthorizationPolicyAttribute : TypeFilterAttribute
+    internal class HasPolicyAccessAttribute : TypeFilterAttribute
     {
-        public AuthorizationPolicyAttribute() : base(typeof(AuthorizationPolicyFilter))
+        public HasPolicyAccessAttribute() : base(typeof(AuthorizationPolicyFilter))
         {
 
         }
-        public AuthorizationPolicyAttribute(string policy) : base(typeof(AuthorizationPolicyFilter))
+        public HasPolicyAccessAttribute(string policy) : base(typeof(AuthorizationPolicyFilter))
         {
             Arguments = new object[] { policy };
         }
