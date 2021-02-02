@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Synergy.ReliefCenter.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Synergy.ReliefCenter.Core.Domain.Models
 {
     public class ContractInformation
     {
+        public ContractStatus Status { get; set; }
         public TravelDetails TravelInfo { get; set; }
 
         public VesselDetails VesselInfo { get; set; }
@@ -15,10 +17,6 @@ namespace Synergy.ReliefCenter.Core.Domain.Models
         public SeafarerDetails SeafarerDetail { get; set; }
 
         public ContractWages Wages { get; set; }
-
-        public IList<ContractReviewers> ContractReviewers { get; set; }
-
-        public ContractReviewers NextReviewer { get; set; }
 
         public IList<RevisedSalary> RevisedSalaries { get; set; }
     }

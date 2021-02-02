@@ -19,9 +19,9 @@ namespace Synergy.ReliefCenter.Services.Abstraction
 
         Task AssignReviewers(long id, ContractReviewerSetDTO reviewerSetDto, string apiKey, string userDetailsApiBaseUrl);
 
-        Task<object> ApproveContract(long id,string userId,string comment);
+        Task<object> ApproveContract(long id,string userId);
 
-        Task<object> VerifyContract(long id, string userId, string comment);
+        Task<object> VerifyContract(long id, string userId);
 
         Task RejectContract(long id, string userId, string comment);
     }

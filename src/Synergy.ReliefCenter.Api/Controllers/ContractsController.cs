@@ -105,10 +105,10 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpPut]
         [Route("{id}/approve")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> ApproveContract([FromRoute] long id,[FromQuery] string comment)
+        public async Task<IActionResult> ApproveContract([FromRoute] long id)
         {
             var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            var response = await _contractService.ApproveContract(id,userId,comment);
+            var response = await _contractService.ApproveContract(id,userId);
             if (response is null)
             {
                 return BadRequest();
@@ -119,10 +119,10 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [HttpPut]
         [Route("{id}/verify")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> VerifyContract([FromRoute] long id, [FromQuery] string comment)
+        public async Task<IActionResult> VerifyContract([FromRoute] long id)
         {
             var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            var response = await _contractService.VerifyContract(id, userId, comment);
+            var response = await _contractService.VerifyContract(id, userId);
             if(response is null)
             {
                 return BadRequest();
