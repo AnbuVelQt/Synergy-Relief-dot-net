@@ -39,11 +39,11 @@
                     "value": "support@synergymarinetest.com"
                   },
                   {
-                    "name": "JwtBearerConfiguration_ShoreIdp__AuthorityUrl",
+                    "name": "AuthenticationScheme_ShoreIdp__AuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
                   },
                   {
-                    "name": "JwtBearerConfiguration_SeafarerIdp__AuthorityUrl",
+                    "name": "AuthenticationScheme_SeafarerIdp__AuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
                   },
                   {
