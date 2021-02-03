@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
+    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
@@ -29,8 +30,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _apiRequestContext = apiRequestContext;
         }
 
-        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-            HasPolicyAccess(PolicyNames.AccessContract)]
+        [HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
@@ -41,8 +41,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return Ok(getContractDetails);
         }
 
-        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-            HasPolicyAccess(PolicyNames.DraftContract)]
+        [HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
@@ -57,6 +56,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return Created("", createContractDetails);
         }
 
+        [HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -68,6 +68,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
+    
         [HttpPut]
         [Route("{id}/reviewers")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -78,6 +79,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
+        [HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet()]
         [Route("active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
@@ -92,6 +94,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return Ok(getContractDetails);
         }
 
+        [HasPolicyAccess(PolicyNames.ApproveContract)]
         [HttpPut]
         [Route("{id}/approve")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -106,6 +109,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return NoContent();
         }
 
+        [HasPolicyAccess(PolicyNames.VerifyContract)]
         [HttpPut]
         [Route("{id}/verify")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

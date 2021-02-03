@@ -16,16 +16,13 @@ namespace Synergy.ReliefCenter.Services
 
         public bool Validate(string policy)
         {
-                //var handler = new JwtSecurityTokenHandler();
-                //var jwttoken = token.Replace("bearer ", string.Empty);
-                //var tokenClaims = handler.ReadToken(jwttoken) as JwtSecurityToken;
-                var tokenRoles = _apiRequestContext.AllowedRoles;
-                 var tokenUserId = _apiRequestContext.UserId;
-                var accessPolicy = _accessPoliciesRepository.GetAccessPolicy(policy);
-                if (accessPolicy != null)
-                {
-                    return (accessPolicy.AllowedRoles.Any(role => tokenRoles.Contains(role))) || (accessPolicy.AllowedUsers.Any(user => user == tokenUserId));
-                }
+            var tokenRoles = _apiRequestContext.AllowedRoles;
+            var tokenUserId = _apiRequestContext.UserId;
+            var accessPolicy = _accessPoliciesRepository.GetAccessPolicy(policy);
+            if(accessPolicy!=null)
+            {
+                return (accessPolicy.AllowedRoles.Any(role => tokenRoles.Contains(role))) || (accessPolicy.AllowedUsers.Any(user => user == tokenUserId));
+            }
             return false;
         }
     }
