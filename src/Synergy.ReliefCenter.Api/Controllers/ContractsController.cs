@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Synergy.ReliefCenter.Api.Configuration;
+using Synergy.ReliefCenter.Api.Filter;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Validations;
+using Synergy.ReliefCenter.Core.Constants;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class ContractsController : ApiControllerBase
     {
         private readonly IContractService _contractService;
@@ -29,6 +29,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _mapper = mapper;
             _configuration = configuration;
         }
+        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
+            HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
@@ -40,7 +42,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             return Ok(getContractDetails);
         }
-
+        [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp), 
+            HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPost]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
