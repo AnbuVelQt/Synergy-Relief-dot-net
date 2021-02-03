@@ -13,21 +13,16 @@ namespace Synergy.ReliefCenter.Api.Filter
         public AuthorizationPolicyFilter(string policy)
         {
             _policy = policy;
-           
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             try
             {
-               
-                //string token = context.HttpContext.Request.Headers["Authorization"];
-                
-                    if (IsAuthorized(context, _policy))
-                    {
-                        return;
-                    }
-                
+                if (IsAuthorized(context, _policy))
+                {
+                    return;
+                }
                 ReturnUnauthorizedResult(context);
             }
             catch (FormatException)
@@ -38,7 +33,7 @@ namespace Synergy.ReliefCenter.Api.Filter
         public bool IsAuthorized(AuthorizationFilterContext context, string policy)
         {
             var authService = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationPolicyService>();
-            return authService.Validate( policy);
+            return authService.Validate(policy);
            
         }
         private void ReturnUnauthorizedResult(AuthorizationFilterContext context)

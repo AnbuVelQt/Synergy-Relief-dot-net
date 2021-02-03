@@ -24,11 +24,7 @@ namespace Synergy.ReliefCenter.Api
         }
         private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
-            // For JwtBearerConfiguration
-
             var authenticationScheme = configuration.GetSection(nameof(AuthenticationScheme)).Get<AuthenticationScheme>();
-
             services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
                     .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
                     {
@@ -54,7 +50,6 @@ namespace Synergy.ReliefCenter.Api
                             ValidateAudience = false
                         };
                     });
-
         }
 
         private static void AddCustomSwagger(this IServiceCollection services)

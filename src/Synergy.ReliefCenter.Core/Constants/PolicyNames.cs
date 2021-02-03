@@ -11,6 +11,7 @@ namespace Synergy.ReliefCenter.Core.Constants
         public const string AccessContract = "access_contract";
         public const string ApproveContract = "approve_contract";
         public const string DraftContract = "draft_contract";
+        public const string VerifyContract = "verify_contract";
 
     }
 }

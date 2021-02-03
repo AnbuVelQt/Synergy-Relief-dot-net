@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Synergy.ReliefCenter.Api.Configuration;
+using Synergy.ReliefCenter.Api.Filter;
 using Synergy.ReliefCenter.Api.Models;
+using Synergy.ReliefCenter.Core.Constants;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
-       Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemas.SeafarerIdp)]
     public class MyContractsController : ApiControllerBase
     {
         private readonly IMyContractService _contractService;
@@ -30,6 +31,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _configuration = configuration;
         }
 
+        [HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet()]
         [Route("mycontracts")]
         [ProducesResponseType(typeof(List<MyContracts>), StatusCodes.Status200OK)]
@@ -45,6 +47,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return Ok(getContractDetails);
         }
 
+        [HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet()]
         [Route("mycontract/active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
