@@ -22,5 +22,6 @@ namespace Synergy.ReliefCenter.Data.Contexts
         public DbSet<PolicyRole> PolicyRoles { get; set; }
 
         public DbSet<PolicyUser> PolicyUsers { get; set; }
+        public DbSet<DocumentSubCategory> DocumentSubCategories { get; set; }
     }
 }

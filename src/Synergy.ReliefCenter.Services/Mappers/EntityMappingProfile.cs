@@ -11,19 +11,19 @@ namespace Synergy.ReliefCenter.Services.Mappers
     {
         public EntityMappingProfile()
         {
-            CreateMap<VesselContract, ContractDto>()
+            CreateMap<VesselContract, ContractDTO>()
                 .ReverseMap();
-            CreateMap<ContractForm, ContractFormDto>()
-                .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<ContractFormDataDto>(src.Data)))
+            CreateMap<ContractForm, ContractFormDTO>()
+                .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<ContractFormDataDTO>(src.Data)))
                 .ReverseMap()
                 .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.SerializeObject(src.Data)));
-            CreateMap<ContractWagesDto, SalaryMatrix>().ReverseMap();
-            CreateMap<WageComponent, WageComponentDto>().ReverseMap();
-            CreateMap<OTRateCard, OTRateCardDto>().ReverseMap();
-            CreateMap<UpdateContractWagesDto, ContractWagesDto>().ReverseMap();
-            CreateMap<ContractReviewer, ContractReviewerSetDto>().ReverseMap();
-            CreateMap<ContractReviewer, ReviewersDto>().ReverseMap();
-            CreateMap<UserDetails, UserInfoDto>().ReverseMap();
+            CreateMap<ContractWagesDTO, SalaryMatrix>().ReverseMap();
+            CreateMap<WageComponent, WageComponentDTO>().ReverseMap();
+            CreateMap<OTRateCard, OTRateCardDTO>().ReverseMap();
+            CreateMap<UpdateContractWagesDTO, ContractWagesDTO>().ReverseMap();
+            CreateMap<ContractReviewer, ContractReviewerSetDTO>().ReverseMap();
+            CreateMap<ContractReviewer, ReviewersDTO>().ReverseMap();
+            CreateMap<UserDetails, UserInfoDTO>().ReverseMap();
             
         }
     }

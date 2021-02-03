@@ -107,6 +107,8 @@ namespace Synergy.ReliefCenter.Api
                 //        }
                 //    }
                 //});
+
+               
             });
 
             services.AddSwaggerGenNewtonsoftSupport();

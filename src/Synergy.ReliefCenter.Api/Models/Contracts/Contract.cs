@@ -1,4 +1,5 @@
 ﻿using Synergy.ReliefCenter.Core.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Synergy.ReliefCenter.Api.Models
@@ -8,6 +9,12 @@ namespace Synergy.ReliefCenter.Api.Models
         public long Id { get; set; }
 
         public decimal? Salary { get; set; }
+
+        public DateTime? VerifyDate { get; set; }
+
+        public string VerifierName { get; set; }
+
+        public string VerifierEmail { get; set; }
 
         public ContractStatus Status { get; set; }
 

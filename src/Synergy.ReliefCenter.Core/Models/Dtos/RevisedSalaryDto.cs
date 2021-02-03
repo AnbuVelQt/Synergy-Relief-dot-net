@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class RevisedSalaryDto
+    public class RevisedSalaryDTO
     {
         public DateTime EffectiveFromDate { get; set; }
 

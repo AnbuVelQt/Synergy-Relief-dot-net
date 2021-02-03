@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class ReviewersDto
+    public class ReviewersDTO
     {
         public string ReviewerId { get; set; }
 
@@ -14,6 +14,8 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
 
         public bool Approved { get; set; }
 
-        public UserInfoDto UserInfo { get; set; }
+        public DateTime ApprovedOn { get; set; }
+
+        public UserInfoDTO UserInfo { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class WageComponentDto
+    public class WageComponentDTO
     {  
         public string Name { get; set; }
 
@@ -16,5 +16,7 @@ namespace Synergy.ReliefCenter.Core.Models.Dtos
         public string Type { get; set; }
 
         public decimal Amount { get; set; }
+
+        public DateTime EffectiveDate { get; set; }
     }
 }

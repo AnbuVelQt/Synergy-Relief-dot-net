@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class OTRateCardDto
+    public class OTRateCardDTO
     {
         public int MinHours { get; set; }
 

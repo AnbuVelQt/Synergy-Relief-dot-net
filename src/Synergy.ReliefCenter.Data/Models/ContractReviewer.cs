@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,7 +34,10 @@ namespace Synergy.ReliefCenter.Data.Models
         public string Role { get; set; }
 
         [Column("approved")]
-        public bool Approved { get; set; }        
+        public bool Approved { get; set; }
+
+        [Column("approved_on")]
+        public DateTime ApprovedOn { get; set; }
 
         [ForeignKey(nameof(ContractId))]
         [InverseProperty("ContractReviewers")]

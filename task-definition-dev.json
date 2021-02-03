@@ -13,7 +13,48 @@
                 }
             ],
             "essential": true,
-            "environment": [],
+            "environment": [
+                {
+                    "name": "SmtpConfiguration__Host",
+                    "value": "email-smtp.ap-south-1.amazonaws.com"
+                  },
+                  {
+                    "name": "SmtpConfiguration__Port",
+                    "value": "587"
+                  },
+                  {
+                    "name": "SmtpConfiguration__EnableSsl",
+                    "value": "true"
+                  },
+                  {
+                    "name": "SmtpConfiguration__DeliveryMethod",
+                    "value": "Network"
+                  },
+                  {
+                    "name": "SmtpConfiguration__UseDefaultCredentials",
+                    "value": "false"
+                  },
+                  {
+                    "name": "SmtpConfiguration__FromEmail",
+                    "value": "support@synergymarinetest.com"
+                  },
+                  {
+                    "name": "JwtBearerConfiguration_ShoreIdp__AuthorityUrl",
+                    "value": "https://login-shore.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "JwtBearerConfiguration_SeafarerIdp__AuthorityUrl",
+                    "value": "https://login-shore.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "CrewWage__ApiUrl",
+                    "value": "https://api-crew-wage-dev.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "UserDetails__ApiUrl",
+                    "value": "https://login-shore.synergymarinetest.com/"
+                  }
+              ],
             "mountPoints": [],
             "volumesFrom": [],
             "secrets": [
@@ -68,6 +109,18 @@
                 {
                     "name": "AwsS3__Region",
                     "valueFrom": "/relief-dotnet-api/dev/AwsS3__Region"
+                },
+                {
+                    "name": "SmtpConfiguration__Login",
+                    "valueFrom": "/dev/smtp_username"
+                },
+                {
+                    "name": "SmtpConfiguration__Password",
+                    "valueFrom": "/dev/smtp_password"
+                },
+                {
+                    "name": "UserDetails__ApiKey",
+                    "valueFrom": "/relief-dotnet-api/dev/api_key"
                 }
             ],
             "logConfiguration": {

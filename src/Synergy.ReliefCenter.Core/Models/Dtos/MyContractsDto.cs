@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Core.Models.Dtos
 {
-    public class MyContractsDto
+    public class MyContractsDTO
     {
         public long Id { get; set; }
         public decimal? Salary { get; set; }
