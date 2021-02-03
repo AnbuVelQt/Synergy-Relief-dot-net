@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.ReliefCenter.Data",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.AdobeSign", "src\Synergy.AdobeSign\Synergy.AdobeSign.csproj", "{81E3F6C2-D8CF-41D2-A08E-BE5013D82243}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synergy.AdobeSign.XUnitTest", "Synergy.AdobeSign.XUnitTest\Synergy.AdobeSign.XUnitTest.csproj", "{711688CF-D36E-4A73-BD24-98D28B399716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Synergy.AdobeSign.XUnitTest", "Synergy.AdobeSign.XUnitTest\Synergy.AdobeSign.XUnitTest.csproj", "{711688CF-D36E-4A73-BD24-98D28B399716}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,18 @@ Global
 		{711688CF-D36E-4A73-BD24-98D28B399716}.Release|x64.Build.0 = Release|Any CPU
 		{711688CF-D36E-4A73-BD24-98D28B399716}.Release|x86.ActiveCfg = Release|Any CPU
 		{711688CF-D36E-4A73-BD24-98D28B399716}.Release|x86.Build.0 = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|x64.Build.0 = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|x64.ActiveCfg = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|x64.Build.0 = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F176010B-9A22-4DC7-BC2D-D6BDA2F7395D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

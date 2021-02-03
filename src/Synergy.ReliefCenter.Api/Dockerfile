@@ -16,7 +16,11 @@ ARG NUGET_USER
 ARG NUGET_SECRET
 WORKDIR /src
 COPY ["src/Synergy.ReliefCenter.Api/Synergy.ReliefCenter.Api.csproj", "src/Synergy.ReliefCenter.Api/"]
-RUN dotnet nuget add source $NUGET_SRC -n $NUGET_NS -u $NUGET_USER -p $NUGET_SECRET --store-password-in-clear-text && dotnet restore "src/Synergy.ReliefCenter.Api/Synergy.ReliefCenter.Api.csproj"
+COPY ["src/Synergy.AdobeSign/Synergy.AdobeSign.csproj", "src/Synergy.AdobeSign/"]
+COPY ["src/Synergy.ReliefCenter.Services/Synergy.ReliefCenter.Services.csproj", "src/Synergy.ReliefCenter.Services/"]
+COPY ["src/Synergy.ReliefCenter.Data/Synergy.ReliefCenter.Data.csproj", "src/Synergy.ReliefCenter.Data/"]
+COPY ["src/Synergy.ReliefCenter.Core/Synergy.ReliefCenter.Core.csproj", "src/Synergy.ReliefCenter.Core/"]
+RUN dotnet restore "src/Synergy.ReliefCenter.Api/Synergy.ReliefCenter.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Synergy.ReliefCenter.Api"
 RUN dotnet build "Synergy.ReliefCenter.Api.csproj" -c Release -o /app/build

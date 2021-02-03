@@ -84,7 +84,7 @@ namespace Synergy.ReliefCenter.Api
             });
 
             //For DB creation
-            manningContext.Database.Migrate();
+            // manningContext.Database.Migrate();
 
             app.UseRouting();
 

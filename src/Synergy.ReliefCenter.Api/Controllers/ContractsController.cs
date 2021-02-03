@@ -11,7 +11,6 @@ using Synergy.ReliefCenter.Core.Constants;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +31,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             _mapper = mapper;
             _configuration = configuration;
         }
+
         [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
             HasPolicyAccess(PolicyNames.AccessContract)]
         [HttpGet]
@@ -45,6 +45,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             return Ok(getContractDetails);
         }
+
         [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
             HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPost]

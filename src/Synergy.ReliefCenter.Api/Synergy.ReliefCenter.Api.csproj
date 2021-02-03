@@ -7,6 +7,7 @@
     <UserSecretsId>a2764dd0-a8c9-45b6-923f-e81a63436080</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +34,5 @@
     <ProjectReference Include="..\Synergy.ReliefCenter.Core\Synergy.ReliefCenter.Core.csproj" />
     <ProjectReference Include="..\Synergy.ReliefCenter.Services\Synergy.ReliefCenter.Services.csproj" />
   </ItemGroup>
-
 
 </Project>
