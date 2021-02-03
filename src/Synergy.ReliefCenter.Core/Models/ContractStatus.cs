@@ -8,6 +8,7 @@ namespace Synergy.ReliefCenter.Core.Models
     {
         InDraft,
         InVerification,
+        InApprove,
         SignaturePending,
         Signed,
         Cancelled

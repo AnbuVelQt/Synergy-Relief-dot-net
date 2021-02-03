@@ -63,41 +63,11 @@ namespace Synergy.ReliefCenter.Api
             services.AddSingleton(Configuration);
             services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
             services.AddAllValidators();
-
-            // For JwtBearerConfiguration
-
-            var jwtBearerConfiguration = Configuration.GetSection(nameof(JwtBearerConfiguration)).Get<JwtBearerConfiguration>();
-
-            services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
-                .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
-                {
-                    options.Authority = jwtBearerConfiguration.ShoreIdp.AuthorityUrl;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.AuthorityUrl,
-                        ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateAudience = false
-                    };
-                })
-                .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
-                {
-                    options.Authority = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl,
-                        ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateAudience = false
-                    };
-                });
             services.AddAdobeSign(Configuration);   //For Adobe Sign
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,synergy_manningContext manningContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, synergy_manningContext manningContext)
         {
             if (env.IsDevelopment())
             {

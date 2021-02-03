@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Services;
 using System;
 using System.IO;
 using System.Reflection;
+using AuthenticationScheme = Synergy.ReliefCenter.Api.Configuration.AuthenticationScheme;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -17,6 +20,41 @@ namespace Synergy.ReliefCenter.Api
             services.AddEFContext(configuration);
             services.AddReliefServices();
             services.AddReliefRepositories();
+            services.AddAuthentication(configuration);
+        }
+        private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+
+            // For JwtBearerConfiguration
+
+            var authenticationScheme = configuration.GetSection(nameof(AuthenticationScheme)).Get<AuthenticationScheme>();
+
+            services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
+                    .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
+                    {
+                        options.Authority = authenticationScheme.ShoreIdp.AuthorityUrl;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidIssuer = authenticationScheme.ShoreIdp.AuthorityUrl,
+                            ValidateIssuer = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidateAudience = false
+                        };
+                    })
+                    .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
+                    {
+                        options.Authority = authenticationScheme.SeafarerIdp.AuthorityUrl;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidIssuer = authenticationScheme.SeafarerIdp.AuthorityUrl,
+                            ValidateIssuer = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidateAudience = false
+                        };
+                    });
+
         }
 
         private static void AddCustomSwagger(this IServiceCollection services)

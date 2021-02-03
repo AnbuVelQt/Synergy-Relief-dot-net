@@ -17,6 +17,11 @@ namespace Synergy.ReliefCenter.Data.Contexts
 
         public DbSet<Nationality> Nationalities { get; set; }
 
+        public DbSet<AccessPolicy> AccessPolicies { get; set; }
+
+        public DbSet<PolicyRole> PolicyRoles { get; set; }
+
+        public DbSet<PolicyUser> PolicyUsers { get; set; }
         public DbSet<DocumentSubCategory> DocumentSubCategories { get; set; }
     }
 }

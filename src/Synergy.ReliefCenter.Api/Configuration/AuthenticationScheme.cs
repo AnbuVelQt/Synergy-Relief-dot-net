@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Configuration
 {
-    public class JwtBearerConfiguration
+    public class AuthenticationScheme
     {
         public IdentityProviderProperties ShoreIdp { get; set; }
         public IdentityProviderProperties SeafarerIdp { get; set; }
