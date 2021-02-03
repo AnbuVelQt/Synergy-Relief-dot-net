@@ -7,7 +7,6 @@ namespace Synergy.ReliefCenter.Api.Models
 {
     public class UpdateContractWages
     {
-        // TODO: SpecialAllowce can't be in minus
         public decimal SpecialAllowance { get; set; }
 
         public IList<WageComponent> OtherEarningComponents { get; set; }

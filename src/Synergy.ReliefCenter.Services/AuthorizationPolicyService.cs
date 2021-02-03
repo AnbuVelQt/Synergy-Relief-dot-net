@@ -22,7 +22,11 @@ namespace Synergy.ReliefCenter.Services
                 var tokenRoles = _apiRequestContext.AllowedRoles;
                  var tokenUserId = _apiRequestContext.UserId;
                 var accessPolicy = _accessPoliciesRepository.GetAccessPolicy(policy);
-                return (accessPolicy.AllowedRoles.Count() > 0  ? accessPolicy.AllowedRoles.Any(role => tokenRoles.Contains(role)) : false) || (accessPolicy.AllowedUsers.Count() > 0 ? accessPolicy.AllowedUsers.Any(user => user == tokenUserId) : false);
+                if (accessPolicy != null)
+                {
+                    return (accessPolicy.AllowedRoles.Any(role => tokenRoles.Contains(role))) || (accessPolicy.AllowedUsers.Any(user => user == tokenUserId));
+                }
+            return false;
         }
     }
 }

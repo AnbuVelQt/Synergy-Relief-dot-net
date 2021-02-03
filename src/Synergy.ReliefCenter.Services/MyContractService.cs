@@ -65,7 +65,7 @@ namespace Synergy.ReliefCenter.Services
             var userInfo = new UserDetails();
             foreach (var data in reviewers)
             {
-                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId, apiKey,userDetailsApiBaseUrl);
+                userInfo = await _externalUserDetailsRepository.GetUserDetails(data.ReviewerId);
                 reviewer.Add(new ReviewersDTO()
                 {
                     ReviewerId = userInfo is null ? data.ReviewerId : userInfo.Id,

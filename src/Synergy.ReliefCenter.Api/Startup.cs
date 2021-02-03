@@ -1,8 +1,6 @@
 using AutoMapper;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +13,10 @@ using Synergy.ReliefCenter.Services.Mappers;
 using Synergy.Core.EmailService;
 using Microsoft.Extensions.Logging;
 using System;
-using Synergy.ReliefCenter.Api.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using Synergy.ReliefCenter.Data;
+using Microsoft.EntityFrameworkCore;
+using Synergy.ReliefCenter.Api.Filter;
+using FluentValidation.AspNetCore;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -62,8 +62,17 @@ namespace Synergy.ReliefCenter.Api
             services.AddSingleton(mapper);
             services.AddSingleton(Configuration);
             services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
-            services.AddAllValidators();
+
+            services.AddMvc(Options => {
+                Options.Filters.Add(new ValidationFilter());
+            }).AddFluentValidation(Options =>
+            {
+                Options.RegisterValidatorsFromAssemblyContaining<Startup>();
+            });
+
             services.AddAdobeSign(Configuration);   //For Adobe Sign
+            services.AddExternalApi(Configuration);   //For ExternalApi 
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,7 +93,7 @@ namespace Synergy.ReliefCenter.Api
             });
 
             //For DB creation
-            // manningContext.Database.Migrate();
+             manningContext.Database.Migrate();
 
             app.UseRouting();
 

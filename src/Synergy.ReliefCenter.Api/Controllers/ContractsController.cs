@@ -20,16 +20,13 @@ namespace Synergy.ReliefCenter.Api.Controllers
     {
         private readonly IContractService _contractService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-        private const string CREW_WAGE_APIURL_SECTION = "CrewWage:ApiUrl";
-        private const string USER_DETAILS_APIURL_SECTION = "UserDetails:ApiUrl";
-        private const string USER_DETAILS_APIKEY_SECTION = "UserDetails:ApiKey";
+        private readonly IApiRequestContext _apiRequestContext;
 
-        public ContractsController(IContractService contractService, IMapper mapper, IConfiguration configuration)
+        public ContractsController(IContractService contractService, IMapper mapper, IApiRequestContext apiRequestContext)
         {
             _contractService = contractService;
             _mapper = mapper;
-            _configuration = configuration;
+            _apiRequestContext = apiRequestContext;
         }
 
         [Authorize(AuthenticationSchemes = AuthenticationSchemas.ShoreIdp),
@@ -39,9 +36,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetConract([FromRoute] long id)
         {
-            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
-            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetConract(id, userDetailsApiKey, userDetailsApiBaseUrl);
+            var contractDetails = await _contractService.GetConract(id);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             return Ok(getContractDetails);
         }
@@ -52,15 +47,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(Contract), StatusCodes.Status201Created)]
         public async Task<ActionResult<Contract>> CreateContract([FromBody] CreateContractRequest model)
         {
-            var validator = new CreateContractRequestValidation();
-            var result = validator.Validate(model);
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors);
-            }
-            string crewWageApiBaseUrl = _configuration.GetSection(CREW_WAGE_APIURL_SECTION).Value;
             var AuthToken = Request.Headers["Authorization"];
-            var contract = await _contractService.CreateContract(model.VesselImoNumber, model.SeafarerCdcNumber, AuthToken, crewWageApiBaseUrl);
+            var contract = await _contractService.CreateContract(model.VesselImoNumber, model.SeafarerCdcNumber, AuthToken);
             if (contract is null)
             {
                 return Conflict();
@@ -85,10 +73,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> AssignReviewers([FromRoute] long id, [FromBody] ContractReviewerSet model)
         {
-            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
-            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
             var requestModel = _mapper.Map<ContractReviewerSetDTO>(model);
-            await _contractService.AssignReviewers(id, requestModel, userDetailsApiKey, userDetailsApiBaseUrl);
+            await _contractService.AssignReviewers(id, requestModel);
             return NoContent();
         }
 
@@ -97,9 +83,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetContracts([FromQuery] string vesselImoNumber, [FromQuery] string seafarerCdcNumber)
         {
-            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
-            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetConracts(vesselImoNumber, seafarerCdcNumber, userDetailsApiKey, userDetailsApiBaseUrl);
+            var contractDetails = await _contractService.GetConracts(vesselImoNumber, seafarerCdcNumber);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {
@@ -113,8 +97,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> ApproveContract([FromRoute] long id)
         {
-            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            var response = await _contractService.ApproveContract(id, userId);
+            
+            var response = await _contractService.ApproveContract(id, _apiRequestContext.UserId);
             if (response is null)
             {
                 return BadRequest();
@@ -127,8 +111,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> VerifyContract([FromRoute] long id)
         {
-            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            var response = await _contractService.VerifyContract(id, userId);
+            var response = await _contractService.VerifyContract(id, _apiRequestContext.UserId);
             if (response is null)
             {
                 return BadRequest();
@@ -141,8 +124,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> RejectContract([FromRoute] long id, [FromQuery] string comment)
         {
-            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            await _contractService.RejectContract(id, userId, comment);
+            await _contractService.RejectContract(id, _apiRequestContext.UserId, comment);
             return NoContent();
         }
     }
