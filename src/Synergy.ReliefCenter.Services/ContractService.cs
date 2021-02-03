@@ -16,6 +16,7 @@ using ContractForm = Synergy.ReliefCenter.Data.Models.ContractForm;
 using System.IO;
 using Synergy.ReliefCenter.Data.Entities.Master;
 using Synergy.Core.EmailService;
+using Synergy.ReliefCenter.Core.Domain.Models;
 
 namespace Synergy.ReliefCenter.Services
 {
@@ -322,6 +323,68 @@ namespace Synergy.ReliefCenter.Services
             await _emailService.SendEmailAsync(sendingMailInfo);
         }
 
-        
+        public async Task<object> ApproveContract(long id, string userId)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (contract is null)
+            {
+                return null;
+            }
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToListAsync();
+            var approver = reviewers.Where(x => x.ReviewerId == userId && x.Role.Equals(ReviewerRole.FleetHead.ToString())).FirstOrDefault();
+            if (approver is null)
+            {
+                return null;
+            }
+
+            Contract contractDomainModel = new Contract();
+            var information = new ContractInformation();
+            contractDomainModel.AssignReviewers(_mapper.Map<List<ContractReviewers>>(reviewers).ToArray());
+            contractDomainModel.Approve();
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_ => _.Role == ReviewerRole.FleetHead.ToString())));
+            contract.Status = contractDomainModel.Information.Status.ToString();
+            contract.NextReviewer = contractDomainModel.NextReviewer.Id;
+            await _contractRepository.UpdateAsync(contract);
+            return 0;
+        }
+
+        public async Task<object> VerifyContract(long id, string userId)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (contract is null)
+            {
+                return null;
+            }
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToArrayAsync();
+            var approver = reviewers.Where(x => x.ReviewerId == userId && x.Role.Equals(ReviewerRole.SourcingExecutive.ToString())).FirstOrDefault();
+            if (approver is null)
+            {
+                return null;
+            }
+            Contract contractDomainModel = new Contract();
+            contractDomainModel.AssignReviewers(_mapper.Map<List<ContractReviewers>>(reviewers).ToArray());
+            contractDomainModel.Verify();
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_=>_.Role == ReviewerRole.SourcingExecutive.ToString())));
+            contract.Status = contractDomainModel.Status.ToString();
+            contract.NextReviewer = contractDomainModel.NextReviewer.Id;
+            await _contractRepository.UpdateAsync(contract);
+            return 0;
+        }
+
+        public async Task RejectContract(long id, string userId, string comment)
+        {
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            var reviewers = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id).ToArrayAsync();
+
+            var reviewer = await _contractReviewerRepository.GetAllIncluding().AsNoTracking().Where(x => x.ContractId == id && x.ReviewerId == userId).FirstOrDefaultAsync();
+            
+            Contract contractDomainModel = new Contract();
+            contractDomainModel.AssignReviewers(_mapper.Map<List<ContractReviewers>>(reviewers).ToArray());
+            contractDomainModel.Reject(comment);
+            await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_=>_.ReviewerId == userId)));
+            contract.Status = contractDomainModel.Status.ToString();
+            await _contractRepository.UpdateAsync(contract);
+            return;
+        }  
     }
 }
