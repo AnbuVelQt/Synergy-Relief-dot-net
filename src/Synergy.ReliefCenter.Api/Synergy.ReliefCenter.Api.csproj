@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Synergy.AdobeSign\Synergy.AdobeSign.csproj" />
     <ProjectReference Include="..\Synergy.ReliefCenter.Core\Synergy.ReliefCenter.Core.csproj" />
     <ProjectReference Include="..\Synergy.ReliefCenter.Services\Synergy.ReliefCenter.Services.csproj" />
   </ItemGroup>

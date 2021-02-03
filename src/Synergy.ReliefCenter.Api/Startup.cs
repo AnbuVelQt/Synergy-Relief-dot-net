@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Synergy.AdobeSign;
 using Synergy.ReliefCenter.Api.Helpers;
 using Synergy.ReliefCenter.Api.Mappers;
 using Synergy.ReliefCenter.Api.Validations;
@@ -59,13 +60,14 @@ namespace Synergy.ReliefCenter.Api
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton(Configuration);
+            services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
             services.AddAllValidators();
-
-            
+            services.AddAdobeSign(Configuration);   //For Adobe Sign
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,synergy_manningContext manningContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, synergy_manningContext manningContext)
         {
             if (env.IsDevelopment())
             {

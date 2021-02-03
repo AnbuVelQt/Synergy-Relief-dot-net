@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.ReliefCenter.Data.Models;
@@ -9,9 +10,10 @@ using Synergy.ReliefCenter.Data.Models;
 namespace Synergy.ReliefCenter.Data.Contexts.Migrations
 {
     [DbContext(typeof(synergy_manningContext))]
-    partial class synergy_manningContextModelSnapshot : ModelSnapshot
+    [Migration("20210121105626_AddAgreementId")]
+    partial class AddAgreementId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,51 +323,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasDatabaseName("ix_contract_form_vessel_contract_id");
 
                     b.ToTable("ContractForm");
-                });
-
-            modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.ContractReviewer", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<bool>("Approved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("approved");
-
-                    b.Property<DateTime>("ApprovedOn")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("approved_on");
-
-                    b.Property<long>("ContractId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("contract_id");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<string>("ReviewerId")
-                        .HasColumnType("text")
-                        .HasColumnName("reviewer_id");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("text")
-                        .HasColumnName("role");
-
-                    b.HasKey("Id")
-                        .HasName("pk_contract_reviewers");
-
-                    b.HasIndex(new[] { "ContractId" }, "index_contract_reviewer_on_contract_id")
-                        .HasDatabaseName("ix_contract_reviewers_contract_id");
-
-                    b.ToTable("ContractReviewers");
                 });
 
             modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.DepartureChecklist", b =>
@@ -1796,10 +1753,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnName("id")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<string>("CdcNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("cdc_number");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp(6) without time zone")
                         .HasColumnName("created_at");
@@ -1819,14 +1772,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("end_date");
-
-                    b.Property<string>("ImoNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("imo_number");
-
-                    b.Property<long?>("NextReviewer")
-                        .HasColumnType("bigint")
-                        .HasColumnName("next_reviewer");
 
                     b.Property<long?>("RankId")
                         .HasColumnType("bigint")
@@ -1848,10 +1793,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("start_date");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp(6) without time zone")
                         .HasColumnName("updated_at");
@@ -1871,17 +1812,8 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.HasKey("Id")
                         .HasName("pk_vessel_contracts");
 
-                    b.HasIndex(new[] { "CdcNumber" }, "index_vessel_contracts_on_cdc_number")
-                        .HasDatabaseName("ix_vessel_contracts_cdc_number");
-
                     b.HasIndex(new[] { "EndDate" }, "index_vessel_contracts_on_end_date")
                         .HasDatabaseName("ix_vessel_contracts_end_date");
-
-                    b.HasIndex(new[] { "ImoNumber" }, "index_vessel_contracts_on_imo_number")
-                        .HasDatabaseName("ix_vessel_contracts_imo_number");
-
-                    b.HasIndex(new[] { "NextReviewer" }, "index_vessel_contracts_on_next_reviewer")
-                        .HasDatabaseName("ix_vessel_contracts_next_reviewer");
 
                     b.HasIndex(new[] { "RankId" }, "index_vessel_contracts_on_rank_id")
                         .HasDatabaseName("ix_vessel_contracts_rank_id");
@@ -1919,18 +1851,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .IsRequired();
 
                     b.Navigation("VesselContract");
-                });
-
-            modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.ContractReviewer", b =>
-                {
-                    b.HasOne("Synergy.ReliefCenter.Data.Models.VesselContract", "VesselContracts")
-                        .WithMany("ContractReviewers")
-                        .HasForeignKey("ContractId")
-                        .HasConstraintName("fk_contract_reviewers_vessel_contracts_contract_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VesselContracts");
                 });
 
             modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.FleetCombinationMatrix", b =>
@@ -2023,21 +1943,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                     b.Navigation("RankCombination");
                 });
 
-            modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.VesselContract", b =>
-                {
-                    b.HasOne("Synergy.ReliefCenter.Data.Models.ContractReviewer", "Reviewer")
-                        .WithMany("Contract")
-                        .HasForeignKey("NextReviewer")
-                        .HasConstraintName("fk_vessel_contracts_contract_reviewers_next_reviewer");
-
-                    b.Navigation("Reviewer");
-                });
-
-            modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.ContractReviewer", b =>
-                {
-                    b.Navigation("Contract");
-                });
-
             modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.RankCombination", b =>
                 {
                     b.Navigation("FleetCombinationMatrices");
@@ -2071,8 +1976,6 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
             modelBuilder.Entity("Synergy.ReliefCenter.Data.Models.VesselContract", b =>
                 {
                     b.Navigation("ContractForms");
-
-                    b.Navigation("ContractReviewers");
 
                     b.Navigation("Reliefs");
                 });
