@@ -12,6 +12,7 @@ namespace Synergy.ReliefCenter.Api.Filter
         {
 
         }
+
         public HasPolicyAccessAttribute(string policy) : base(typeof(AuthorizationPolicyFilter))
         {
             Arguments = new object[] { policy };

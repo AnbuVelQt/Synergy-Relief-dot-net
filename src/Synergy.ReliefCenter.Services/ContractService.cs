@@ -153,6 +153,8 @@ namespace Synergy.ReliefCenter.Services
             await _contractFormRepository.SaveAsync();
             
             return contractDto;
+
+            _mapper.Map<AgreementCreationInfo>(contract);
         }
 
         private AgreementCreationInfo GetAgreementCreationInfo(ContractDTO contractData)

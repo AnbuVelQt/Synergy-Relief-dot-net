@@ -9,8 +9,8 @@ namespace Synergy.ReliefCenter.Api.Validations
     {
         public CreateContractRequestValidation()
         {
-            RuleFor(x => x.VesselImoNumber).NotNull().NotEmpty();
-            RuleFor(x => x.SeafarerCdcNumber).NotNull().NotEmpty();
+            RuleFor(x => x.VesselImoNumber).NotEmpty();
+            RuleFor(x => x.SeafarerCdcNumber).NotEmpty();
         }
     
     }

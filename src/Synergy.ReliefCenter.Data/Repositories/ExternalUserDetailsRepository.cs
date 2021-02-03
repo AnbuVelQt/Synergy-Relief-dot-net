@@ -9,6 +9,7 @@ namespace Synergy.ReliefCenter.Data.Repositories
 {
     public class ExternalUserDetailsRepository : IExternalUserDetailsRepository
     {
+
         public async Task<UserDetails> GetUserDetails(string userId, string apiKey, string userDetailsApiBaseUrl)
         {
             using (var client = new HttpClient())
