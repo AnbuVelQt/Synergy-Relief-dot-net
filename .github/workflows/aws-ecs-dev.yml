@@ -46,7 +46,6 @@ jobs:
         docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg NUGET_SRC=$NUGET_SRC --build-arg NUGET_NS=$NUGET_NS --build-arg NUGET_USER=$NUGET_USER --build-arg NUGET_SECRET=$NUGET_SECRET ../.
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -61,7 +60,7 @@ jobs:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: relief-dotnet
         cluster: relief-dotnet-dev-test
-        wait-for-service-stability: true
+        wait-for-service-stability: false
 
     - name: Slack Notification
       uses: 8398a7/action-slack@v3
@@ -71,4 +70,3 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
       if: always() 
-
