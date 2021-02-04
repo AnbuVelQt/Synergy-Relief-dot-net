@@ -55,7 +55,7 @@ namespace Synergy.ReliefCenter.Api
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new EntityMappingProfile());
-                mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new MappingProfile(Configuration));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

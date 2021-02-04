@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
+using Synergy.AdobeSign.Models;
+using Synergy.ReliefCenter.Api.Mapper;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 
@@ -6,8 +9,10 @@ namespace Synergy.ReliefCenter.Api.Mappers
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile()
+        private readonly IConfiguration _configuration;
+        public MappingProfile(IConfiguration configuration)
         {
+            _configuration = configuration;
             CreateMap<Contract, ContractDTO>()
                 .ReverseMap()                
                 .ForMember(dest => dest.SeafarerDetail, opt => opt.MapFrom(src => src.ContractForm.Data.SeafarerDetail))
@@ -34,6 +39,8 @@ namespace Synergy.ReliefCenter.Api.Mappers
             CreateMap<UserInfo, UserInfoDTO>().ReverseMap();
             CreateMap<RevisedSalary, RevisedSalaryDTO>().ReverseMap();
             CreateMap<MyContracts, MyContractsDTO>().ReverseMap();
+
+            CreateMap<ContractDTO, AgreementCreationInfo>().ConvertUsing(new ContractToAgreementMapper(_configuration));
         }
     }
 }

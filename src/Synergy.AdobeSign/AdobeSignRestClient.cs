@@ -15,17 +15,19 @@ namespace Synergy.AdobeSign
     public class AdobeSignRestClient : IAdobeSignRestClient
     {
         private readonly AdobeSignConfiguration _configuration;
-        
-        public AdobeSignRestClient(AdobeSignConfiguration configuration)
+        private readonly IHttpClientFactory _clientFactory;
+
+        public AdobeSignRestClient(AdobeSignConfiguration configuration, IHttpClientFactory clientFactory)
         {
             _configuration = configuration;
+            _clientFactory = clientFactory;
         }
 
         public async Task<AgreementCreationResponse> CreateAgreementAsync(AgreementCreationInfo agreementInfo, CancellationToken cancellationToken = default)
         {
             var agrrementPath = $"/api/rest/{_configuration.ApiVersion}/agreements";
 
-            using (var client = new HttpClient())
+            using (var client = _clientFactory.CreateClient())
             {
                 client.BaseAddress = new Uri(_configuration.ApiUrl);
 
@@ -59,7 +61,7 @@ namespace Synergy.AdobeSign
         {
             var getSigningUrlsPath = $"/api/rest/{_configuration.ApiVersion}/agreements/{agreementId}/signingUrls";
 
-            using (var client = new HttpClient())
+            using (var client = _clientFactory.CreateClient())
             {
                 client.BaseAddress = new Uri(_configuration.ApiUrl);
 

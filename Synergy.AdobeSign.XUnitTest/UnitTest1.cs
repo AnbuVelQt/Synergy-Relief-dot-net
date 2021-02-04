@@ -3,6 +3,7 @@ using Synergy.AdobeSign.Configurations;
 using Synergy.AdobeSign.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,6 +13,7 @@ namespace Synergy.AdobeSign.XUnitTest
     {
         private AgreementCreationInfo agreementCreationInfo;
         private AdobeSignRestClient adobeSignRestClient;
+        private readonly IHttpClientFactory _clientFactory;
         public UnitTest1()
         {
             AdobeSignConfiguration _configuration = new AdobeSignConfiguration()
@@ -20,7 +22,7 @@ namespace Synergy.AdobeSign.XUnitTest
                 ApiUrl = "https://api.in1.echosign.com:443",
                 ApiVersion = "v6"
             };
-            adobeSignRestClient = new AdobeSignRestClient(_configuration);
+            adobeSignRestClient = new AdobeSignRestClient(_configuration,_clientFactory);
             var fileInfosList = new List<FileInformation>();
             string contractDocumentId = "CBJCHBCAABAAuIj3UtlJc9u7_PKAdBAu3UqrGBXJWqrT";
             fileInfosList.Add(new FileInformation { libraryDocumentId = contractDocumentId });
@@ -57,7 +59,7 @@ namespace Synergy.AdobeSign.XUnitTest
         [Fact]
         public void TestAsync_InValidCase_Configs()
         {
-            AdobeSignRestClient adobeSignRestClientInvalid = new AdobeSignRestClient(new AdobeSignConfiguration());
+            AdobeSignRestClient adobeSignRestClientInvalid = new AdobeSignRestClient(new AdobeSignConfiguration(),_clientFactory);
             Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => adobeSignRestClientInvalid.CreateAgreementAsync(agreementCreationInfo));
         }
 
