@@ -1,13 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Synergy.ReliefCenter.Api.Configuration;
+using Synergy.ReliefCenter.Api.Models;
+using Synergy.ReliefCenter.Api.Validations;
+using Synergy.ReliefCenter.Core.Models;
 using Synergy.ReliefCenter.Services;
 using System;
 using System.IO;
 using System.Reflection;
-using AuthenticationScheme = Synergy.ReliefCenter.Api.Configuration.AuthenticationScheme;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -21,21 +23,18 @@ namespace Synergy.ReliefCenter.Api
             services.AddReliefServices();
             services.AddReliefRepositories();
             services.AddAuthentication(configuration);
+            services.AddAllValidators();
         }
         private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
-            // For JwtBearerConfiguration
-
-            var authenticationScheme = configuration.GetSection(nameof(AuthenticationScheme)).Get<AuthenticationScheme>();
-
+            var authenticationScheme = configuration.GetSection(nameof(IdentityServerConfiguration)).Get<IdentityServerConfiguration>();
             services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
                     .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
                     {
-                        options.Authority = authenticationScheme.ShoreIdp.AuthorityUrl;
+                        options.Authority = authenticationScheme.ShoreAuthorityUrl;
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidIssuer = authenticationScheme.ShoreIdp.AuthorityUrl,
+                            ValidIssuer = authenticationScheme.ShoreAuthorityUrl,
                             ValidateIssuer = true,
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true,
@@ -44,17 +43,16 @@ namespace Synergy.ReliefCenter.Api
                     })
                     .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
                     {
-                        options.Authority = authenticationScheme.SeafarerIdp.AuthorityUrl;
+                        options.Authority = authenticationScheme.SeafarerAuthorityUrl;
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidIssuer = authenticationScheme.SeafarerIdp.AuthorityUrl,
+                            ValidIssuer = authenticationScheme.SeafarerAuthorityUrl,
                             ValidateIssuer = true,
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true,
                             ValidateAudience = false
                         };
                     });
-
         }
 
         private static void AddCustomSwagger(this IServiceCollection services)
@@ -124,6 +122,17 @@ namespace Synergy.ReliefCenter.Api
 
                 return xmlPath;
             }
+        }
+
+        public static void AddAllValidators(this IServiceCollection services)
+        {
+            services.AddTransient<IValidator<CreateContractRequest>, CreateContractRequestValidator>();
+            services.AddTransient<IValidator<UpdateContractRequest>, UpdateContractRequestValidator>();
+            services.AddTransient<IValidator<UpdateContractWages>, UpdateContractWagesValidator>();
+            services.AddTransient<IValidator<RevisedSalary>, RevisedSalaryValidator>();
+            services.AddTransient<IValidator<WageComponent>, WageComponentValidator>();
+            services.AddTransient<IValidator<TravelDetail>, TravelInfoValidator>();
+            services.AddTransient<IValidator<ContractReviewerSet>, ContractReviewerValidator>();
         }
     }
 }

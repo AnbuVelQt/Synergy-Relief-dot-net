@@ -11,7 +11,6 @@ namespace Synergy.ReliefCenter.Api.Models
         // Also can effective date in past
         public DateTime? EffectiveFromDate { get; set; }
 
-        // TODO: What is max length of this field (i.e. max allowed characters)
         public string ReasonForRevision { get; set; }
 
         public decimal TotalMonthlyWage { get; set; }

@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Synergy.ReliefCenter.Api.Validations
 {
-    public class CreateContractRequestValidation : AbstractValidator<CreateContractRequest>
+    public class CreateContractRequestValidator : AbstractValidator<CreateContractRequest>
     {
-        public CreateContractRequestValidation()
+        public CreateContractRequestValidator()
         {
             RuleFor(x => x.VesselImoNumber).NotEmpty();
             RuleFor(x => x.SeafarerCdcNumber).NotEmpty();

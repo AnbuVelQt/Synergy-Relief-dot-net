@@ -5,6 +5,6 @@ namespace Synergy.ReliefCenter.Data.Repositories.Abstraction
 {
     public interface IExternalSalaryMatrixRepository
     {
-        Task<SalaryMatrix> GetSalaryMatrix(string vesselImoNumber, string seafarerCdcNumer, string AuthToken, string crewWageApiBaseUrl);
+        Task<SalaryMatrix> GetSalaryMatrix(string vesselImoNumber, string seafarerCdcNumer, string AuthToken);
     }
 }

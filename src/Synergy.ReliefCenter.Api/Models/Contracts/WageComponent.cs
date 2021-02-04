@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Synergy.ReliefCenter.Core.Models.Enum;
+using System;
 
 namespace Synergy.ReliefCenter.Api.Models
 {
@@ -9,11 +10,10 @@ namespace Synergy.ReliefCenter.Api.Models
         public string AccountCode { get; set; }
 
         // TODO: Use enum for Frequency and Type to avoid adding wrong value in database
-        public string Frequency { get; set; }
+        public WageFrequency Frequency { get; set; }
 
         public string Type { get; set; }
 
-        // TODO: Amount should not be negative
         public decimal Amount { get; set; }
 
         // TODO: Check whether effective date is mandatory or not
