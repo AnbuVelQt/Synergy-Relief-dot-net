@@ -93,9 +93,7 @@ namespace Synergy.ReliefCenter.Api
             });
 
             //For DB creation
-            // manningContext.Database.Migrate();
-           
-            // manningContext.Database.Migrate();
+            manningContext.Database.Migrate();
 
             app.UseCors("MyPolicy");
 
