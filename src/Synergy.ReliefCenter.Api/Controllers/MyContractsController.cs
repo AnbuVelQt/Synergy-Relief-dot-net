@@ -18,15 +18,13 @@ namespace Synergy.ReliefCenter.Api.Controllers
     {
         private readonly IMyContractService _contractService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-        private const string USER_DETAILS_APIURL_SECTION = "UserDetails:ApiUrl";
-        private const string USER_DETAILS_APIKEY_SECTION = "UserDetails:ApiKey";
+        private readonly IApiRequestContext _apiRequestContext;
 
-        public MyContractsController(IMyContractService contractService, IMapper mapper, IConfiguration configuration)
+        public MyContractsController(IMyContractService contractService, IMapper mapper, IApiRequestContext apiRequestContext)
         {
             _contractService = contractService;
             _mapper = mapper;
-            _configuration = configuration;
+            _apiRequestContext = apiRequestContext;
         }
 
         [HttpGet()]
@@ -34,8 +32,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [ProducesResponseType(typeof(List<MyContracts>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetSeafarerConracts([FromQuery] string imoNumber)
         {
-            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            var contractDetails = await _contractService.GetSeafarerConracts(imoNumber, userId);
+            var contractDetails = await _contractService.GetSeafarerConracts(imoNumber, _apiRequestContext.UserId);
             var getContractDetails = _mapper.Map<List<MyContracts>>(contractDetails);
             if (contractDetails == null)
             {
@@ -48,11 +45,8 @@ namespace Synergy.ReliefCenter.Api.Controllers
         [Route("mycontract/active")]
         [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
         public async Task<ActionResult<Contract>> GetSeafarerConract([FromQuery] string imoNumber)
-        {
-            var userId = Request.HttpContext.User.Claims.FirstOrDefault(s => s.Type.Equals("user_id", StringComparison.OrdinalIgnoreCase))?.Value;
-            string userDetailsApiBaseUrl = _configuration.GetSection(USER_DETAILS_APIURL_SECTION).Value;
-            string userDetailsApiKey = _configuration.GetSection(USER_DETAILS_APIKEY_SECTION).Value;
-            var contractDetails = await _contractService.GetSeafarerConract(imoNumber, userId,userDetailsApiKey,userDetailsApiBaseUrl);
+        {  
+            var contractDetails = await _contractService.GetSeafarerConract(imoNumber, _apiRequestContext.UserId);
             var getContractDetails = _mapper.Map<Contract>(contractDetails);
             if (contractDetails == null)
             {

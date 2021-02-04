@@ -18,38 +18,36 @@ namespace Synergy.ReliefCenter.Services
     {
         private readonly IContractRepository _contractRepository;
         private readonly IContractFormRepository _contractFormRepository;
-        private readonly IVesselDataRepository _vesselDataRepository;
         private readonly ISeafarerDataRepository _seafarerDataRepository;
         private readonly IMapper _mapper;
-        private readonly IExternalSalaryMatrixRepository _externalSalaryMatrixRepository;
         private readonly IContractReviewerRepository _contractReviewerRepository;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
 
         public MyContractService(
             IContractRepository contractRepository,
             IContractFormRepository contractFormRepository,
-            IVesselDataRepository vesselRepository,
             ISeafarerDataRepository seafarerRepository,
             IMapper mapper,
             IContractReviewerRepository contractReviewerRepository,
-            IExternalSalaryMatrixRepository externalSalaryMatrixRepository,
             IExternalUserDetailsRepository externalUserDetailsRepository)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
-            _vesselDataRepository = vesselRepository;
             _seafarerDataRepository = seafarerRepository;
             _mapper = mapper;
             _contractReviewerRepository = contractReviewerRepository;
-            _externalSalaryMatrixRepository = externalSalaryMatrixRepository;
             _externalUserDetailsRepository = externalUserDetailsRepository;
         }
-        public async Task<ContractDTO> GetSeafarerConract(string imoNumber, string userId, string apiKey, string userDetailsApiBaseUrl)
+        public async Task<ContractDTO> GetSeafarerConract(string imoNumber, string userId)
         {
-            var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
+            var seafarerDetails = await _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
+            if(seafarerDetails == null)
+            {
+                return null;
+            }
             var contracts = new ContractDTO();
 
-            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.SeafarerId == seafarerDetails.Result.Id && ((x.EndDate >= DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)) && x.Status != ContractStatus.Cancelled.ToString() && x.Status != ContractStatus.InDraft.ToString()).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+            var contract = await _contractRepository.GetAllIncluding().AsNoTracking().Where(x => x.SeafarerId == seafarerDetails.Id && ((x.EndDate >= DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)) && x.Status != ContractStatus.Cancelled.ToString() && x.Status != ContractStatus.InDraft.ToString()).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
             if (imoNumber != null)
             {
                 contract.ImoNumber = imoNumber;
@@ -89,10 +87,13 @@ namespace Synergy.ReliefCenter.Services
 
         public async Task<IList<MyContractsDTO>> GetSeafarerConracts(string imoNumber, string userId)
         {
-            var seafarerDetails = _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
-           
+            var seafarerDetails =await _seafarerDataRepository.GetSeafarerByIdentityAsync(userId);
+            if (seafarerDetails == null)
+            {
+                return null;
+            }
             var contract = await _contractRepository.GetAllIncluding().AsNoTracking()
-                .Where(x => x.SeafarerId == seafarerDetails.Result.Id && 
+                .Where(x => x.SeafarerId == seafarerDetails.Id && 
                 ((x.EndDate >= DateTime.UtcNow) || (x.StartDate == null && x.EndDate == null)) && x.Status != ContractStatus.Cancelled.ToString() && x.Status != ContractStatus.InDraft.ToString())
                 .OrderByDescending(x => x.Id).ToListAsync();
             if (imoNumber != null)
