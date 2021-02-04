@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Api.Models;
 using Synergy.ReliefCenter.Api.Models.Events;
 using Synergy.ReliefCenter.Api.Validations;

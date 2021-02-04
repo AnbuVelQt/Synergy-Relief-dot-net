@@ -2,16 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Synergy.ReliefCenter.Api.Configuration;
 using Synergy.ReliefCenter.Api.Filter;
 using Synergy.ReliefCenter.Api.Models;
-using Synergy.ReliefCenter.Api.Validations;
 using Synergy.ReliefCenter.Core.Constants;
+using Synergy.ReliefCenter.Core.Models;
 using Synergy.ReliefCenter.Core.Models.Dtos;
 using Synergy.ReliefCenter.Services.Abstraction;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Synergy.ReliefCenter.Api.Controllers

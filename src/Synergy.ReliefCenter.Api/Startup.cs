@@ -94,12 +94,14 @@ namespace Synergy.ReliefCenter.Api
 
             //For DB creation
             // manningContext.Database.Migrate();
-            app.UseAuthentication();
-             manningContext.Database.Migrate();
+           
+            // manningContext.Database.Migrate();
+
+            app.UseCors("MyPolicy");
 
             app.UseRouting();
 
-            app.UseCors("MyPolicy");
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
