@@ -39,11 +39,11 @@
                     "value": "support@synergymarinetest.com"
                   },
                   {
-                    "name": "JwtBearerConfiguration_ShoreIdp__AuthorityUrl",
+                    "name": "AuthenticationScheme_ShoreIdp__AuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
                   },
                   {
-                    "name": "JwtBearerConfiguration_SeafarerIdp__AuthorityUrl",
+                    "name": "AuthenticationScheme_SeafarerIdp__AuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
                   },
                   {
@@ -53,6 +53,10 @@
                   {
                     "name": "UserDetails__ApiUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "AbodeSign__ApiVersion",
+                    "value": "v6"
                   }
               ],
             "mountPoints": [],
@@ -121,6 +125,22 @@
                 {
                     "name": "UserDetails__ApiKey",
                     "valueFrom": "/relief-dotnet-api/dev/api_key"
+                },
+                {
+                    "name": "AbodeSign__AccessKey",
+                    "valueFrom": "/dev/adobe-sign/AccessKey"
+                },
+                {
+                    "name": "AbodeSign__ApiUrl",
+                    "valueFrom": "/dev/adobe-sign/api-url"
+                },
+                {
+                    "name": "AbodeSign__ContractDocumentId_v1.1",
+                    "valueFrom": "/dev/adobe-sign/contract-documentId_v1.1"
+                },
+                {
+                    "name": "AbodeSign__ContractDocumentId_v1.2",
+                    "valueFrom": "/dev/adobe-sign/contract-documentId_v1.2"
                 }
             ],
             "logConfiguration": {

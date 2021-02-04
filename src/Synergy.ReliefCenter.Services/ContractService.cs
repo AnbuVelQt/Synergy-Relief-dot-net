@@ -418,18 +418,15 @@ namespace Synergy.ReliefCenter.Services
 
             ContractWagesDTO wage= new ContractWagesDTO();
             List<WageComponentDTO> otherEarnings = new List<WageComponentDTO>();
-            otherEarnings.AddRange(convertToDto.Wages.OtherEarningComponents.ToList());
             otherEarnings.AddRange(contractDto.Wages.OtherEarningComponents.ToList());
             wage.OtherEarningComponents = otherEarnings;
             List<WageComponentDTO> deduction = new List<WageComponentDTO>();
-            deduction.AddRange(convertToDto.Wages.DeductionComponents.ToList());
             deduction.AddRange(contractDto.Wages.DeductionComponents.ToList());
             wage.DeductionComponents = deduction;
-            wage.SpecialAllownce = convertToDto.Wages.SpecialAllownce + contractDto.Wages.SpecialAllowance;
+            wage.SpecialAllownce = contractDto.Wages.SpecialAllowance;
 
             List<RevisedSalaryDTO> revisedSalaries = new List<RevisedSalaryDTO>();
             revisedSalaries.AddRange(contractDto.RevisedSalaries);
-            revisedSalaries.AddRange(convertToDto.RevisedSalaries);
             
             convertToDto.Wages.OtherEarningComponents = _mapper.Map(wage.OtherEarningComponents,convertToDto.Wages.OtherEarningComponents);
             convertToDto.Wages.DeductionComponents = _mapper.Map(wage.DeductionComponents, convertToDto.Wages.DeductionComponents);
