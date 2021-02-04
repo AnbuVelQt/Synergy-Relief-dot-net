@@ -52,7 +52,7 @@ namespace Synergy.ReliefCenter.Api.Controllers
             return Created("", createContractDetails);
         }
 
-        //[HasPolicyAccess(PolicyNames.DraftContract)]
+        [HasPolicyAccess(PolicyNames.DraftContract)]
         [HttpPut]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
