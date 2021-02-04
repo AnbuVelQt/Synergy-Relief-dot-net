@@ -42,6 +42,7 @@ namespace Synergy.ReliefCenter.Services
         private readonly IEmailService _emailService;
         private readonly IExternalUserDetailsRepository _externalUserDetailsRepository;
         private readonly IMasterDataRepository _masterDataRepository;
+        private readonly IApiRequestContext _apiRequestContext;
 
         public ContractService(
             IContractRepository contractRepository,
@@ -55,7 +56,8 @@ namespace Synergy.ReliefCenter.Services
             IContractReviewerRepository contractReviewerRepository,
             IEmailService emailService,
             IExternalUserDetailsRepository externalUserDetailsRepository,
-            IMasterDataRepository masterDataRepository)
+            IMasterDataRepository masterDataRepository,
+            IApiRequestContext apiRequestContext)
         {
             _contractRepository = contractRepository;
             _contractFormRepository = contractFormRepository;
@@ -69,6 +71,7 @@ namespace Synergy.ReliefCenter.Services
             _emailService = emailService;
             _externalUserDetailsRepository = externalUserDetailsRepository;
             _masterDataRepository = masterDataRepository;
+            _apiRequestContext = apiRequestContext;
         }
 
 
@@ -91,7 +94,7 @@ namespace Synergy.ReliefCenter.Services
                 Status = ContractStatus.InDraft,
                 Salary = salarymatrix.TotalMonthlyWages,
                 CdcNumber = seafarerDetails.CdcNumber,
-                ImoNumber = vesselDetails.ImoNumber.ToString()                
+                ImoNumber = vesselDetails.ImoNumber.ToString()
             };
            
             var seafarer = new SeafarerDetailDTO()
@@ -143,6 +146,8 @@ namespace Synergy.ReliefCenter.Services
             };
             
             var contractToCreate = _mapper.Map<VesselContract>(contractDto);
+            contractToCreate.CreatedAt = DateTime.UtcNow;
+            contractToCreate.CreatedById = _apiRequestContext.UserId;
             await _contractRepository.InsertAsync(contractToCreate);
             await _contractRepository.SaveAsync();
             long ContractId = contractToCreate.Id;
@@ -153,8 +158,6 @@ namespace Synergy.ReliefCenter.Services
             await _contractFormRepository.SaveAsync();
             
             return contractDto;
-
-            _mapper.Map<AgreementCreationInfo>(contract);
         }
 
         private AgreementCreationInfo GetAgreementCreationInfo(ContractDTO contractData)
@@ -435,6 +438,7 @@ namespace Synergy.ReliefCenter.Services
             convertToDto.RevisedSalaries = _mapper.Map<List<RevisedSalaryDTO>>(revisedSalaries);
 
             contract.UpdatedAt = DateTime.UtcNow;
+            contract.UpdatedById = _apiRequestContext.UserId;
             var contractToUpdate = _mapper.Map(_mapper.Map<VesselContract>(contract), contract);
             await _contractRepository.UpdateAsync(contractToUpdate);
 
@@ -475,6 +479,7 @@ namespace Synergy.ReliefCenter.Services
             contract.Status = ContractStatus.InVerification.ToString();
             contract.NextReviewer = await _contractReviewerRepository.GetAllIncluding().Where(x => x.ContractId == id).OrderBy(z => z.Id).Select(x => x.Id).FirstOrDefaultAsync();
             contract.UpdatedAt = DateTime.UtcNow;
+            contract.UpdatedById = _apiRequestContext.UserId;
             var mapContract = _mapper.Map<VesselContract>(contract);
             await _contractRepository.UpdateAsync(mapContract);
 
@@ -522,6 +527,8 @@ namespace Synergy.ReliefCenter.Services
             await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_ => _.Role == ReviewerRole.FleetHead.ToString())));
             contract.Status = contractDomainModel.Information.Status.ToString();
             contract.NextReviewer = contractDomainModel.NextReviewer.Id;
+            contract.UpdatedAt = DateTime.UtcNow;
+            contract.UpdatedById = _apiRequestContext.UserId;
             await _contractRepository.UpdateAsync(contract);
             return 0;
         }
@@ -545,6 +552,8 @@ namespace Synergy.ReliefCenter.Services
             await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_=>_.Role == ReviewerRole.SourcingExecutive.ToString())));
             contract.Status = contractDomainModel.Status.ToString();
             contract.NextReviewer = contractDomainModel.NextReviewer.Id;
+            contract.UpdatedAt = DateTime.UtcNow;
+            contract.UpdatedById = _apiRequestContext.UserId;
             await _contractRepository.UpdateAsync(contract);
             return 0;
         }
@@ -561,6 +570,8 @@ namespace Synergy.ReliefCenter.Services
             contractDomainModel.Reject(comment);
             await _contractReviewerRepository.UpdateAsync(_mapper.Map<ContractReviewer>(contractDomainModel.Reviewers.FirstOrDefault(_=>_.ReviewerId == userId)));
             contract.Status = contractDomainModel.Status.ToString();
+            contract.UpdatedAt = DateTime.UtcNow;
+            contract.UpdatedById = _apiRequestContext.UserId;
             await _contractRepository.UpdateAsync(contract);
             return;
         }  

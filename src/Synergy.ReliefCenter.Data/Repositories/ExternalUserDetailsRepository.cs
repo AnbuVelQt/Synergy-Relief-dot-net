@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Synergy.ReliefCenter.Core.Models;
 using Synergy.ReliefCenter.Data.Entities.Master;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
 using System;
@@ -11,8 +12,8 @@ namespace Synergy.ReliefCenter.Data.Repositories
     public class ExternalUserDetailsRepository : IExternalUserDetailsRepository
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly ExternalApiConfiguration.UserInfoApi _configuration;
-        public ExternalUserDetailsRepository(IHttpClientFactory clientFactory, ExternalApiConfiguration.UserInfoApi configuration)
+        private readonly IdentityServerConfiguration _configuration;
+        public ExternalUserDetailsRepository(IHttpClientFactory clientFactory, IdentityServerConfiguration configuration)
         {
             _clientFactory = clientFactory;
             _configuration = configuration;
@@ -20,8 +21,8 @@ namespace Synergy.ReliefCenter.Data.Repositories
         public async Task<UserDetails> GetUserDetails(string userId)
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-            new Uri(_configuration.ApiUrl+"User/UserRole/"+userId));
-            request.Headers.Add("apikey", _configuration.ApiKey);
+            new Uri(_configuration.ShoreAuthorityUrl+"User/UserRole/"+userId));
+            request.Headers.Add("apikey", _configuration.ShoreApiKey);
 
             var client = _clientFactory.CreateClient();
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Synergy.ReliefCenter.Api.Configuration
+namespace Synergy.ReliefCenter.Core.Models
 {
     public class IdentityServerConfiguration
     {

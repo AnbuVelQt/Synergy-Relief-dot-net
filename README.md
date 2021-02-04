@@ -63,9 +63,9 @@ dotnet nuget add source https://nuget.pkg.github.com/Synergy-Marine-Group/index.
  SmtpConfiguration__FromEmail | Smtp FromEmail configuration 
  SmtpConfiguration__Login | Smtp User login name for Email
  SmtpConfiguration__Password | Smtp User Password for Email
- AuthenticationScheme_ShoreIdp__AuthorityUrl | Jwt Token URL for ShoreIdp 
- AuthenticationScheme_SeafarerIdp__AuthorityUrl | Jwt Token URL for SeafarerIdp 
- UserDetails__ApiKey | ApiKey for userdetails Api
+ IdentityServerConfiguration__ShoreAuthorityUrl | Jwt Token URL for ShoreIdp 
+ IdentityServerConfiguration__SeafarerAuthorityUrl | Jwt Token URL for SeafarerIdp 
+ IdentityServerConfiguration__ShoreApiKey | ApiKey for userdetails Api
  CrewWage__ApiUrl | ApiUrl for external CrewWage Api
  AbodeSign__AccessKey | AccessKey for AdobeSign
  AbodeSign__ApiUrl | ApiUrl for AdobeSign 

@@ -12,11 +12,5 @@ namespace Synergy.ReliefCenter.Data
             public string ApiUrl { get; set; }
         }
 
-        public class UserInfoApi
-        {
-            public string ApiKey { get; set; }
-
-            public string ApiUrl { get; set; }
-        }
     }
 }

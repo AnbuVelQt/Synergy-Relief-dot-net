@@ -9,7 +9,7 @@
     <DockerServiceName>synergy.reliefcenter.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="dev.env" />
+    <None Include="dev.env.sample" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
