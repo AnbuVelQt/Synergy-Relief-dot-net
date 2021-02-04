@@ -20,6 +20,7 @@ namespace Synergy.ReliefCenter.Services.Mappers
                 .ForMember(dest => dest.Data, opt => opt.MapFrom(src => JsonConvert.SerializeObject(src.Data)));
             CreateMap<ContractWagesDTO, SalaryMatrix>().ReverseMap();
             CreateMap<WageComponent, WageComponentDTO>().ReverseMap();
+            CreateMap<SalaryWageComponent, WageComponentDTO>().ReverseMap();
             CreateMap<OTRateCard, OTRateCardDTO>().ReverseMap();
             CreateMap<UpdateContractWagesDTO, ContractWagesDTO>().ReverseMap();
             CreateMap<ContractReviewer, ContractReviewerSetDTO>().ReverseMap();

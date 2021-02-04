@@ -13,9 +13,11 @@ namespace Synergy.ReliefCenter.Data.Entities.SalaryMatrix
 
 		public decimal TotalMonthlyWages { get; set; }
 
-		public IList<CBAWageComponent> CBAWageComponents { get; set; }
+		public IList<SalaryWageComponent> CBAEarningComponents { get; set; }
 
-		public IList<CompanyWageComponent> CompanyWageComponents { get; set; }
+		public IList<SalaryWageComponent> OtherEarningComponents { get; set; }
+
+		public IList<SalaryWageComponent> DeductionComponents { get; set; }
 
 		public OTRateCard OTRate { get; set; }
 	}

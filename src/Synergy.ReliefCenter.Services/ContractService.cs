@@ -137,10 +137,10 @@ namespace Synergy.ReliefCenter.Services
             contractDto.ContractForm.Data.Wages = new ContractWagesDTO()
             {
                 BasicAmount = salarymatrix.BasicAmount,
-                CBAEarningComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.CBAWageComponents.Where(x => x.Type.Equals(WageComponentType.Earning.ToString()))),
-                OtherEarningComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.CompanyWageComponents.Where(x => x.Type.Equals(WageComponentType.Earning.ToString()))),
-                DeductionComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.CBAWageComponents.Where(x => x.Type.Equals(WageComponentType.Deduction.ToString()))),
-                SpecialAllownce = salarymatrix.SpecialAllowance,
+                CBAEarningComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.CBAEarningComponents),
+                OtherEarningComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.OtherEarningComponents),
+                DeductionComponents = _mapper.Map<List<WageComponentDTO>>(salarymatrix.DeductionComponents),
+                SpecialAllowance = salarymatrix.SpecialAllowance,
                 OTRateCard = _mapper.Map<OTRateCardDTO>(salarymatrix.OTRate),
                 TotalMonthlyAmount = salarymatrix.TotalMonthlyWages
             };
@@ -212,7 +212,7 @@ namespace Synergy.ReliefCenter.Services
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader1", defaultValue = "Basic Wages" });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue1", defaultValue = convertAmountString(FormData.Wages.BasicAmount) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesHeader2", defaultValue = "Special Allowance" });
-            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = convertAmountString(FormData.Wages.SpecialAllownce) });
+            mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "monthlyWagesValue2", defaultValue = convertAmountString(FormData.Wages.SpecialAllowance) });
             mergeFieldInfoList.Add(new MergeFieldInfo() { fieldName = "totalMonthlyWages", defaultValue = convertAmountString(FormData.Wages.TotalMonthlyAmount) });
 
             int wageLastStaticRowNo = 2;
@@ -426,14 +426,14 @@ namespace Synergy.ReliefCenter.Services
             List<WageComponentDTO> deduction = new List<WageComponentDTO>();
             deduction.AddRange(contractDto.Wages.DeductionComponents.ToList());
             wage.DeductionComponents = deduction;
-            wage.SpecialAllownce = contractDto.Wages.SpecialAllowance;
+            wage.SpecialAllowance = contractDto.Wages.SpecialAllowance;
 
             List<RevisedSalaryDTO> revisedSalaries = new List<RevisedSalaryDTO>();
             revisedSalaries.AddRange(contractDto.RevisedSalaries);
             
             convertToDto.Wages.OtherEarningComponents = _mapper.Map(wage.OtherEarningComponents,convertToDto.Wages.OtherEarningComponents);
             convertToDto.Wages.DeductionComponents = _mapper.Map(wage.DeductionComponents, convertToDto.Wages.DeductionComponents);
-            convertToDto.Wages.SpecialAllownce = _mapper.Map(wage.SpecialAllownce, convertToDto.Wages.SpecialAllownce);
+            convertToDto.Wages.SpecialAllowance = _mapper.Map(wage.SpecialAllowance, convertToDto.Wages.SpecialAllowance);
             convertToDto.Wages = _mapper.Map<ContractWagesDTO>(convertToDto.Wages);
             convertToDto.RevisedSalaries = _mapper.Map<List<RevisedSalaryDTO>>(revisedSalaries);
 
