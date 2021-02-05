@@ -9,24 +9,32 @@ namespace Synergy.ReliefCenter.Data.Repositories
 {
     public class ExternalSalaryMatrixRepository : IExternalSalaryMatrixRepository
     {
-        public async Task<SalaryMatrix> GetSalaryMatrix(string vesselImoNumber, string seafarerCdcNumer, string AuthToken, string crewWageApiBaseUrl)
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly ExternalApiConfiguration.CrewWageApi _configuration;
+        public ExternalSalaryMatrixRepository(IHttpClientFactory clientFactory, ExternalApiConfiguration.CrewWageApi configuration)
         {
-            using (var client = new HttpClient())
+            _clientFactory = clientFactory;
+            _configuration = configuration;
+        }
+        public async Task<SalaryMatrix> GetSalaryMatrix(string vesselImoNumber, string seafarerCdcNumer, string AuthToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,
+            new Uri(_configuration.ApiUrl + "SalaryMatrix?vesselIMONumber=" + vesselImoNumber + "&seafarerCDCNumber=" + seafarerCdcNumer));
+            request.Headers.Add("Authorization", AuthToken.Replace("Bearer ", ""));
+
+            var client = _clientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
             {
-                client.BaseAddress = new Uri(crewWageApiBaseUrl);
-                client.DefaultRequestHeaders.Add("Authorization", AuthToken.Replace("Bearer ", ""));
-                //HTTP GET
-                var response = await client.GetAsync("SalaryMatrix?vesselIMONumber=" + vesselImoNumber + "&seafarerCDCNumber=" + seafarerCdcNumer );
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseAsString = await response.Content.ReadAsStringAsync();
-                    var responseAsConcreteType = JsonConvert.DeserializeObject<SalaryMatrix>(responseAsString);
-                    return responseAsConcreteType;
-                }
-                else
-                {
-                    return null;
-                }
+                var responseStream = await response.Content.ReadAsStringAsync();
+                var responseAsConcreteType = JsonConvert.DeserializeObject<SalaryMatrix>(responseStream);
+                return responseAsConcreteType;
+            }
+            else
+            {
+                return null;
             }
         }
     }

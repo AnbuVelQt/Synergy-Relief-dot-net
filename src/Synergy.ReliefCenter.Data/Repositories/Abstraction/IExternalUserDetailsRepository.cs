@@ -6,6 +6,6 @@ namespace Synergy.ReliefCenter.Data.Repositories.Abstraction
 {
     public interface IExternalUserDetailsRepository
     {
-        Task<UserDetails> GetUserDetails(string userId, string apiKey, string userDetailsApiBaseUrl);
+        Task<UserDetails> GetUserDetails(string userId);
     }
 }

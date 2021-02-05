@@ -39,12 +39,20 @@
                     "value": "support@synergymarinetest.com"
                   },
                   {
-                    "name": "JwtBearerConfiguration_ShoreIdp__AuthorityUrl",
+                    "name": "IdentityServerConfiguration__ShoreAuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
                   },
                   {
-                    "name": "JwtBearerConfiguration_SeafarerIdp__AuthorityUrl",
+                    "name": "IdentityServerConfiguration__SeafarerAuthorityUrl",
                     "value": "https://login-shore.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "CrewWage__ApiUrl",
+                    "value": "https://api-crew-wage-dev.synergymarinetest.com/"
+                  },
+                  {
+                    "name": "AbodeSign__ApiVersion",
+                    "value": "v6"
                   }
               ],
             "mountPoints": [],
@@ -71,14 +79,6 @@
                     "valueFrom": "/relief-dotnet-api/dev/ConnectionStrings__MasterDB"
                 },
                 {
-                    "name": "IdentityServer__BaseUrl",
-                    "valueFrom": "/relief-dotnet-api/dev/IdentityServer__BaseUrl"
-                },
-                {
-                    "name": "IdentityServer__IntrospectionPath",
-                    "valueFrom": "/relief-dotnet-api/dev/IdentityServer__IntrospectionPath"
-                },
-                {
                     "name": "IdentityServer__ApiName",
                     "valueFrom": "/relief-dotnet-api/dev/IdentityServer__ApiName"
                 },
@@ -87,20 +87,32 @@
                     "valueFrom": "/relief-dotnet-api/dev/IdentityServer__ApiSecretKey"
                 },
                 {
-                    "name": "AwsS3__BucketName",
-                    "valueFrom": "/relief-dotnet-api/dev/AwsS3__BucketName"
+                    "name": "SmtpConfiguration__Login",
+                    "valueFrom": "/dev/smtp_username"
                 },
                 {
-                    "name": "AwsS3__AccessKey",
-                    "valueFrom": "/relief-dotnet-api/dev/AwsS3__AccessKey"
+                    "name": "SmtpConfiguration__Password",
+                    "valueFrom": "/dev/smtp_password"
                 },
                 {
-                    "name": "AwsS3__SecretAccessKey",
-                    "valueFrom": "/relief-dotnet-api/dev/AwsS3__SecretAccessKey"
+                  "name": "IdentityServerConfiguration__ShoreApiKey",
+                  "valueFrom": "/relief-dotnet-api/dev/api_key"
                 },
                 {
-                    "name": "AwsS3__Region",
-                    "valueFrom": "/relief-dotnet-api/dev/AwsS3__Region"
+                    "name": "AbodeSign__AccessKey",
+                    "valueFrom": "/dev/adobe-sign/AccessKey"
+                },
+                {
+                    "name": "AbodeSign__ApiUrl",
+                    "valueFrom": "/dev/adobe-sign/api-url"
+                },
+                {
+                    "name": "AbodeSign__ContractDocumentId_v1.1",
+                    "valueFrom": "/dev/adobe-sign/contract-documentId_v1.1"
+                },
+                {
+                    "name": "AbodeSign__ContractDocumentId_v1.2",
+                    "valueFrom": "/dev/adobe-sign/contract-documentId_v1.2"
                 }
             ],
             "logConfiguration": {

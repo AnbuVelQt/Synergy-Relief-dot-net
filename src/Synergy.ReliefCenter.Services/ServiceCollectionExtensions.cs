@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Synergy.ReliefCenter.Data.Contexts;
 using Synergy.ReliefCenter.Data.Models;
 using Synergy.ReliefCenter.Data.Repositories;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction;
+using Synergy.ReliefCenter.Data.Repositories.Abstraction.PolicyRepository;
 using Synergy.ReliefCenter.Data.Repositories.Abstraction.ReliefRepository;
 using Synergy.ReliefCenter.Data.Repositories.ReliefRepository;
 using Synergy.ReliefCenter.Services.Abstraction;
@@ -21,6 +24,9 @@ namespace Synergy.ReliefCenter.Services
         {
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<IMyContractService, MyContractService>();
+            services.AddScoped<IAuthorizationPolicyService, AuthorizationPolicyService>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IApiRequestContext, ApiRequestContext>();
         }
 
         public static void AddReliefRepositories(this IServiceCollection services)
@@ -32,6 +38,7 @@ namespace Synergy.ReliefCenter.Services
             services.AddScoped<IExternalSalaryMatrixRepository, ExternalSalaryMatrixRepository>();
             services.AddScoped<IContractReviewerRepository, ContractReviewerRepository>();
             services.AddScoped<IExternalUserDetailsRepository, ExternalUserDetailsRepository>();
+            services.AddScoped<IAccessPoliciesRepository, AccessPoliciesRepository>();
             services.AddScoped<IMasterDataRepository, MasterDataRepository>();
         }
 
@@ -44,7 +51,7 @@ namespace Synergy.ReliefCenter.Services
             var MasterString = configuration.GetConnectionString(MasterDBConnectionString);
 
             // Context Register
-            
+
             services.AddDbContext<VesselDbContext>(opt =>
                 opt.UseNpgsql(VesselString).UseSnakeCaseNamingConvention());
 
@@ -56,6 +63,7 @@ namespace Synergy.ReliefCenter.Services
 
             services.AddDbContext<synergy_manningContext>(opt =>
                 opt.UseNpgsql(ManningDbString).UseSnakeCaseNamingConvention());
+
         }
     }
 }

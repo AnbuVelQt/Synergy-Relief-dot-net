@@ -1,11 +1,10 @@
 using AutoMapper;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Synergy.AdobeSign;
 using Synergy.ReliefCenter.Api.Helpers;
 using Synergy.ReliefCenter.Api.Mappers;
 using Synergy.ReliefCenter.Api.Validations;
@@ -14,8 +13,10 @@ using Synergy.ReliefCenter.Services.Mappers;
 using Synergy.Core.EmailService;
 using Microsoft.Extensions.Logging;
 using System;
-using Synergy.ReliefCenter.Api.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using Synergy.ReliefCenter.Data;
+using Microsoft.EntityFrameworkCore;
+using Synergy.ReliefCenter.Api.Filter;
+using FluentValidation.AspNetCore;
 
 namespace Synergy.ReliefCenter.Api
 {
@@ -59,41 +60,23 @@ namespace Synergy.ReliefCenter.Api
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
-            services.AddAllValidators();
+            services.AddSingleton(Configuration);
+            services.AddScoped<IAdobeSignRestClient, AdobeSignRestClient>();
 
-            // For JwtBearerConfiguration
+            services.AddMvc(Options => {
+                Options.Filters.Add(new ValidationFilter());
+            }).AddFluentValidation(Options =>
+            {
+                Options.RegisterValidatorsFromAssemblyContaining<Startup>();
+            });
 
-            var jwtBearerConfiguration = Configuration.GetSection(nameof(JwtBearerConfiguration)).Get<JwtBearerConfiguration>();
-
-            services.AddAuthentication(AuthenticationSchemas.ShoreIdp)
-                .AddJwtBearer(AuthenticationSchemas.ShoreIdp, options =>
-                {
-                    options.Authority = jwtBearerConfiguration.ShoreIdp.AuthorityUrl;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtBearerConfiguration.ShoreIdp.AuthorityUrl,
-                        ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateAudience = false
-                    };
-                })
-                .AddJwtBearer(AuthenticationSchemas.SeafarerIdp, options =>
-                {
-                    options.Authority = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtBearerConfiguration.SeafarerIdp.AuthorityUrl,
-                        ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateAudience = false
-                    };
-                });
+            services.AddAdobeSign(Configuration);   //For Adobe Sign
+            services.AddExternalApi(Configuration);   //For ExternalApi 
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,synergy_manningContext manningContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, synergy_manningContext manningContext)
         {
             if (env.IsDevelopment())
             {
@@ -112,9 +95,11 @@ namespace Synergy.ReliefCenter.Api
             //For DB creation
             manningContext.Database.Migrate();
 
+            app.UseCors("MyPolicy");
+
             app.UseRouting();
 
-            app.UseCors("MyPolicy");
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

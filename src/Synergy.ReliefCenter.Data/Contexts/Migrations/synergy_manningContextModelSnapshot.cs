@@ -1832,6 +1832,10 @@ namespace Synergy.ReliefCenter.Data.Contexts.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("rank_id");
 
+                    b.Property<string>("ReferenceAgreementId")
+                        .HasColumnType("character varying")
+                        .HasColumnName("ref_agreement_id");
+
                     b.Property<double?>("Salary")
                         .HasColumnType("double precision")
                         .HasColumnName("salary");

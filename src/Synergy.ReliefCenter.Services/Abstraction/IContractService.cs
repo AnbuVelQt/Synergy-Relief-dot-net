@@ -9,14 +9,21 @@ namespace Synergy.ReliefCenter.Services.Abstraction
 {
     public interface IContractService
     {
-        Task<ContractDTO> CreateContract(string vesselImoNumber, string seafarerCdcNumber, string AuthToken, string crewWageApiBaseUrl);
+        Task ApproveAsync(long contractId);
+        Task<ContractDTO> CreateContract(string vesselImoNumber, string seafarerCdcNumber, string AuthToken);
 
-        Task<ContractDTO> GetConract(long id, string apiKey, string userDetailsApiBaseUrl);
+        Task<ContractDTO> GetConract(long id);
 
         Task UpdateContract(UpdateContractDTO contractDto, long id);
 
-        Task<ContractDTO> GetConracts(string vesselImoNumber, string seafarerCdcNumber, string apiKey, string userDetailsApiBaseUrl);
+        Task<ContractDTO> GetConracts(string vesselImoNumber, string seafarerCdcNumber);
 
-        Task AssignReviewers(long id, ContractReviewerSetDTO reviewerSetDto, string apiKey, string userDetailsApiBaseUrl);
+        Task AssignReviewers(long id, ContractReviewerSetDTO reviewerSetDto);
+
+        Task<object> ApproveContract(long id,string userId);
+
+        Task<object> VerifyContract(long id, string userId);
+
+        Task RejectContract(long id, string userId, string comment);
     }
 }

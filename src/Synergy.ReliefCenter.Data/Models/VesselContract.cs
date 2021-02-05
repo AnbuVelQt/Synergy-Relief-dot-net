@@ -76,9 +76,11 @@ namespace Synergy.ReliefCenter.Data.Models
         [InverseProperty(nameof(ContractForm.VesselContract))]
         public virtual ICollection<ContractForm> ContractForms { get; set; }
 
+        [Column("ref_agreement_id", TypeName = "character varying")]
+        public string ReferenceAgreementId { get; set; }
+
         [InverseProperty(nameof(ContractReviewer.VesselContracts))]
         public virtual ICollection<ContractReviewer> ContractReviewers { get; set; }
-
 
         [ForeignKey(nameof(NextReviewer))]
         [InverseProperty("Contract")]
